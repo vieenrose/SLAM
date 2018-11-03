@@ -56,8 +56,8 @@ timeStep = .001 #in seconds, step for swipe pitch analysis
 voicedThreshold = 0.2 #for swipe
 
 #Tiers for the speaker and the target intervals, put your own tier names
-speakerTier= 'locuteur' 
-targetTier = 'package'
+speakerTier= 'Biola-IP' 
+targetTier = 'mot'
 
 #display
 examplesDisplayCount = 5 #number of example plots to do. Possibly 0
@@ -132,13 +132,13 @@ while tgFiles:
     tierNames = [t.name() for t in tg]
     
     while targetTier not in tierNames:
-        print '    TextGrid does not have a tier named %s. Available tiers are:'%targetTier
+        print '    TextGrid does not have a tier named %s for target. Available tiers are:'%targetTier
         for t in tierNames: print '        %s'%t
-        targetTier=raw_input('Type the tier name to use (+ENTER):')
+        targetTier=raw_input('Type the tier name to use as target (+ENTER):')
     while speakerTier not in tierNames and speakerTier:
-        print '    TextGrid does not have a tier named %s. Available tiers are:'%speakerTier
+        print '    TextGrid does not have a tier named %s for speaker/supportTier. Available tiers are:'%speakerTier
         for t in tierNames: print '        %s'%t
-        speakerTier=raw_input('Type the tier name indicating speaker (or any categorizing variable):')
+        speakerTier=raw_input('Type the tier name indicating speaker/supportTier (or any categorizing variable):')
         
     
     #create interval tier for output
