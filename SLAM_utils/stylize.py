@@ -125,13 +125,8 @@ def SLAM1(semitones):
     return (style,smooth)
     
 def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunction=SLAM1):
-    #get stylization for an object that implements the xmin() and xmax()
-    #methods.
-    if (speakerTier is not None) and (registers is None):
-        #if a speaker tier is provided and registers is not already computed,
-        #compute it.
-        registers = averageRegisters(swipeFile,speakerTier)
-    
+    #get stylization for an object that implements the xmin() and xmax() methods.
+
     #get f0 values
     imin, imax = swipeFile.time_bisect(target.xmin(),target.xmax())
     pitchs = swipeFile.pitch[imin:imax]
@@ -139,30 +134,35 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
     if len(pitchs)<2:
         #skipping interval (unvoiced)
         return ('_',[],[])
-        
-    #get corresponding interval in the speaker tier
-    if speakerTier is not None:
-        if isinstance(registers,(int,float)):
-            #no speaker tier was provided, registers is only the average f0
-            reference = registers
+
+    #get corresponding interval in the speaker (i.e. support) tier
+    speaker = None
+    if speakerTier and isinstance(registers,dict):
+        speakers_intervals = tg.getMatchingIntervals([target],speakerTier,strict=False,just_intersection=True)
+        speakers = [i.mark() for i in speakers_intervals]
+        speakersCount = dict( (x,speakers.count(x)) for x in set(speakers))
+        #counting the speakers
+        if len(speakersCount)>1:
+            speaker = max(speakersCount,key=speakersCount.get)
+            print('     Keeping %s'%speaker, speakersCount)
         else:
-            #else : getting all speakers of target object
-            speakers_intervals = tg.getMatchingIntervals([target],speakerTier,strict=False,just_intersection=True)
-            speakers = [i.mark() for i in speakers_intervals]
-            speakersCount = dict( (x,speakers.count(x)) for x in set(speakers))
-            #counting the speakers
-            if len(speakersCount)>1:
-                speaker = max(speakersCount,key=speakersCount.get)
-                print('     Keeping %s'%speaker, speakersCount)
-            else:
-                #only one speaker for all target intervals
-                speaker = speakers[0]
-            #reference is the value of the registers for this speaker
-            reference = registers[speaker]
-    else:
+            #only one speaker for all target intervals
+            speaker = speakers[0]
+
+    #get corresponding register value
+    if not registers:
+        #if a speaker tier is provided and registers is not already computed,
+        #compute it.
+        registers = averageRegisters(swipeFile,speakerTier)
+
+    if speaker:
+        #reference is the value of the registers for this speaker
+        reference = registers[speaker]
+    else: #speaker == None
         if not is_numeric_paranoid(registers):
             print('WARNING : no speaker tier provided and reference is not numeric ! not stylizing.')
             return ''
+        #no speaker/support tier was provided, registers is only the average f0
         reference = registers
 
     #delta with reference in semitones
