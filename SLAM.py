@@ -54,6 +54,7 @@ display:
 
 timeStep = .001 #in seconds, step for swipe pitch analysis
 voicedThreshold = 0.2 #for swipe
+estimate_mode = 2 #register estimate mdoe: 1 for avergae, 2 for Hann window
 
 #Tiers for the speaker and the target intervals, put your own tier names
 speakerTier= 'Biola-IP' 
@@ -181,7 +182,7 @@ while tgFiles:
             print 'stylizing: %d percents'%(pos/LEN*100.0)
             
         #compute style of current interval
-        (style,original, smooth)=stylize.stylizeObject(interval,sf,tg[speakerTier],registers)
+        (style,original, smooth)=stylize.stylizeObject(interval,sf,tg[speakerTier],registers,estimate_mode=estimate_mode)
         
         #if style computed, adding it to global list
         if len(style) and (style!='_') :styles+=[style]

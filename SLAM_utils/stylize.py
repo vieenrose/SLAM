@@ -124,14 +124,14 @@ def SLAM1(semitones):
     print('STYLE', style)
     return (style,smooth)
     
-def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunction=SLAM1):
+def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunction=SLAM1,estimate_mode=1):
     #get stylization for an object that implements the xmin() and xmax() methods.
 
-    #get f0 values
+    #get f0 values for target
     imin, imax = swipeFile.time_bisect(target.xmin(),target.xmax())
-    pitchs = swipeFile.pitch[imin:imax]
+    pitchs_C = swipeFile.pitch[imin:imax]
 
-    if len(pitchs)<2:
+    if len(pitchs_C)<2:
         #skipping interval (unvoiced)
         return ('_',[],[])
 
@@ -149,6 +149,42 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
             #only one speaker for all target intervals
             speaker = speakers[0]
 
+    if estimate_mode == 2:
+        print('========== EXPERIMENT START ====')
+        #get temporal indices
+        #for target
+        imin,imax = swipeFile.time_bisect(target.xmin(),target.xmax())
+        if imin < imax: upper_bound = imax
+        else: upper_bound = imax + 1
+        target_int = range(imin,upper_bound)
+        #for support
+        support_int = []
+        for i in speakers_intervals:
+            if i.mark() == speaker:
+                imin,imax = swipeFile.time_bisect(i.xmin(),i.xmax())
+                if imin < imax: upper_bound = imax
+                else: upper_bound = imax + 1
+                support_int += range(imin,upper_bound)
+        #get the temporal index of
+        #the center of intersection of the support and the target
+        inter = list(set(target_int) & (set(support_int)))
+        center = inter[len(inter) // 2]
+
+        #estimate register using Hann window
+        r = 0.0
+        c = 0.0
+        half_width = max(center - support_int[0] + 1, support_int[-1] - center + 1)
+        for t in support_int:
+            #compute a Hann window
+            w = 0.0
+            #convoluate it with a rectangular function with its support as our target
+            for center_mobile in inter:
+                w += (np.cos(np.pi / 2.0 / float(half_width) * (t - center_mobile))) ** 2
+            #w = 1 #debug: constant window
+            r += w * swipeFile.pitch[t]
+            c += w
+        if c: r = r / c # normalization
+
     #get corresponding register value
     if not registers:
         #if a speaker tier is provided and registers is not already computed,
@@ -158,17 +194,28 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
     if speaker:
         #reference is the value of the registers for this speaker
         reference = registers[speaker]
+        if not reference: return ('',[],[]) #bugfix
     else: #speaker == None
         if not is_numeric_paranoid(registers):
             print('WARNING : no speaker tier provided and reference is not numeric ! not stylizing.')
-            return ''
+            return ('',[],[])
         #no speaker/support tier was provided, registers is only the average f0
         reference = registers
 
+    if estimate_mode == 2:
+        try:
+            print('(new register, old register,diff): ({},{},{})'.format(r,reference, abs(r-reference)))
+        except:
+            print('(new register, old register): ({},{})'.format(r,reference))
+            print(registers)
+            exit(1)
+        reference = r
+        print('========== EXPERIMENT END ======')
+
     #delta with reference in semitones
-    delta_pitchs = [1E-2*(hz2cent(pitch) - hz2cent(reference)) for pitch in pitchs]
-    (style,smoothed) = stylizeFunction(delta_pitchs)
-    return (style,delta_pitchs,smoothed)
+    delta_pitchs_C = [1E-2*(hz2cent(pitch) - hz2cent(reference)) for pitch in pitchs_C]
+    (style,smoothed) = stylizeFunction(delta_pitchs_C)
+    return (style,delta_pitchs_C,smoothed)
 
 # source:
 # https://stackoverflow.com/questions/500328/identifying-numeric-and-array-types-in-numpy
