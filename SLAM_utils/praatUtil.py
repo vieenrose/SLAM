@@ -26,6 +26,32 @@ this program; if not, see <http://www.gnu.org/licenses/>.
 
 import numpy
 
+def writeBinPitchTier(fileName, dataX, dataY):
+
+      with open(fileName, "wb") as bin :
+            
+            # check data lengths
+            if len(dataX) <> len(dataY):
+                  raise IOError('dataX and dataY should have the same length !')
+      
+            # metadata & data format
+            mdType = numpy.dtype([\
+                  ('header',str, 22),
+                  ('xMin','>d'),\
+                  ('xMax','>d'),\
+                  ('nb','>i4')])
+                  
+            numpy.array([\
+                  ("ooBinaryFile\x09PitchTier",\
+                  min(dataX),\
+                  max(dataX),\
+                  len(dataX))],\
+                  dtype=mdType).tofile(bin)
+      
+            # read data as 2D-array
+            dType = numpy.dtype([('x','>d'),('y','>d')])
+            numpy.array(zip(dataX,dataY),dtype=dType).tofile(bin)
+
 def readBinPitchTier(fileName):
 
       metadata=None
@@ -42,10 +68,8 @@ def readBinPitchTier(fileName):
           dType = numpy.dtype([('x','>d'),('y','>d')])
           try:
               metadata = numpy.fromfile(bin, dtype=mdType, count=1)
-              header = (metadata['header'])[0].split('\t')
               # check file header
-              if not(header[0] == 'ooBinaryFile' and \
-                     header[1] == 'PitchTier'):
+              if not(metadata['header'] == 'ooBinaryFile\x09PitchTier'):
                   raise IOError('file header not recongized !')
               # read data as 2D-array
               data = numpy.fromfile(bin, dtype=dType, count=metadata['nb'])
