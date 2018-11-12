@@ -54,7 +54,7 @@ display:
 
 timeStep = .001 #in seconds, step for swipe pitch analysis
 voicedThreshold = 0.2 #for swipe
-estimate_mode = 2 #register estimate mdoe: 1 for avergae, 2 for Hann window
+estimate_mode = 1 #register estimate mdoe: 1 for avergae, 2 for Hann window
 
 #Tiers for the speaker and the target intervals, put your own tier names
 speakerTier= 'Biola-IP' 
@@ -119,6 +119,7 @@ while tgFiles:
     basename = stylize.get_basename(inputTextgridFile)
     extension = stylize.get_extension(inputTextgridFile)
     outputTextgridFile = './output/{}{}'.format(basename, extension)
+    outputPitchTierFile = './output/{}{}'.format(basename, ".PitchTier")
     srcFile = \
     [filename for filename in srcFiles \
         if stylize.get_basename(filename).lower() == basename.lower()]
@@ -176,14 +177,18 @@ while tgFiles:
     LEN = float(len(tg[targetTier]))
     totalN+=LEN
     POSdisplay = set([int(float(i)/100.0*LEN) for i in range(0,100,10)])
+    smooth_total = []
+    time_total = []
 
     for pos,interval in enumerate(tg[targetTier]):
         if pos in POSdisplay:
             print 'stylizing: %d percents'%(pos/LEN*100.0)
             
         #compute style of current interval
-        (style,original, smooth)=stylize.stylizeObject(interval,sf,tg[speakerTier],registers,estimate_mode=estimate_mode)
-        
+        (style,original, smooth, time, smooth_out)=stylize.stylizeObject(interval,sf,tg[speakerTier],registers,estimate_mode=estimate_mode)
+        smooth_total=np.concatenate((smooth_total,smooth_out))
+        time_total=np.concatenate((time_total,time))
+
         #if style computed, adding it to global list
         if len(style) and (style!='_') :styles+=[style]
         
@@ -208,6 +213,8 @@ while tgFiles:
     print 'Saving computed styles in file %s'%outputTextgridFile
     tg.append(newTier)
     tg.write(outputTextgridFile)
+    print 'Exporting smoothed pitchs in Binary PitchTierfile %s'%outputPitchTierFile
+    praatUtil.writeBinPitchTier(outputPitchTierFile,time_total,smooth_total)
 
 
 #Now output statistics

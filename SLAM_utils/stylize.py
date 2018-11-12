@@ -23,7 +23,8 @@ class readPitchtier(swipe.Swipe):
 
 def hz2cent(f0_Hz):
     return 1200.0*np.log2( np.maximum(1E-5,np.double(f0_Hz) ))
-
+def cent2hz(semitone):
+    return np.double(2.0**(np.double(semitone) / 1200.0))
 def relst2register(semitones):
     #from relative semitones to register
     if isinstance(semitones,(int,float)):
@@ -130,10 +131,11 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
     #get f0 values for target
     imin, imax = swipeFile.time_bisect(target.xmin(),target.xmax())
     pitchs_C = swipeFile.pitch[imin:imax]
+    times_C = swipeFile.time[imin:imax]
 
     if len(pitchs_C)<2:
         #skipping interval (unvoiced)
-        return ('_',[],[])
+        return ('_',[],[],[],[])
 
     #get corresponding interval in the speaker (i.e. support) tier
     speaker = None
@@ -194,11 +196,11 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
     if speaker:
         #reference is the value of the registers for this speaker
         reference = registers[speaker]
-        if not reference: return ('',[],[]) #bugfix
+        if not reference: return ('',[],[],[],[]) #bugfix
     else: #speaker == None
         if not is_numeric_paranoid(registers):
             print('WARNING : no speaker tier provided and reference is not numeric ! not stylizing.')
-            return ('',[],[])
+            return ('',[],[],[],[])
         #no speaker/support tier was provided, registers is only the average f0
         reference = registers
 
@@ -215,7 +217,9 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
     #delta with reference in semitones
     delta_pitchs_C = [1E-2*(hz2cent(pitch) - hz2cent(reference)) for pitch in pitchs_C]
     (style,smoothed) = stylizeFunction(delta_pitchs_C)
-    return (style,delta_pitchs_C,smoothed)
+
+    smoothed_out = [cent2hz((100*delta + hz2cent(reference))) for delta in smoothed]
+    return (style,delta_pitchs_C,smoothed,times_C, smoothed_out)
 
 # source:
 # https://stackoverflow.com/questions/500328/identifying-numeric-and-array-types-in-numpy
