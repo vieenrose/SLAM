@@ -198,15 +198,7 @@ while tgFiles:
         
         #display if interval is sufficiently large
         if (examplesDisplayCount>0) and len(style) and len(original)>=minLengthDisplay:
-            import pylab as pl
-            pl.figure(1)
-            pl.clf()
-            pl.plot(np.linspace(0,1,len(original)),original,'b')
-            pl.hold(True)
-            pl.plot(np.linspace(0,1,len(smooth)),smooth,'r')
-            pl.title(style)
-            pl.grid(True)
-            pl.show()
+            stylize.show_stylization(original,smooth,style)
             examplesDisplayCount-=1
     
     #done, now writing tier into textgrid and saving textgrid

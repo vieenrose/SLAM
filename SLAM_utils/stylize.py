@@ -2,6 +2,7 @@
 """
 
 """
+import matplotlib
 import matplotlib.pylab as pl
 import numpy as np
 import SLAM_utils.TextGrid as tg
@@ -33,24 +34,24 @@ def relst2register(semitones):
     for st in semitones:
         if   st > 6  : result.append('H')
         elif st > 2  : result.append('h')
-        elif st > -2  : result.append('m')        
+        elif st > -2  : result.append('m')
         elif st > -6  : result.append('l')
         elif st < -6  : result.append('L')
-    return result        
-        
+    return result
+
 def averageRegisters(swipeFile,speakerTier=None):
-    #if no speaker tier is provided, just take the average of the f0s 
+    #if no speaker tier is provided, just take the average of the f0s
     if speakerTier is None:
         print('     No speaker tier given, just taking mean of f0s as average register')
         pitchs = [x for x in swipeFile if x]
         return np.mean(pitchs)
-        
+
     #get all different speaker names
     speakerNames = set([interval.mark() for interval in speakerTier])
-    registers     = {}    
+    registers     = {}
     #for each speaker, compute mean register
     for speaker in speakerNames:
-        intervals = [interval for interval in speakerTier if interval.mark()==speaker]        
+        intervals = [interval for interval in speakerTier if interval.mark()==speaker]
         #on va calculer la moyenne=sum/n
         sumf0 = 0
         nf0 = 0
@@ -65,13 +66,12 @@ def averageRegisters(swipeFile,speakerTier=None):
             registers[speaker]=None
     return registers
 
-def SLAM1(semitones):
+def SLAM1(semitones, display=False):
     #this takes a sequence of semitones and applies the SLAM1 stylization
-    display=False
-    
+
     #first, smooth the semitones curves using LOWESS
     if 100<len(semitones):
-        r = int(len(semitones)/100.0)   
+        r = int(len(semitones)/100.0)
         semitones = list(np.array(semitones)[::r])
     t = np.array(range(len(semitones)))/float(len(semitones))
     if 10<len(semitones):
@@ -79,7 +79,7 @@ def SLAM1(semitones):
         smooth = lowess.lowess(t,semitones)
     else:
         smooth = semitones
-		
+
     start = smooth[0]
     stop = smooth[-1]
     style = relst2register(start)
@@ -90,7 +90,7 @@ def SLAM1(semitones):
     xmin = np.min(smooth)
     maxdiffpositive = xmax - max(start,stop)
     maxdiffnegative = 0 #xmin # min(start, stop) - xmin
-	
+
     #maxdiffpositive = np.max(np.abs([x-max(start,stop) for x in smooth]))
     #maxdiffnegative = 0
     #maxdiffnegative = np.abs(np.min([x-min(start,stop) for x in smooth]))
@@ -115,16 +115,47 @@ def SLAM1(semitones):
         else:
             style+='3'
     style = ''.join(style)
-    display=0;
+
     if display:
-        pl.plot(semitones,'b')
-        pl.hold(True)
-        pl.plot(smooth,'r')
-        pl.title(style)
-        pl.show()    
+        show_stylization(semitones,smooth,style)
+
     print('STYLE', style)
     return (style,smooth)
-    
+
+def show_stylization(original,smooth,style):
+    semitones = original
+    fig, ax = pl.subplots()
+    fig.canvas.set_window_title('SLAM: Input & Smoothed Pitchs with Tonal Annotation')
+    time = np.linspace(0, 1, len(semitones)) # normalized time
+    # xtick (time) handeling
+    num_intervals = 3
+    num_xticks = num_intervals + 1
+    xticks = np.linspace(0, 1, num_xticks)
+    pl.xlim(xticks[0],xticks[-1])
+    xticklabels = []
+    for i, t in enumerate(xticks):
+        if i: xticklabels.append('{:d}/{:d}'.format(i, num_intervals))
+        else: xticklabels.append('0')
+    ax.xaxis.set_major_locator(matplotlib.ticker.FixedLocator(xticks))
+    ax.set_xticks(xticks)
+    ax.set_xticklabels(xticklabels)
+    # ytick (pitch) handeling
+    yticks = range(-6,6+1,4)
+    pl.ylim(-6 - 4,6 + 4)
+    ax.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks))
+    ax.set_yticks(yticks)
+    yticklabels = ['{:.2f}'.format(f) for f in yticks]
+    ax.set_yticklabels(yticklabels)
+    pl.hold(True)
+    pl.plot(time, semitones, 'b.') # input pitch
+    pl.plot(time, smooth   , 'r') # smoothed pitch
+    pl.xlabel('Normalized Time')
+    pl.ylabel('Pitch (semitones)')
+    pl.title(style)
+    ax.legend(['Input or Original Pitch','Smoothed Pitch (LOWESS)'])
+    pl.grid(b=True, which='both', linestyle='-')
+    pl.show()
+
 def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunction=SLAM1,estimate_mode=1):
     #get stylization for an object that implements the xmin() and xmax() methods.
 
