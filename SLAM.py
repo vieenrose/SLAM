@@ -62,7 +62,7 @@ targetTier = 'mot'
 
 #display
 examplesDisplayCount = 5 #number of example plots to do. Possibly 0
-minLengthDisplay = 30 #min number of f0 points for an interval to be displayed
+minLengthDisplay = 3 #min number of f0 points for an interval to be displayed
 
 
 #END OF PARAMETERS (don't touch below please)
@@ -185,7 +185,7 @@ while tgFiles:
             print 'stylizing: %d percents'%(pos/LEN*100.0)
             
         #compute style of current interval
-        (style,original, smooth, time, smooth_out)=stylize.stylizeObject(interval,sf,tg[speakerTier],registers,estimate_mode=estimate_mode)
+        (style,original, smooth, time, smooth_out, reg)=stylize.stylizeObject(interval,sf,tg[speakerTier],registers,estimate_mode=estimate_mode)
         smooth_total=np.concatenate((smooth_total,smooth_out))
         time_total=np.concatenate((time_total,time))
 
@@ -198,7 +198,7 @@ while tgFiles:
         
         #display if interval is sufficiently large
         if (examplesDisplayCount>0) and len(style) and len(original)>=minLengthDisplay:
-            stylize.show_stylization(original,smooth,style,interval.mark())
+            stylize.show_stylization(original,smooth,style,interval,register=reg)
             examplesDisplayCount-=1
     
     #done, now writing tier into textgrid and saving textgrid

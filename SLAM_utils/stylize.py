@@ -66,7 +66,7 @@ def averageRegisters(swipeFile,speakerTier=None):
             registers[speaker]=None
     return registers
 
-def SLAM1(semitones, display=False, mark=None):
+def SLAM1(semitones, tier=None, display=None, register=None):
     #this takes a sequence of semitones and applies the SLAM1 stylization
 
     #first, smooth the semitones curves using LOWESS
@@ -117,12 +117,12 @@ def SLAM1(semitones, display=False, mark=None):
     style = ''.join(style)
 
     if display:
-        show_stylization(semitones,smooth,style,mark)
+        show_stylization(semitones,smooth,style,tier=tier,register=register)
 
     print('STYLE', style)
     return (style,smooth)
 
-def show_stylization(original,smooth,style,mark=None):
+def show_stylization(original,smooth,style,tier=None,register=None):
     semitones = original
     fig, ax = pl.subplots()
     fig.canvas.set_window_title('SLAM: Input & Smoothed Pitchs with Tonal Annotation')
@@ -140,8 +140,8 @@ def show_stylization(original,smooth,style,mark=None):
     ax.set_xticks(xticks)
     ax.set_xticklabels(xticklabels)
     # ytick (pitch) handeling
-    yticks = range(-6,6+1,4)
-    pl.ylim(-6 - 4,6 + 4)
+    yticks = range(-6, 6 + 1, 4)
+    pl.ylim(-6 - 4, 6 + 4)
     ax.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks))
     ax.set_yticks(yticks)
     yticklabels = ['{:.2f}'.format(f) for f in yticks]
@@ -149,12 +149,31 @@ def show_stylization(original,smooth,style,mark=None):
     pl.hold(True)
     pl.plot(time, semitones, 'b.') # input pitch
     pl.plot(time, smooth   , 'r') # smoothed pitch
-    pl.xlabel('Normalized Time')
+    ax.set_xlabel('Normalized Time')
     pl.ylabel('Pitch (semitones)')
-    if mark: style = mark + ' ' +  u'\u2192'+ ' ' + style
-    pl.title(style)
+    if tier:
+        # show mark and tonal annotation
+        mark = tier.mark()
+        style = mark + ' ' +  u'\u2192'+ ' ' + style
     ax.legend(['Input or Original Pitch','Smoothed Pitch (LOWESS)'])
     pl.grid(b=True, which='both', linestyle='-')
+    if tier:
+        # a second time axis in seconds
+        ax2 = ax.twiny()
+        ax2.set_xlabel('Time (secondes)')
+        ax2.set_xlim(tier.xmin(),tier.xmax())
+        title = ax2.set_title(style)
+        title.set_y(1.15)
+        fig.subplots_adjust(top=0.81)
+    else:
+        pl.title(style)
+    if register != None:
+        ax2 = ax.twinx()
+        ax2.set_ylabel('Frequency (Hz)')
+        register=200#debug
+        ylim = ax.get_ylim()
+        ax2.set_ylim(register*(2**(ylim[0]/12)),register*(2**(ylim[1]/12)))
+        fig.subplots_adjust(right=0.875)
     pl.show()
 
 def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunction=SLAM1,estimate_mode=1):
@@ -167,7 +186,7 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
 
     if len(pitchs_C)<2:
         #skipping interval (unvoiced)
-        return ('_',[],[],[],[])
+        return ('_',[],[],[],[],[])
 
     #get corresponding interval in the speaker (i.e. support) tier
     speaker = None
@@ -228,11 +247,11 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
     if speaker:
         #reference is the value of the registers for this speaker
         reference = registers[speaker]
-        if not reference: return ('',[],[],[],[]) #bugfix
+        if not reference: return ('',[],[],[],[],[]) #bugfix
     else: #speaker == None
         if not is_numeric_paranoid(registers):
             print('WARNING : no speaker tier provided and reference is not numeric ! not stylizing.')
-            return ('',[],[],[],[])
+            return ('',[],[],[],[],[])
         #no speaker/support tier was provided, registers is only the average f0
         reference = registers
 
@@ -248,10 +267,10 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
 
     #delta with reference in semitones
     delta_pitchs_C = [1E-2*(hz2cent(pitch) - hz2cent(reference)) for pitch in pitchs_C]
-    (style,smoothed) = stylizeFunction(delta_pitchs_C,mark=target.mark())
+    (style,smoothed) = stylizeFunction(delta_pitchs_C,tier=target,register=reference)
 
     smoothed_out = [cent2hz((100*delta + hz2cent(reference))) for delta in smoothed]
-    return (style,delta_pitchs_C,smoothed,times_C, smoothed_out)
+    return (style,delta_pitchs_C,smoothed,times_C, smoothed_out, reference)
 
 # source:
 # https://stackoverflow.com/questions/500328/identifying-numeric-and-array-types-in-numpy
