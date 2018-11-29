@@ -106,11 +106,11 @@ def SLAM1(semitones, tier=None, display=None, register=None):
     else:
         extremum = maxdiffnegative
         posextremum = np.argmin(smooth)
-    if extremum>1:
+    if extremum>2:
         style+=relst2register(smooth[posextremum])
-        if t[posextremum] < 0.3:
+        if t[posextremum] < 0.33:
             style+='1'
-        elif t[posextremum] < 0.7:
+        elif t[posextremum] < 0.66:
             style+='2'
         else:
             style+='3'
