@@ -198,7 +198,7 @@ while tgFiles:
         
         #display if interval is sufficiently large
         if (examplesDisplayCount>0) and len(style) and len(original)>=minLengthDisplay:
-            stylize.show_stylization(original,smooth,style)
+            stylize.show_stylization(original,smooth,style,interval.mark())
             examplesDisplayCount-=1
     
     #done, now writing tier into textgrid and saving textgrid

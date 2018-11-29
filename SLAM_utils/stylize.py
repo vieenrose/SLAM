@@ -66,7 +66,7 @@ def averageRegisters(swipeFile,speakerTier=None):
             registers[speaker]=None
     return registers
 
-def SLAM1(semitones, display=False):
+def SLAM1(semitones, display=False, mark=None):
     #this takes a sequence of semitones and applies the SLAM1 stylization
 
     #first, smooth the semitones curves using LOWESS
@@ -117,12 +117,12 @@ def SLAM1(semitones, display=False):
     style = ''.join(style)
 
     if display:
-        show_stylization(semitones,smooth,style)
+        show_stylization(semitones,smooth,style,mark)
 
     print('STYLE', style)
     return (style,smooth)
 
-def show_stylization(original,smooth,style):
+def show_stylization(original,smooth,style,mark=None):
     semitones = original
     fig, ax = pl.subplots()
     fig.canvas.set_window_title('SLAM: Input & Smoothed Pitchs with Tonal Annotation')
@@ -151,6 +151,7 @@ def show_stylization(original,smooth,style):
     pl.plot(time, smooth   , 'r') # smoothed pitch
     pl.xlabel('Normalized Time')
     pl.ylabel('Pitch (semitones)')
+    if mark: style = mark + ' ' +  u'\u2192'+ ' ' + style
     pl.title(style)
     ax.legend(['Input or Original Pitch','Smoothed Pitch (LOWESS)'])
     pl.grid(b=True, which='both', linestyle='-')
@@ -247,7 +248,7 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
 
     #delta with reference in semitones
     delta_pitchs_C = [1E-2*(hz2cent(pitch) - hz2cent(reference)) for pitch in pitchs_C]
-    (style,smoothed) = stylizeFunction(delta_pitchs_C)
+    (style,smoothed) = stylizeFunction(delta_pitchs_C,mark=target.mark())
 
     smoothed_out = [cent2hz((100*delta + hz2cent(reference))) for delta in smoothed]
     return (style,delta_pitchs_C,smoothed,times_C, smoothed_out)
