@@ -85,7 +85,7 @@ def SLAM1(semitones, tier=None, display=None, register=None):
     style = relst2register(start)
     style+= relst2register(stop)
     #identify prominence. Either max or min
-    print('START/STOP/MAX', start, stop, np.max(smooth))
+    #print('START/STOP/MAX', start, stop, np.max(smooth))
     xmax = np.max(smooth)
     xmin = np.min(smooth)
     maxdiffpositive = xmax - max(start,stop)
@@ -95,13 +95,13 @@ def SLAM1(semitones, tier=None, display=None, register=None):
     #maxdiffnegative = 0
     #maxdiffnegative = np.abs(np.min([x-min(start,stop) for x in smooth]))
 
-    print('MAXPOS, MAXNEG')
-    print(maxdiffpositive, maxdiffnegative)
+    #print('MAXPOS, MAXNEG')
+    #print(maxdiffpositive, maxdiffnegative)
     if maxdiffpositive  > maxdiffnegative:
         #the max is further from boundaries than the min is
         extremum = maxdiffpositive
         posextremum = np.argmax(smooth)
-        print('EXTREMUM', extremum, t[posextremum])
+        #print('EXTREMUM', extremum, t[posextremum])
         #print 'SMOOTH', semitones
     else:
         extremum = maxdiffnegative
@@ -119,13 +119,18 @@ def SLAM1(semitones, tier=None, display=None, register=None):
     if display:
         show_stylization(semitones,smooth,style,tier=tier,register=register)
 
-    print('STYLE', style)
+    #print('STYLE', style)
     return (style,smooth)
 
-def show_stylization(original,smooth,style,tier=None,register=None):
+def show_stylization(original,smooth,style,tier=None,register=None,figId=1):
     semitones = original
-    fig, ax = pl.subplots()
-    fig.canvas.set_window_title('SLAM: Input & Smoothed Pitchs with Tonal Annotation')
+    fig = matplotlib.pyplot.figure(figId)
+    ax = fig.gca()
+    #fig, ax = pl.subplots()
+    if tier:
+        fig.canvas.set_window_title('Figure {} - Melodic Contour of \'{}\' Annotated as \'{}\''.format(figId,tier.mark(),style))
+    else:
+        fig.canvas.set_window_title('Figure {} - Melodic Contour Annotated as \'{}\''.format(figId,style))
     time = np.linspace(0, 1, len(semitones)) # normalized time
     # xtick (time) handeling
     num_intervals = 3
@@ -146,7 +151,6 @@ def show_stylization(original,smooth,style,tier=None,register=None):
     ax.set_yticks(yticks)
     yticklabels = ['{:.2f}'.format(f) for f in yticks]
     ax.set_yticklabels(yticklabels)
-    pl.hold(True)
     pl.plot(time, semitones, 'b.') # input pitch
     pl.plot(time, smooth   , 'r') # smoothed pitch
     ax.set_xlabel('Normalized Time')
@@ -155,7 +159,7 @@ def show_stylization(original,smooth,style,tier=None,register=None):
         # show mark and tonal annotation
         mark = tier.mark()
         style = mark + ' ' +  u'\u2192'+ ' ' + style
-    ax.legend(['Input or Original Pitch','Smoothed Pitch (LOWESS)'])
+    ax.legend(['Original Pitch','Pitch smoothed by LOWESS'])
     pl.grid(b=True, which='both', linestyle='-')
     if tier:
         # a second time axis in seconds

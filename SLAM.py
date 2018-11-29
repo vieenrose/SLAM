@@ -61,7 +61,7 @@ speakerTier= 'Biola-IP'
 targetTier = 'mot'
 
 #display
-examplesDisplayCount = 5 #number of example plots to do. Possibly 0
+examplesDisplayCount = 100 #number of example plots to do. Possibly 0
 minLengthDisplay = 3 #min number of f0 points for an interval to be displayed
 
 
@@ -198,7 +198,7 @@ while tgFiles:
         
         #display if interval is sufficiently large
         if (examplesDisplayCount>0) and len(style) and len(original)>=minLengthDisplay:
-            stylize.show_stylization(original,smooth,style,interval,register=reg)
+            stylize.show_stylization(original,smooth,style,interval,register=reg, figId=pos)
             examplesDisplayCount-=1
     
     #done, now writing tier into textgrid and saving textgrid
