@@ -26,6 +26,13 @@ def hz2cent(f0_Hz):
     return 1200.0*np.log2( np.maximum(1E-5,np.double(f0_Hz) ))
 def cent2hz(semitone):
     return np.double(2.0**(np.double(semitone) / 1200.0))
+def hz2semitone(f0_Hz):
+    return 12.0*np.log2( np.maximum(1E-5,np.double(f0_Hz) ))
+def semitone2hz(semitone):
+    return np.double(2.0**(np.double(semitone) / 12.0))
+def sec2msec(sec):
+    return 1000.0 * sec
+
 def relst2register(semitones):
     #from relative semitones to register
     if isinstance(semitones,(int,float)):
@@ -145,39 +152,64 @@ def show_stylization(original,smooth,style,tier=None,register=None,figId=1):
     ax.set_xticks(xticks)
     ax.set_xticklabels(xticklabels)
     # ytick (pitch) handeling
-    yticks = range(-6, 6 + 1, 4)
-    pl.ylim(-6 - 4, 6 + 4)
-    ax.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks))
-    ax.set_yticks(yticks)
-    yticklabels = ['{:.2f}'.format(f) for f in yticks]
-    ax.set_yticklabels(yticklabels)
-    pl.plot(time, semitones, 'b.') # input pitch
-    pl.plot(time, smooth   , 'r') # smoothed pitch
+    yticks_major = range(-6, 6 + 1, 4)
+    yticks_minor = list(set(range(-8, 8 + 1, 2)) - set(yticks_major))
+    ylim = [-6-4,6+4]
+    pl.ylim(ylim)
+    ax.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks_major))
+    ax.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
+    yticklabels_major = ['{:.0f}'.format(f) for f in yticks_major]
+    yticklabels_minor = ['{:.0f}'.format(f) for f in yticks_minor]
+    ax.set_yticklabels(yticklabels_major,minor=False,color='0')
+    ax.set_yticklabels(yticklabels_minor,minor=True,color='.45')
     ax.set_xlabel('Normalized Time')
     pl.ylabel('Pitch (semitones)')
     if tier:
         # show mark and tonal annotation
         mark = tier.mark()
         style = mark + ' ' +  u'\u2192'+ ' ' + style
-    ax.legend(['Original Pitch','Pitch smoothed by LOWESS'])
-    pl.grid(b=True, which='both', linestyle='-')
     if tier:
         # a second time axis in seconds
         ax2 = ax.twiny()
-        ax2.set_xlabel('Time (secondes)')
-        ax2.set_xlim(tier.xmin(),tier.xmax())
+        xlim = [sec2msec(tier.xmin()), sec2msec(tier.xmax())]
+        duration = sec2msec(tier.xmax() - tier.xmin())
+        xticks2 = [x * duration + xlim[0] for x in xticks]
+        xtick2labels = ['{:.0f} ms'.format(x) for x in xticks2]
+        ax2.set_xlim(xlim)
+        ax2.xaxis.set_major_locator(matplotlib.ticker.FixedLocator(xticks2))
+        ax2.set_xticklabels(xtick2labels)
         title = ax2.set_title(style)
-        title.set_y(1.15)
-        fig.subplots_adjust(top=0.81)
+        title.set_y(1.075)
+        fig.subplots_adjust(top=0.875)
     else:
         pl.title(style)
     if register != None:
-        ax2 = ax.twinx()
-        ax2.set_ylabel('Frequency (Hz)')
-        register=200#debug
+        # a second frequency axis in log-scale of Hz
+        yticks2_major = [register * semitone2hz(y) for y in yticks_major]
+        yticks2_minor = [register * semitone2hz(y) for y in yticks_minor]
+        ytick2labels_major = ['{:.0f} Hz'.format(y) for y in yticks2_major]
+        ytick2labels_minor = ['{:.0f} Hz'.format(y) for y in yticks2_minor]
         ylim = ax.get_ylim()
-        ax2.set_ylim(register*(2**(ylim[0]/12)),register*(2**(ylim[1]/12)))
+        ylim2 = [register * semitone2hz(ylim[0]),register * semitone2hz(ylim[1])]
+        ax3 = ax.twinx()
+        ax3.set_yscale('log')
+        ax3.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks2_major))
+        ax3.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks2_minor))
+        ax3.set_ylim(ylim2)
+        ax3.set_yticklabels(ytick2labels_major,minor=False,color='0')
+        ax3.set_yticklabels(ytick2labels_minor,minor=True, color='.45')
+        ax3.grid(b=True, which='minor', color='.85',linestyle='-')
+        ax3.grid(b=True, which='major',color='0', linestyle='-')
+        ax2.grid(b=True, which='major',color='0', linestyle='-')
+        ax2.set_zorder(ax3.get_zorder()+1)
+        ax2.patch.set_visible(False)
         fig.subplots_adjust(right=0.875)
+    ax.set_axisbelow(True)
+    ax.set_zorder(ax2.get_zorder()+1)
+    ax.patch.set_visible(False)
+    lns1=ax.plot(time, semitones, 'b.') # input pitch
+    lns2=ax.plot(time, smooth   , 'r') # smoothed pitch
+    ax.legend(lns1+lns2,['Original Pitch','Pitch smoothed by LOWESS'])
     pl.show()
 
 def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunction=SLAM1,estimate_mode=1):
@@ -274,6 +306,7 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
     (style,smoothed) = stylizeFunction(delta_pitchs_C,tier=target,register=reference)
 
     smoothed_out = [cent2hz((100*delta + hz2cent(reference))) for delta in smoothed]
+    #print(reference)
     return (style,delta_pitchs_C,smoothed,times_C, smoothed_out, reference)
 
 # source:
