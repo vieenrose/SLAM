@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """
+    #tode: 1.refine the identification of prominence. 2.indicate the main saliency in the output figure produced by show_stylization()
 
 """
 import matplotlib
@@ -135,7 +136,7 @@ def show_stylization(original,smooth,style,tier=None,register=None,figId=1):
     ax = fig.gca()
     #fig, ax = pl.subplots()
     if tier:
-        fig.canvas.set_window_title('Figure {} - Melodic Contour of \'{}\' Annotated as \'{}\''.format(figId,tier.mark(),style))
+        fig.canvas.set_window_title('Figure {} - Melodic Contour of \'{}\' Transcribed as \'{}\''.format(figId,tier.mark(),style))
     else:
         fig.canvas.set_window_title('Figure {} - Melodic Contour Annotated as \'{}\''.format(figId,style))
     time = np.linspace(0, 1, len(semitones)) # normalized time
@@ -177,12 +178,12 @@ def show_stylization(original,smooth,style,tier=None,register=None,figId=1):
         xtick2labels = ['{:.0f} ms'.format(x) for x in xticks2]
         ax2.set_xlim(xlim)
         ax2.xaxis.set_major_locator(matplotlib.ticker.FixedLocator(xticks2))
-        ax2.set_xticklabels(xtick2labels)
-        title = ax2.set_title(style)
-        title.set_y(1.075)
+        ax2.set_xticklabels(xtick2labels, fontsize=8.5)
+        title = ax2.set_title(style, fontsize=14,fontweight='medium')
+        title.set_y(1.06)
         fig.subplots_adjust(top=0.875)
     else:
-        pl.title(style)
+        pl.title(style,style='',fontsize=14)
     if register != None:
         # a second frequency axis in log-scale of Hz
         yticks2_major = [register * semitone2hz(y) for y in yticks_major]
@@ -196,8 +197,8 @@ def show_stylization(original,smooth,style,tier=None,register=None,figId=1):
         ax3.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks2_major))
         ax3.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks2_minor))
         ax3.set_ylim(ylim2)
-        ax3.set_yticklabels(ytick2labels_major,minor=False,color='0')
-        ax3.set_yticklabels(ytick2labels_minor,minor=True, color='.45')
+        ax3.set_yticklabels(ytick2labels_major,minor=False,color='0',fontsize=8.5)
+        ax3.set_yticklabels(ytick2labels_minor,minor=True, color='.45',fontsize=8.5)
         ax3.grid(b=True, which='minor', color='.85',linestyle='-')
         ax3.grid(b=True, which='major',color='0', linestyle='-')
         ax2.grid(b=True, which='major',color='0', linestyle='-')
