@@ -61,7 +61,7 @@ speakerTier= 'Biola-IP'
 targetTier = 'mot'
 
 #display
-examplesDisplayCount = 100 #number of example plots to do. Possibly 0
+#examplesDisplayCount = 100 #number of example plots to do. Possibly 0
 minLengthDisplay = 3 #min number of f0 points for an interval to be displayed
 
 
@@ -72,18 +72,29 @@ minLengthDisplay = 3 #min number of f0 points for an interval to be displayed
 from SLAM_utils import TextGrid, swipe, stylize, praatUtil
 import sys, glob, os, re
 import numpy as np
+import matplotlib.backends.backend_pdf
 
+if False: #backup
+      change = raw_input("""
+      Current parameters are:
+        tier to use for categorizing registers : %s
+        tier to stylize                        : %s
+        Number of examples to display          : %d
+      
+        ENTER = ok
+        anything+ENTER = change
+        
+        """%(speakerTier, targetTier,examplesDisplayCount))
 
 change = raw_input("""
 Current parameters are:
   tier to use for categorizing registers : %s
   tier to stylize                        : %s
-  Number of examples to display          : %d
 
   ENTER = ok
   anything+ENTER = change
   
-  """%(speakerTier, targetTier,examplesDisplayCount))
+  """%(speakerTier, targetTier))
   
 print change
 if len(change):
@@ -91,8 +102,8 @@ if len(change):
     if len(new):speakerTier=new
     new = raw_input('target tier (empty = keep %s) : '%targetTier)
     if len(new):targetTier=new
-    new = raw_input('number of displays (empty = keep %d) : '%examplesDisplayCount)
-    if len(new):examplesDisplayCount=int(new)
+    #new = raw_input('number of displays (empty = keep %d) : '%examplesDisplayCount)
+    #if len(new):examplesDisplayCount=int(new)
     
   
 
@@ -120,6 +131,7 @@ while tgFiles:
     extension = stylize.get_extension(inputTextgridFile)
     outputTextgridFile = './output/{}{}'.format(basename, extension)
     outputPitchTierFile = './output/{}{}'.format(basename, ".PitchTier")
+    outputFigureFile = './output/{}{}'.format(basename, ".pdf")
     srcFile = \
     [filename for filename in srcFiles \
         if stylize.get_basename(filename).lower() == basename.lower()]
@@ -179,6 +191,7 @@ while tgFiles:
     POSdisplay = set([int(float(i)/100.0*LEN) for i in range(0,100,10)])
     smooth_total = []
     time_total = []
+    pdf = matplotlib.backends.backend_pdf.PdfPages('figures/'+basename+'.pdf')
     for pos,interval in enumerate(tg[targetTier]):
         if pos in POSdisplay:
             print 'stylizing: %d percents'%(pos/LEN*100.0)
@@ -196,11 +209,12 @@ while tgFiles:
         newTier.append(newInterval)    
         
         #display if interval is sufficiently large
-        if (examplesDisplayCount>0) and len(style) and len(original)>=minLengthDisplay:
-            stylize.show_stylization(original,smooth,style,interval,register=reg, figId=pos, support=support,time_org=time)
-            examplesDisplayCount-=1
+        #if (examplesDisplayCount>0) and len(style) and len(original)>=minLengthDisplay:
+        if len(style) and len(original)>=minLengthDisplay:
+            stylize.show_stylization(original,smooth,style,interval,register=reg, figId=pos, support=support,time_org=time, pdf=pdf)
+            #examplesDisplayCount-=1
         
-    
+    pdf.close()
     #done, now writing tier into textgrid and saving textgrid
     print 'Saving computed styles in file %s'%outputTextgridFile
     tg.append(newTier)

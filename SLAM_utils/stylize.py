@@ -11,6 +11,7 @@ from SLAM_utils import praatUtil
 from SLAM_utils import swipe
 import os
 
+
 #handy funciotns
 def get_extension(file): return os.path.splitext(file)[1]
 def get_basename(file): return os.path.splitext(os.path.basename(file))[0]
@@ -130,7 +131,7 @@ def SLAM1(semitones, tier=None, display=None, register=None):
     #print('STYLE', style)
     return (style,smooth)
 
-def show_stylization(original,smooth,style,tier=None,register=None,figId=1,support=None,time_org=None):
+def show_stylization(original,smooth,style,tier=None,register=None,figId=1,support=None,time_org=None, pdf=None):
 
     # alias
     intv = tier
@@ -141,6 +142,7 @@ def show_stylization(original,smooth,style,tier=None,register=None,figId=1,suppo
     num_freq_boundaries = 4
     freq_min = -6
     freq_max = +6
+    #figfmt = 'png'
 
     fig, ax = pl.subplots()
     # put window title
@@ -191,8 +193,8 @@ def show_stylization(original,smooth,style,tier=None,register=None,figId=1,suppo
     ax2.plot(supp_intv,supp_org, 'b.')
     # draw target
     target_intv = sec2msec(time_org)
-    ax2.plot(target_intv,smooth,'r',linewidth=3.5)
-    ax2.plot(target_intv,original,'g.',linewidth=3.5)
+    lns1=ax2.plot(target_intv,smooth,'r',linewidth=3.5)
+    lns2=ax2.plot(target_intv,original,'g.',linewidth=3.5)
     tot_intv = np.concatenate((supp_intv,target_intv))
     pl.xlim(min(min(tot_intv),xticks[0]),max(max(tot_intv),xticks[-1]))
     ax.grid(b=True,which='major', axis='y', color='0')
@@ -213,9 +215,12 @@ def show_stylization(original,smooth,style,tier=None,register=None,figId=1,suppo
     x2 = (xticks_major[1]-xlim[0])/diff_xlim
     ax.annotate(xticks_labels_major[0],xy=(x1-0.1,-0.07),xycoords='axes fraction',fontsize=10)
     ax.annotate(xticks_labels_major[1],xy=(x2,-0.07),xycoords='axes fraction',fontsize=10)
+    ax2.legend(['Input Pitch','Pitch Smoothed by LOWESS'])
 
     # let us plot the figure!
-    pl.show()
+    #pl.show()
+    #fig.savefig('figures/{}_fig{}.{}'.format(file_basename, figId, figfmt), format=figfmt,dpi=300)
+    pdf.savefig(fig)
 
 def intv2pitch(intv,swipeFile):
     imin, imax = swipeFile.time_bisect(intv.xmin(),intv.xmax())
