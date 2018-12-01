@@ -130,116 +130,131 @@ def SLAM1(semitones, tier=None, display=None, register=None):
     #print('STYLE', style)
     return (style,smooth)
 
-def show_stylization(original,smooth,style,tier=None,register=None,figId=1):
-    semitones = original
-    fig = matplotlib.pyplot.figure(figId)
-    ax = fig.gca()
-    #fig, ax = pl.subplots()
-    if tier:
-        fig.canvas.set_window_title('Figure {} - Melodic Contour of \'{}\' Transcribed as \'{}\''.format(figId,tier.mark(),style))
-    else:
-        fig.canvas.set_window_title('Figure {} - Melodic Contour Annotated as \'{}\''.format(figId,style))
-    time = np.linspace(0, 1, len(semitones)) # normalized time
-    # xtick (time) handeling
-    num_intervals = 3
-    num_xticks = num_intervals + 1
-    xticks = np.linspace(0, 1, num_xticks)
-    pl.xlim(xticks[0],xticks[-1])
-    xticklabels = []
-    for i, t in enumerate(xticks):
-        if i: xticklabels.append('{:d}/{:d}'.format(i, num_intervals))
-        else: xticklabels.append('0')
-    ax.xaxis.set_major_locator(matplotlib.ticker.FixedLocator(xticks))
-    ax.set_xticks(xticks)
-    ax.set_xticklabels(xticklabels)
-    # ytick (pitch) handeling
-    yticks_major = range(-6, 6 + 1, 4)
-    yticks_minor = list(set(range(-8, 8 + 1, 2)) - set(yticks_major))
-    ylim = [-6-4,6+4]
-    pl.ylim(ylim)
+def show_stylization(original,smooth,style,tier=None,register=None,figId=1,support=None,time_org=None):
+
+    # alias
+    intv = tier
+    fid = figId
+
+    # parameters
+    num_time_partitions_per_target = 3
+    num_freq_boundaries = 4
+    freq_min = -6
+    freq_max = +6
+
+    fig, ax = pl.subplots()
+    # put window title
+    fig_window_title = 'Figure {} - Melodic Contour of \'{}\' Transcribed as \'{}\''.format(fid,intv.mark(),style)
+    fig.canvas.set_window_title(fig_window_title)
+    # make time axis
+    xlim = [sec2msec(time_org[0]),sec2msec(time_org[-1])]
+    xticks = np.linspace(xlim[0], xlim[1], num_time_partitions_per_target+1)
+    xticks_major = xlim
+    xticks_minor = sorted(list(set(xticks) - set(xlim)))
+    ax.xaxis.set_major_locator(matplotlib.ticker.FixedLocator(xticks_major))
+    ax.xaxis.set_minor_locator(matplotlib.ticker.FixedLocator(xticks_minor))
+    xticks_labels_major = ['{:.0f} ms'.format(x) for x in xticks_major]
+    xticks_labels_minor = ['{:.0f}'.format(x) for x in xticks_minor]
+    ax.set_xticklabels([],minor=False,fontsize=7)
+    #ax.set_xticklabels(xticks_labels_minor,minor=True)
+    
+    ax.grid(b=True,which='major', axis='x', color='0')
+    ax.grid(b=True,which='minor', axis='x',color='.9')
+    # make frequency axis
+    yticks_major = np.linspace(freq_min, freq_max, num_freq_boundaries)
+    freq_step_major = (freq_max - freq_min) / (num_freq_boundaries - 1)
+    yticks_minor = np.linspace(freq_min - freq_step_major/2, freq_max+freq_step_major/2, num_freq_boundaries + 1)
+    yticklabels_major = ['{:.0f} ST'.format(f) for f in yticks_major]
+    yticklabels_minor = ['{:.0f}'.format(f) for f in yticks_minor]
     ax.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks_major))
     ax.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
-    yticklabels_major = ['{:.0f}'.format(f) for f in yticks_major]
-    yticklabels_minor = ['{:.0f}'.format(f) for f in yticks_minor]
-    ax.set_yticklabels(yticklabels_major,minor=False,color='0')
-    ax.set_yticklabels(yticklabels_minor,minor=True,color='.45')
-    ax.set_xlabel('Normalized Time')
-    pl.ylabel('Pitch (semitones)')
-    if tier:
-        # show mark and tonal annotation
-        mark = tier.mark()
-        style = mark + ' ' +  u'\u2192'+ ' ' + style
-    if tier:
-        # a second time axis in seconds
-        ax2 = ax.twiny()
-        xlim = [sec2msec(tier.xmin()), sec2msec(tier.xmax())]
-        duration = sec2msec(tier.xmax() - tier.xmin())
-        xticks2 = [x * duration + xlim[0] for x in xticks]
-        xtick2labels = ['{:.0f} ms'.format(x) for x in xticks2]
-        ax2.set_xlim(xlim)
-        ax2.xaxis.set_major_locator(matplotlib.ticker.FixedLocator(xticks2))
-        ax2.set_xticklabels(xtick2labels, fontsize=8.5)
-        title = ax2.set_title(style, fontsize=14,fontweight='medium')
-        title.set_y(1.06)
-        fig.subplots_adjust(top=0.875)
-    else:
-        pl.title(style,style='',fontsize=14)
-    if register != None:
-        # a second frequency axis in log-scale of Hz
-        yticks2_major = [register * semitone2hz(y) for y in yticks_major]
-        yticks2_minor = [register * semitone2hz(y) for y in yticks_minor]
-        ytick2labels_major = ['{:.0f} Hz'.format(y) for y in yticks2_major]
-        ytick2labels_minor = ['{:.0f} Hz'.format(y) for y in yticks2_minor]
-        ylim = ax.get_ylim()
-        ylim2 = [register * semitone2hz(ylim[0]),register * semitone2hz(ylim[1])]
-        ax3 = ax.twinx()
-        ax3.set_yscale('log')
-        ax3.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks2_major))
-        ax3.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks2_minor))
-        ax3.set_ylim(ylim2)
-        ax3.set_yticklabels(ytick2labels_major,minor=False,color='0',fontsize=8.5)
-        ax3.set_yticklabels(ytick2labels_minor,minor=True, color='.45',fontsize=8.5)
-        ax3.grid(b=True, which='minor', color='.85',linestyle='-')
-        ax3.grid(b=True, which='major',color='0', linestyle='-')
-        ax2.grid(b=True, which='major',color='0', linestyle='-')
-        ax2.set_zorder(ax3.get_zorder()+1)
-        ax2.patch.set_visible(False)
-        fig.subplots_adjust(right=0.875)
-    ax.set_axisbelow(True)
-    ax.set_zorder(ax2.get_zorder()+1)
-    ax.patch.set_visible(False)
-    lns1=ax.plot(time, semitones, 'b.') # input pitch
-    lns2=ax.plot(time, smooth   , 'r') # smoothed pitch
-    ax.legend(lns1+lns2,['Original Pitch','Pitch smoothed by LOWESS'])
+    ax.set_yticklabels(yticklabels_major,minor=False)
+    ax.set_yticklabels(yticklabels_minor,minor=True)
+    tot_yticks = np.concatenate((yticks_major,yticks_minor))
+    ylim = [min(tot_yticks),max(tot_yticks)]
+    pl.ylim(ylim)
+    
+    # make 2nd freauency axis
+    ax2 = ax.twinx()
+    ytick2labels_major = ['{:.0f}'.format(register*semitone2hz(y)) for y in yticks_major]
+    ytick2labels_minor = ['{:.0f} Hz'.format(register*semitone2hz(y)) for y in yticks_minor]
+    ax2.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks_major))
+    ax2.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
+    ax2.set_yticklabels(ytick2labels_major,minor=False)
+    ax2.set_yticklabels(ytick2labels_minor,minor=True)
+    
+    pl.ylim(min(tot_yticks),max(tot_yticks))
+    # draw support (debug)
+    supp_intv = sec2msec(support[0])
+    supp_org = hz2semitone(support[1]) - hz2semitone(register)
+    supp_mark = support[2]
+    ax2.plot(supp_intv,supp_org, 'b.')
+    # draw target
+    target_intv = sec2msec(time_org)
+    ax2.plot(target_intv,smooth,'r',linewidth=3.5)
+    ax2.plot(target_intv,original,'g.',linewidth=3.5)
+    tot_intv = np.concatenate((supp_intv,target_intv))
+    pl.xlim(min(min(tot_intv),xticks[0]),max(max(tot_intv),xticks[-1]))
+    ax.grid(b=True,which='major', axis='y', color='0')
+    title = ax.set_title('Support: ' + supp_mark, fontweight='medium')
+    title.set_y(1.035)
+    
+    # annotation
+    style = 'Target: ' + tier.mark() + ' ' +  u'\u2192'+ ' ' + style
+    ax.set_xlabel(xlabel=style,fontsize=12,fontweight='medium')
+    ax.xaxis.set_label_coords(0.5, -0.1)
+    fig.subplots_adjust(bottom=0.14)
+    
+    # annotation2
+    xlim=ax.get_xlim()
+    diff_xlim = max(xlim)-min(xlim)
+    diff_ylim = max(ylim)-min(ylim)
+    x1 = (xticks_major[0]-xlim[0])/diff_xlim
+    x2 = (xticks_major[1]-xlim[0])/diff_xlim
+    ax.annotate(xticks_labels_major[0],xy=(x1-0.1,-0.07),xycoords='axes fraction',fontsize=10)
+    ax.annotate(xticks_labels_major[1],xy=(x2,-0.07),xycoords='axes fraction',fontsize=10)
+
+    # let us plot the figure!
     pl.show()
 
+def intv2pitch(intv,swipeFile):
+    imin, imax = swipeFile.time_bisect(intv.xmin(),intv.xmax())
+    pitch = swipeFile.pitch[imin:imax]
+    time = swipeFile.time[imin:imax]
+    return [time,pitch]
+
+def getMaxMatchIntv(target,support):
+    candidateIntvs = tg.getMatchingIntervals(target,support,strict=False,just_intersection=True)
+    marks = [intv.mark() for intv in candidateIntvs]
+    marksCount = dict( (mark,marks.count(mark)) for mark in set(marks))
+    #counting the speakers
+    if len(marksCount)>1:
+        optMark = max(marksCount,key=marksCount.get)
+        print('     Keeping %s'%optMark, marksCount)
+    else:
+        #only one speaker for all target intervals
+        optMark = marks[0]
+    optIntv = [intv for intv in candidateIntvs if intv.mark() == optMark][0]
+    return optMark, optIntv, candidateIntvs
+
 def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunction=SLAM1,estimate_mode=1):
+
+    targetIntv = target
+
     #get stylization for an object that implements the xmin() and xmax() methods.
+    [times_C,pitchs_C] = intv2pitch(target,swipeFile)
 
-    #get f0 values for target
-    imin, imax = swipeFile.time_bisect(target.xmin(),target.xmax())
-    pitchs_C = swipeFile.pitch[imin:imax]
-    times_C = swipeFile.time[imin:imax]
-
-    if len(pitchs_C)<2:
-        #skipping interval (unvoiced)
-        return ('_',[],[],[],[],[])
+    #skipping interval (unvoiced)
+    if len(pitchs_C)<2: return ('_',[],[],[],[],[],[])
 
     #get corresponding interval in the speaker (i.e. support) tier
-    speaker = None
-    if speakerTier and isinstance(registers,dict):
-        speakers_intervals = tg.getMatchingIntervals([target],speakerTier,strict=False,just_intersection=True)
-        speakers = [i.mark() for i in speakers_intervals]
-        speakersCount = dict( (x,speakers.count(x)) for x in set(speakers))
-        #counting the speakers
-        if len(speakersCount)>1:
-            speaker = max(speakersCount,key=speakersCount.get)
-            print('     Keeping %s'%speaker, speakersCount)
-        else:
-            #only one speaker for all target intervals
-            speaker = speakers[0]
+    [optSpeaker,optIntv, candiateIntvs] = getMaxMatchIntv([targetIntv],speakerTier)
 
-    if estimate_mode == 2:
+    speaker = optSpeaker
+    speakers_intervals=candiateIntvs
+
+    #if estimate_mode == 2:
+    if True:
         print('========== EXPERIMENT START ====')
         #get temporal indices
         #for target
@@ -284,11 +299,11 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
     if speaker:
         #reference is the value of the registers for this speaker
         reference = registers[speaker]
-        if not reference: return ('',[],[],[],[],[]) #bugfix
+        if not reference: return ('',[],[],[],[],[],[]) #bugfix
     else: #speaker == None
         if not is_numeric_paranoid(registers):
             print('WARNING : no speaker tier provided and reference is not numeric ! not stylizing.')
-            return ('',[],[],[],[],[])
+            return ('',[],[],[],[],[],[])
         #no speaker/support tier was provided, registers is only the average f0
         reference = registers
 
@@ -302,13 +317,16 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
         reference = r
         print('========== EXPERIMENT END ======')
 
+
     #delta with reference in semitones
-    delta_pitchs_C = [1E-2*(hz2cent(pitch) - hz2cent(reference)) for pitch in pitchs_C]
+    delta_pitchs_C = [(hz2semitone(pitch) - hz2semitone(reference)) for pitch in pitchs_C]
     (style,smoothed) = stylizeFunction(delta_pitchs_C,tier=target,register=reference)
 
     smoothed_out = [cent2hz((100*delta + hz2cent(reference))) for delta in smoothed]
     #print(reference)
-    return (style,delta_pitchs_C,smoothed,times_C, smoothed_out, reference)
+    supportIntv = intv2pitch(optIntv,swipeFile)
+    supportIntv.append(optIntv.mark())
+    return (style,delta_pitchs_C,smoothed,times_C, smoothed_out, reference,supportIntv)
 
 # source:
 # https://stackoverflow.com/questions/500328/identifying-numeric-and-array-types-in-numpy

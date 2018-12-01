@@ -179,13 +179,12 @@ while tgFiles:
     POSdisplay = set([int(float(i)/100.0*LEN) for i in range(0,100,10)])
     smooth_total = []
     time_total = []
-
     for pos,interval in enumerate(tg[targetTier]):
         if pos in POSdisplay:
             print 'stylizing: %d percents'%(pos/LEN*100.0)
             
         #compute style of current interval
-        (style,original, smooth, time, smooth_out, reg)=stylize.stylizeObject(interval,sf,tg[speakerTier],registers,estimate_mode=estimate_mode)
+        (style,original, smooth, time, smooth_out, reg,support)=stylize.stylizeObject(interval,sf,tg[speakerTier],registers,estimate_mode=estimate_mode)
         smooth_total=np.concatenate((smooth_total,smooth_out))
         time_total=np.concatenate((time_total,time))
 
@@ -198,8 +197,9 @@ while tgFiles:
         
         #display if interval is sufficiently large
         if (examplesDisplayCount>0) and len(style) and len(original)>=minLengthDisplay:
-            stylize.show_stylization(original,smooth,style,interval,register=reg, figId=pos)
+            stylize.show_stylization(original,smooth,style,interval,register=reg, figId=pos, support=support,time_org=time)
             examplesDisplayCount-=1
+        
     
     #done, now writing tier into textgrid and saving textgrid
     print 'Saving computed styles in file %s'%outputTextgridFile
