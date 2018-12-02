@@ -54,15 +54,17 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     num_freq_boundaries = 5
     freq_min = -10
     freq_max = +10
-    linewidth_RelGrid_Major=.75/3*2
-    linewidth_RelGrid_Minor=.375/3*1
+    linewidth_RelGrid_Major=.75/3*1/2
+    linewidth_RelGrid_Minor=.375/3*1/2/2
+    linewidth_LocReg = .75
     
     fig = figIn
     ax = fig.gca()
     
     # put window title
-    fig_window_title = u'Figure - Melodic Contour of \'{}\' Transcribed as \'{}\''.format(targetIntv.mark(),style)
-    fig.canvas.set_window_title(fig_window_title)
+    if support:
+      fig_window_title = u'Figure - Melodic Contour of \'{}\''.format(support.label)
+      fig.canvas.set_window_title(fig_window_title)
     # make time axis
     xlim = [sec2msec(time_org[0]),sec2msec(time_org[-1])]
     xticks = np.linspace(xlim[0], xlim[1], num_time_partitions_per_target+1)
@@ -91,17 +93,18 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     yticks_minor=[-8,-4,0,4,8]
     ytick2labels_major = ['{:.0f} Hz'.format(register*semitone2hz(y)) for y in yticks_major]
     ytick2labels_minor = ['{:.0f}'.format(register*semitone2hz(y)) for y in yticks_minor]
-    ax.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks_major))
-    ax.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
-    ax.set_yticklabels(ytick2labels_major,minor=False)
-    ax.set_yticklabels(ytick2labels_minor,minor=True)
+    if support:
+          ax.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks_major))
+          ax.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
+          ax.set_yticklabels(ytick2labels_major,minor=False)
+          ax.set_yticklabels(ytick2labels_minor,minor=True)
     tot_yticks = np.concatenate((yticks_major,yticks_minor))
     ylim = [min(tot_yticks),max(tot_yticks)]
     pl.ylim(ylim)
     
     
     # make 2nd freauency axis
-    if True:#support:
+    if support:
           ax2 = ax.twinx()
           # move the second axis to background
           ax.set_zorder(20) 
@@ -113,12 +116,13 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
           ax2.set_yticklabels(yticklabels_major,minor=False)
           ax2.set_yticklabels(yticklabels_minor,minor=True)
 
+    # grid relative to local regster in bleu lines
     register_local = hz2semitone(np.mean([semitone2hz(f) for f in smooth]))
     for offset in [0,-2,2,-6,6,-10,10]:
         if offset :
             ax.plot(xticks_major,[register_local+offset,register_local+offset], 'b--',linewidth=linewidth_RelGrid_Minor,zorder=0)
-        else:
-            ax.plot(xticks_major,[register_local+offset,register_local+offset], 'b--',linewidth=linewidth_RelGrid_Major,zorder=0)
+        else: # i.e. offset = 0
+            lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], 'y-',linewidth=linewidth_LocReg,zorder=0)
     
     pl.ylim(min(tot_yticks),max(tot_yticks))
     # draw support 
@@ -157,9 +161,9 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
         lns0=ax.plot(supp_intv,supp_org, 'b.',markersize=2)
     #lns1=ax.plot(target_intv,original,'b',linewidth=2)
     
-    lns2=ax.plot(target_intv,smooth,'r',linewidth=.75)
-    lns4=ax.plot(essential_intv,essential_pitch,'ro',markersize=6)
-    lns3=ax.plot(style_intv,style_pitch,'g',linewidth=2.5)
+    lns2=ax.plot(target_intv,smooth,'r',linewidth=.35)
+    lns4=ax.plot(essential_intv,essential_pitch,'ro',markersize=3)
+    lns3=ax.plot(style_intv,style_pitch,'g',linewidth=2)
     
     
     #print(supp_intv)
@@ -180,10 +184,6 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     x2 = (xticks_major[1]-xlim[0])/diff_xlim
     
     # time label
-    """
-    ax.annotate(xticks_labels_major[0],xy=(x1,-0.035),xycoords='axes fraction',fontsize=6,horizontalalignment='left')
-    ax.annotate(xticks_labels_major[1],xy=(x2,+0.015),xycoords='axes fraction',fontsize=6,horizontalalignment='right')
-    """
     ax.annotate('{:.0f} ms'.format(xticks_major[-1]-xticks_major[0]),xy=(x2/2+x1/2,-0.035),xycoords='axes fraction',fontsize=6,horizontalalignment='center')
     
     # interval label and symbolic annotation
@@ -193,7 +193,12 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     if support:
       ax.annotate(supp_mark,xy=(0.5,1.05),xycoords='axes fraction',fontsize=11,fontweight='medium',  horizontalalignment='center',fontstyle='italic')
       
-      ax.legend(lns3+lns4+lns2+lns0,['Stylized + Smoothed Pitch','Essential Points of Smoothed Pitch','Smoothed Pitch (LOWESS)','Input Pitch'],fontsize=7)
+      ax.legend(lns3+lns4+lnst5+lns2+lns0,\
+      ['Stylized + Smoothed Pitch',\
+      'Essential Points of Smoothed Pitch',\
+      'Local Register of Smoothed Pitch',\
+      'Smoothed Pitch (LOWESS)',\
+      'Input Pitch'],fontsize=7)
 
     # let us make the figure!
     return fig
