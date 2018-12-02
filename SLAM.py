@@ -47,26 +47,22 @@ display & export:
                    of stylized f0 segments
 * displaySummary : True or False: whether or not to display a small
                    summary of the distribution of the stylizes 
-* export_figures_on :  True or False: whether or not to export stylization
-                    result in PDF file
+* exportFigures :  True or False: whether or not to export the result 
+                   tonal analysis in PDF file
 #####################################################################"""
 
 
-#essai
-
 timeStep = .001 #in seconds, step for swipe pitch analysis
 voicedThreshold = 0.2 #for swipe
-estimate_mode = 1 #register estimate mdoe: 1 for avergae, 2 for Hann window
-
 
 #Tiers for the speaker and the target intervals, put your own tier names
 speakerTier= 'Biola-IP' 
 targetTier = 'mot'
 
-#display
+#display and exportation
 examplesDisplayCount = 5 #number of example plots to do. Possibly 0
-minLengthDisplay = 50 #min number of f0 points for an interval to be displayed
-export_figures_on = True
+minLengthDisplay = 1 #min number of f0 points for an interval to be displayed
+exportFigures = True
 
 
 #END OF PARAMETERS (don't touch below please)
@@ -88,10 +84,11 @@ Current parameters are:
   tier to use for categorizing registers : %s
   tier to stylize                        : %s
   Number of examples to display          : %d
+  Export result in PDF                   : %d
   ENTER = ok
   anything+ENTER = change
   
-  """%(speakerTier, targetTier,examplesDisplayCount))
+  """%(speakerTier, targetTier,examplesDisplayCount, exportFigures))
   
 print change
 if len(change):
@@ -101,10 +98,11 @@ if len(change):
     if len(new):targetTier=new
     new = raw_input('number of displays (empty = keep %d) : '%examplesDisplayCount)
     if len(new):examplesDisplayCount=int(new)
+    new = raw_input('export figures in PDF file (empty = keep %d) : '%examplesDisplayCount)
+    if len(new):exportFigures=int(new)
     
   
-
-
+  
 #all styles, for statistics
 styles = []
 totalN=0
@@ -121,7 +119,6 @@ while tmpFiles:
         srcFiles.append(filename)
 
 while tgFiles:
-
     #take a tg file from tgFiles and its related src file(s) from SrcFiles
     inputTextgridFile = tgFiles.pop(0)
     basename = stylize.get_basename(inputTextgridFile)
@@ -147,41 +144,43 @@ while tgFiles:
         for t in tierNames: print '        %s'%t
         targetTier=raw_input('Type the tier name to use as target (+ENTER):')
     while speakerTier not in tierNames and speakerTier:
-        print '    TextGrid does not have a tier named %s for speaker/supportTier. Available tiers are:'%speakerTier
+        print '    TextGrid does not have a tier named %s for speaker/support Tier. Available tiers are:'%speakerTier
         for t in tierNames: print '        %s'%t
-        speakerTier=raw_input('Type the tier name indicating speaker/supportTier (or any categorizing variable):')
+        speakerTier=raw_input('Type the tier name indicating speaker/support Tier (or any categorizing variable):')
         
-    
     #create interval tier for output
     newTier = TextGrid.IntervalTier(name = '%sStyle'%targetTier, 
-                           xmin = tg[targetTier].xmin(), xmax=tg[targetTier].xmax())    
+                  xmin = tg[targetTier].xmin(), xmax=tg[targetTier].xmax())    
             
     #Create swipe object from wave file or external PitchTier file
-    sf = None
+    inputPitch = None
     #try as PitchTier files (supported formats: short text and binary)
-    if not sf:
+    if not inputPitch:
         for file in srcFile:
-            try: sf = stylize.readPitchtier(file)
-            except: sf = None;continue
+            try: inputPitch = stylize.readPitchtier(file)
+            except: 
+                  inputPitch = None;
+                  continue
             print 'Reading pitch from PitchTier file {}'.format(file); break
     # try as wave files
-    if not sf:
+    if not inputPitch:
         for file in srcFile:
-   	    try: sf = swipe.Swipe(file, pMin=75, pMax=500, s=timeStep, t=voicedThreshold, mel=False)
-            except:sf = None;continue
+   	    try: inputPitch = swipe.Swipe(file, pMin=75, pMax=500, s=timeStep, t=voicedThreshold, mel=False)
+            except:
+                  inputPitch = None;
+                  continue
             print 'Computing pitch on wave file {}'.format(file); break
     # unknown format
-    if not sf:
+    if not inputPitch:
         print 'Error: source files {} are not supported !'.format(srcFile)
         continue
 
     print 'Computing average register for each speaker' 
-    registers = stylize.averageRegisters(sf, tg[speakerTier])
+    registers = stylize.averageRegisters(inputPitch, tg[speakerTier])
     
-        
-    	
+    
     print 'Stylizing each interval of the target tier'
-    
+
     #computing at which iterations to give progress  
     LEN = float(len(tg[targetTier]))
     totalN+=LEN
@@ -190,98 +189,98 @@ while tgFiles:
     time_total = []
     pl.rcParams["figure.figsize"] = [12,6]
     fig = pl.figure()
-    if export_figures_on:
+    support = None
+    if exportFigures:
         pdf = pdfLib.PdfPages(outputFigureFile)
     
-    for pos,interval in enumerate(tg[targetTier]):
+    for pos,targetIntv in enumerate(tg[targetTier]):
         if pos in POSdisplay:
             print 'stylizing: %d %%'%(pos/LEN*100.0)
 
-        targetIntv = interval
         supportIntv = stylize.getSupportIntv(targetIntv,supportTier=tg[speakerTier])
-        inputPitch = sf
         
         #compute style of current interval
         try:
-            (style,targetTimes,deltaTargetPitch, smooth, reference) = \
-            stylize.stylizeObject2(\
-            targetIntv = interval,\
-            supportIntv = supportIntv,\
+            (style,targetTimes,deltaTargetPitch, deltaTargetPitchSmooth, reference) = \
+            stylize.stylizeObject(\
+            targetIntv = targetIntv, supportIntv = supportIntv,\
             inputPitch = inputPitch,\
             registers = registers)
         except TypeError:
+            #print('Info. skip {}'.format(targetIntv.mark()))
             continue
             
+        # debug
+        """
+        stylize.printIntv(supportIntv)
+        stylize.printIntv(targetIntv)
+        print(['reference(Hz): ',registers[supportIntv.mark()]])
+        print(['style: ',style])
+        """
+            
         #prepare exportation of smoothed
-        if isinstance(smooth, (np.ndarray,list)):
-            if len(smooth)==len(targetTimes):
+        if isinstance(deltaTargetPitchSmooth, (np.ndarray,list)):
+            if len(deltaTargetPitchSmooth)==len(targetTimes):
                 reference_semitones = stylize.hz2semitone(reference)
-                smooth_hz = [stylize.semitone2hz(delta + reference_semitones) for delta in smooth]
+                smooth_hz = [stylize.semitone2hz(delta + reference_semitones) for delta in deltaTargetPitchSmooth]
                 smooth_total = np.concatenate((smooth_total,smooth_hz))
                 time_total = np.concatenate((time_total,targetTimes))
             
         styles += [style] 
             
         #then add an interval with that style to the (new) style tier
-        newInterval = TextGrid.Interval(interval.xmin(), interval.xmax(), style)
+        newInterval = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(), style)
         newTier.append(newInterval)    
         
-        
         #compute figure either for examples or for export in PDF file
-        
-        if (len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount) or \
-        export_figures_on:
-            # compute a new support if needed
-            same_support = False
-            try: 
-                  if support.label != supportIntv.mark():raise
-                  else: same_support=True
+        if (len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount) \
+            or exportFigures:
                   
-            except: 
-                  support=stylize.intv2customPitchObj(supportIntv,inputPitch)
+            same_support = False
+            # compute a new support if needed
+            try: 
+                  if support.label != supportIntv.mark(): 
+                        # show and save figure before process the next support
+                        #display figures on the screen
+                        if len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount:
+                              pl.show()
+                              examplesDisplayCount-=1
+                        #export figures in PDF
+                        if exportFigures:
+                              pdf.savefig(fig)
+                        fig.clf()
+                        support = stylize.intv2customPitchObj(supportIntv,inputPitch)
+                  else : # same supporr as the previous linguistic unit
+                        same_support = True
+                  
+            except AttributeError: # read a 1st support
+                  print('TypeError',support)
+                  support = stylize.intv2customPitchObj(supportIntv,inputPitch)
                   fig.clf()
                   
             # draw figure
             fig = pl.gcf()
-            #fig.set_size_inches(12,6)
-            if same_support:
-                  fig = stylize.show_stylization(\
-                  original=deltaTargetPitch,smooth=smooth,\
+            supportIn = support
+            if same_support: 
+                  supportIn = False
+            fig = stylize.show_stylization(\
+                  original=deltaTargetPitch,\
+                  smooth=deltaTargetPitchSmooth,\
                   style=style,\
                   targetIntv=targetIntv,\
                   register=reference,\
-                  support=None,\
+                  support=supportIn,\
                   time_org=targetTimes,\
                   figIn=fig)
-            else:
-                  fig = stylize.show_stylization(\
-                  original=deltaTargetPitch,smooth=smooth,\
-                  style=style,\
-                  targetIntv=targetIntv,\
-                  register=reference,\
-                  support=support,\
-                  time_org=targetTimes,\
-                  figIn=fig)
-            
-        if fig:
-            #display figures on the screen
-            if len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount:
-                  pl.show()
-                  examplesDisplayCount-=1
-            #export figures in PDF
-            if export_figures_on:
-                  pdf.savefig(fig)
-            
-            #fig.clf()
-    
+
     #done, now writing tier into textgrid and saving textgrid
     print 'Saving computed styles in file %s'%outputTextgridFile
     tg.append(newTier)
     tg.write(outputTextgridFile)
     print 'Exporting smoothed pitchs in Binary PitchTierfile %s'%outputPitchTierFile
     praatUtil.writeBinPitchTier(outputPitchTierFile,time_total,smooth_total)
-    print 'Exporting figures in %s'%outputFigureFile
-    if export_figures_on: pdf.close()
+    print 'Exporting figures in PDF file %s'%outputFigureFile
+    if exportFigures: pdf.close()
     pl.close()
 
 #Now output statistics
@@ -326,7 +325,7 @@ L)
 styleNames=sorted(count,key=count.get)
 styleNames.reverse()
 for styleName in styleNames[:L]:
-    print '\t%s\t:\t%04.2f%% (%d occurrences)'%(styleName,count[styleName]/total*100.0,count[styleName])
+    print '\t%s\t:\t%4.2f%% (%d occurrences)'%(styleName,count[styleName]/total*100.0,count[styleName])
 print '''
 
 x------------------------------------------x---------------------x
