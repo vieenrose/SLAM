@@ -236,7 +236,7 @@ while tgFiles:
         if (len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount) \
             or exportFigures:
                   
-            same_support = False
+            is_new_support = True
             # compute a new support if needed
             try: 
                   if support.label != supportIntv.mark(): 
@@ -251,27 +251,23 @@ while tgFiles:
                         fig.clf()
                         support = stylize.intv2customPitchObj(supportIntv,inputPitch)
                   else : # same supporr as the previous linguistic unit
-                        same_support = True
+                        is_new_support = False
                   
             except AttributeError: # read a 1st support
-                  print('TypeError',support)
                   support = stylize.intv2customPitchObj(supportIntv,inputPitch)
                   fig.clf()
                   
             # draw figure
             fig = pl.gcf()
-            supportIn = support
-            if same_support: 
-                  supportIn = False
             fig = stylize.show_stylization(\
                   original=deltaTargetPitch,\
                   smooth=deltaTargetPitchSmooth,\
                   style=style,\
                   targetIntv=targetIntv,\
                   register=reference,\
-                  support=supportIn,\
+                  support=support,\
                   time_org=targetTimes,\
-                  figIn=fig)
+                  figIn=fig, is_new_support=is_new_support)
 
     #done, now writing tier into textgrid and saving textgrid
     print 'Saving computed styles in file %s'%outputTextgridFile
