@@ -41,12 +41,14 @@ tiers of interest:
 * targetTier  : The tier whose intervals will be stylized using
                 SLAM
 
-display:
+display & export:
 -------
 * displayExamples : True or False: whether or not to display examples 
                    of stylized f0 segments
 * displaySummary : True or False: whether or not to display a small
                    summary of the distribution of the stylizes 
+* export_figures_on :  True or False: whether or not to export stylization
+                    result in PDF file
 #####################################################################"""
 
 
@@ -56,13 +58,15 @@ timeStep = .001 #in seconds, step for swipe pitch analysis
 voicedThreshold = 0.2 #for swipe
 estimate_mode = 1 #register estimate mdoe: 1 for avergae, 2 for Hann window
 
+
 #Tiers for the speaker and the target intervals, put your own tier names
 speakerTier= 'Biola-IP' 
 targetTier = 'mot'
 
 #display
-#examplesDisplayCount = 100 #number of example plots to do. Possibly 0
-minLengthDisplay = 3 #min number of f0 points for an interval to be displayed
+examplesDisplayCount = 5 #number of example plots to do. Possibly 0
+minLengthDisplay = 50 #min number of f0 points for an interval to be displayed
+export_figures_on = True
 
 
 #END OF PARAMETERS (don't touch below please)
@@ -72,29 +76,22 @@ minLengthDisplay = 3 #min number of f0 points for an interval to be displayed
 from SLAM_utils import TextGrid, swipe, stylize, praatUtil
 import sys, glob, os, re
 import numpy as np
-import matplotlib.backends.backend_pdf
+import matplotlib.backends.backend_pdf as pdfLib
+import matplotlib.pylab as pl
+import SLAM_utils.TextGrid as tgLib
 
-if False: #backup
-      change = raw_input("""
-      Current parameters are:
-        tier to use for categorizing registers : %s
-        tier to stylize                        : %s
-        Number of examples to display          : %d
-      
-        ENTER = ok
-        anything+ENTER = change
-        
-        """%(speakerTier, targetTier,examplesDisplayCount))
 
+
+              
 change = raw_input("""
 Current parameters are:
   tier to use for categorizing registers : %s
   tier to stylize                        : %s
-
+  Number of examples to display          : %d
   ENTER = ok
   anything+ENTER = change
   
-  """%(speakerTier, targetTier))
+  """%(speakerTier, targetTier,examplesDisplayCount))
   
 print change
 if len(change):
@@ -102,8 +99,8 @@ if len(change):
     if len(new):speakerTier=new
     new = raw_input('target tier (empty = keep %s) : '%targetTier)
     if len(new):targetTier=new
-    #new = raw_input('number of displays (empty = keep %d) : '%examplesDisplayCount)
-    #if len(new):examplesDisplayCount=int(new)
+    new = raw_input('number of displays (empty = keep %d) : '%examplesDisplayCount)
+    if len(new):examplesDisplayCount=int(new)
     
   
 
@@ -191,37 +188,101 @@ while tgFiles:
     POSdisplay = set([int(float(i)/100.0*LEN) for i in range(0,100,10)])
     smooth_total = []
     time_total = []
-    pdf = matplotlib.backends.backend_pdf.PdfPages('figures/'+basename+'.pdf')
+    pl.rcParams["figure.figsize"] = [12,6]
+    fig = pl.figure()
+    if export_figures_on:
+        pdf = pdfLib.PdfPages(outputFigureFile)
+    
     for pos,interval in enumerate(tg[targetTier]):
         if pos in POSdisplay:
-            print 'stylizing: %d percents'%(pos/LEN*100.0)
-            
-        #compute style of current interval
-        (style,original, smooth, time, smooth_out, reg,support)=stylize.stylizeObject(interval,sf,tg[speakerTier],registers,estimate_mode=estimate_mode)
-        smooth_total=np.concatenate((smooth_total,smooth_out))
-        time_total=np.concatenate((time_total,time))
+            print 'stylizing: %d %%'%(pos/LEN*100.0)
 
-        #if style computed, adding it to global list
-        if len(style) and (style!='_') :styles+=[style]
+        targetIntv = interval
+        supportIntv = stylize.getSupportIntv(targetIntv,supportTier=tg[speakerTier])
+        inputPitch = sf
         
+        #compute style of current interval
+        try:
+            (style,targetTimes,deltaTargetPitch, smooth, reference) = \
+            stylize.stylizeObject2(\
+            targetIntv = interval,\
+            supportIntv = supportIntv,\
+            inputPitch = inputPitch,\
+            registers = registers)
+        except TypeError:
+            continue
+            
+        #prepare exportation of smoothed
+        if isinstance(smooth, (np.ndarray,list)):
+            if len(smooth)==len(targetTimes):
+                reference_semitones = stylize.hz2semitone(reference)
+                smooth_hz = [stylize.semitone2hz(delta + reference_semitones) for delta in smooth]
+                smooth_total = np.concatenate((smooth_total,smooth_hz))
+                time_total = np.concatenate((time_total,targetTimes))
+            
+        styles += [style] 
+            
         #then add an interval with that style to the (new) style tier
         newInterval = TextGrid.Interval(interval.xmin(), interval.xmax(), style)
         newTier.append(newInterval)    
         
-        #display if interval is sufficiently large
-        #if (examplesDisplayCount>0) and len(style) and len(original)>=minLengthDisplay:
-        if len(style) and len(original)>=minLengthDisplay:
-            stylize.show_stylization(original,smooth,style,interval,register=reg, figId=pos, support=support,time_org=time, pdf=pdf)
-            #examplesDisplayCount-=1
         
-    pdf.close()
+        #compute figure either for examples or for export in PDF file
+        
+        if (len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount) or \
+        export_figures_on:
+            # compute a new support if needed
+            same_support = False
+            try: 
+                  if support.label != supportIntv.mark():raise
+                  else: same_support=True
+                  
+            except: 
+                  support=stylize.intv2customPitchObj(supportIntv,inputPitch)
+                  fig.clf()
+                  
+            # draw figure
+            fig = pl.gcf()
+            #fig.set_size_inches(12,6)
+            if same_support:
+                  fig = stylize.show_stylization(\
+                  original=deltaTargetPitch,smooth=smooth,\
+                  style=style,\
+                  targetIntv=targetIntv,\
+                  register=reference,\
+                  support=None,\
+                  time_org=targetTimes,\
+                  figIn=fig)
+            else:
+                  fig = stylize.show_stylization(\
+                  original=deltaTargetPitch,smooth=smooth,\
+                  style=style,\
+                  targetIntv=targetIntv,\
+                  register=reference,\
+                  support=support,\
+                  time_org=targetTimes,\
+                  figIn=fig)
+            
+        if fig:
+            #display figures on the screen
+            if len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount:
+                  pl.show()
+                  examplesDisplayCount-=1
+            #export figures in PDF
+            if export_figures_on:
+                  pdf.savefig(fig)
+            
+            #fig.clf()
+    
     #done, now writing tier into textgrid and saving textgrid
     print 'Saving computed styles in file %s'%outputTextgridFile
     tg.append(newTier)
     tg.write(outputTextgridFile)
     print 'Exporting smoothed pitchs in Binary PitchTierfile %s'%outputPitchTierFile
     praatUtil.writeBinPitchTier(outputPitchTierFile,time_total,smooth_total)
-
+    print 'Exporting figures in %s'%outputFigureFile
+    if export_figures_on: pdf.close()
+    pl.close()
 
 #Now output statistics
 #---------------------
@@ -265,7 +326,7 @@ L)
 styleNames=sorted(count,key=count.get)
 styleNames.reverse()
 for styleName in styleNames[:L]:
-    print '\t%s\t:\t:%0.1f%% (%d occurrences)'%(styleName,count[styleName]/total*100.0,count[styleName])
+    print '\t%s\t:\t%04.2f%% (%d occurrences)'%(styleName,count[styleName]/total*100.0,count[styleName])
 print '''
 
 x------------------------------------------x---------------------x
@@ -278,6 +339,6 @@ cumulative_values = cumulative_values/float(cumulative_values[-1])
 
 for P in [70, 75, 80, 85, 90, 95, 99]:
     N = np.nonzero(cumulative_values>float(P)/100.0)[0][0]+1
-    print '|                %d                        |         %d          |'%(P,N)
+    print '|                %2.0f                        |         %2.0f          |'%(P,N)
 print 'x------------------------------------------x---------------------x'
     
