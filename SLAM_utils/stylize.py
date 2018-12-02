@@ -54,18 +54,21 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     num_freq_boundaries = 5
     freq_min = -10
     freq_max = +10
-    linewidth_RelGrid_Major=.75/3*1
-    linewidth_RelGrid_Minor=.375/3/2
-    linewidth_LocReg = .75
+    linewidth_RelGrid_Major=.75/3 * 2
+    linewidth_RelGrid_Minor=.375/3*2*2
+    linewidth_LocReg = .75*7.5
     linestyle_RelGrid_Major='-'
     linestyle_RelGrid_Minor='-'
-    color_RelGrid_Minor = 'yellow'
+    color_RelGrid_Minor = 'white'
+    background_color = 'lightgray'
+    linewidth_AbsGrid = .5
     
     fig = figIn
     ax = fig.gca()
     
     # put window title
     if is_new_support:
+      ax.set_facecolor(background_color)
       fig_window_title = u'Figure - Melodic Contour of \'{}\''.format(support.label)
       fig.canvas.set_window_title(fig_window_title)
     # make time axis
@@ -127,7 +130,7 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
         if offset :
             ax.plot(xticks_major,[register_local+offset,register_local+offset], linestyle=linestyle_RelGrid_Minor,color=color_RelGrid_Minor,linewidth=linewidth_RelGrid_Minor,zorder=0)
         else: # i.e. offset = 0
-            lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], 'y-',linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_RelGrid_Major)
+            lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], 'w-',linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_RelGrid_Major)
     
     pl.ylim(min(tot_yticks),max(tot_yticks))
     # draw support 
@@ -163,7 +166,7 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     #print(fr)
     
     if is_new_support:
-        lns0=ax.plot(supp_intv,supp_org, 'b.',markersize=2)
+        lns0=ax.plot(supp_intv,supp_org, 'b.',markersize=2.5)
     #lns1=ax.plot(target_intv,original,'b',linewidth=2)
     
     lns2=ax.plot(target_intv,smooth,'r',linewidth=.35)
@@ -175,7 +178,7 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     if is_new_support:
           tot_intv = np.concatenate((supp_intv,target_intv))
           pl.xlim(min(min(tot_intv),xticks[0]),max(max(tot_intv),xticks[-1]))
-          ax.grid(b=True,which='major', axis='y', color='0')
+          ax.grid(b=True,which='major', axis='y', color='0',linewidth=linewidth_AbsGrid)
           
     if is_new_support:
           ax.set_ylabel('Frequencey (Hz)')
