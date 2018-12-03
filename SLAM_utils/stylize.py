@@ -60,6 +60,7 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     linestyle_LocReg = ':'
     color_GloReg = 'k'
     linestyle_GloReg =':'
+    linestyle_pitch = '-'
     color_RelGrid_Minor = 'white'
     background_color = 'lightgrey'
     color_style='seagreen'
@@ -68,11 +69,13 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     linewidth_RelGrid_Minor=.5
     linewidth_AbsGrid = .35
     markersize_pitch = 2.5
-    markersize_essentials = 5
+    markersize_essentials = 2.5
     linewidth_LocReg = .25*1.5*1.5*1.5
     linewidth_GloReg = .25*1.5*1.5*1.5
-    linewidth_Style = .5*1.25*1.5*1.5
+    
     linewidth_smooth=.5*1.5*0.75
+    linewidth_Style = linewidth_smooth*4
+    linewidth_pitch=linewidth_smooth
     
     fig = figIn
     ax = fig.gca()
@@ -122,10 +125,11 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     pl.ylim(ylim)
     
     # plot global register on support
+    """
     if is_new_support:
           xlim_support = [sec2msec(support.time[i])for i in [0,-1]]
           lnst6=ax.plot(xlim_support,[0,0], '-',linewidth=linewidth_GloReg,zorder=0,linestyle=linestyle_GloReg,color=color_GloReg)
-    
+    """
     """
     # make 2nd freauency axis
     if is_new_support:
@@ -180,8 +184,8 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     #print(ti)
     #print(fr)
     
-    if is_new_support or True:
-        lns0=ax.plot(supp_intv,supp_org, 'b.',markersize=markersize_pitch)
+    if is_new_support:
+        lns0=ax.plot(supp_intv,supp_org, 'b',linestyle=linestyle_pitch,markersize=markersize_pitch,linewidth=linewidth_pitch)
     #lns1=ax.plot(target_intv,original,'b',linewidth=2)
     
     
@@ -228,12 +232,12 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     if is_new_support:
       ax.annotate(supp_mark,xy=(0.5,1.05),xycoords='axes fraction',fontsize=11,fontweight='medium',  horizontalalignment='center',fontstyle='italic')
       
-      ax2.legend(lns3+lns2+lns0+lns4+lnst6+lnst5,\
+      ax2.legend(lns3+lns2+lns0+lns4+lnst5,\
       ['Stylized + Smoothed Pitch',\
        'Smoothed Pitch (LOWESS)',\
        'Input Pitch',\
-       'Essential Points of Smoothed Pitch',
-       'Global Register',\
+       'Essential Points of Smoothed Pitch',\
+       #'Global Register',\
        'Local Register'],fontsize=7)
        
     # let us make the figure!
