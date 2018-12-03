@@ -69,7 +69,7 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     linewidth_RelGrid_Minor=.5
     linewidth_AbsGrid = .35
     markersize_pitch = 2.5
-    markersize_essentials = 2.5
+    markersize_essentials = 5
     linewidth_LocReg = .25*1.5*1.5*1.5
     linewidth_GloReg = .25*1.5*1.5*1.5
     
@@ -190,7 +190,9 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     
     
     lns2=ax.plot(target_intv,smooth,'r',linewidth=linewidth_smooth)
-    lns4=ax.plot(essential_intv,essential_pitch,'ro',markersize=markersize_essentials,color=color_essentials)
+    if len(essential_intv)>2:
+      # only show the significative main saliancy 
+      lns4=ax.plot(essential_intv[1],essential_pitch[1],'ro',markersize=markersize_essentials,color=color_essentials)
     lns3=ax.plot(style_intv,style_pitch,color=color_style,linewidth=linewidth_Style)
 
     
@@ -232,11 +234,11 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     if is_new_support:
       ax.annotate(supp_mark,xy=(0.5,1.05),xycoords='axes fraction',fontsize=11,fontweight='medium',  horizontalalignment='center',fontstyle='italic')
       
-      ax2.legend(lns3+lns2+lns0+lns4+lnst5,\
+      ax2.legend(lns3+lns2+lns0+lnst5,\
       ['Stylized + Smoothed Pitch',\
        'Smoothed Pitch (LOWESS)',\
        'Input Pitch',\
-       'Essential Points of Smoothed Pitch',\
+       #'Essential Points of Smoothed Pitch',\
        #'Global Register',\
        'Local Register'],fontsize=7)
        
