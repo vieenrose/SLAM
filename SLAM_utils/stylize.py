@@ -47,7 +47,7 @@ def SLAM1(semitones):
     style = ''.join(style)
     return (style,smooth)
 
-def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,support, is_new_support=True):
+def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register, register_loc,figIn,support, is_new_support=True):
 
     # parameters
     num_time_partitions_per_target = 3
@@ -63,7 +63,8 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     linestyle_pitch = '-'
     color_RelGrid_Minor = 'white'
     background_color = 'lightgrey'
-    color_style='seagreen'
+    color_style_styl='seagreen'
+    color_style_sty2='orange'
     color_essentials = 'red'
     linewidth_RelGrid_Major=.5
     linewidth_RelGrid_Minor=.5
@@ -74,7 +75,8 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     linewidth_GloReg = .25*1.5*1.5*1.5
     
     linewidth_smooth=.5*1.5*0.75
-    linewidth_Style = linewidth_smooth*4
+    linewidth_Style1 = linewidth_smooth*4
+    linewidth_Style2=linewidth_smooth*4
     linewidth_pitch=linewidth_smooth
     
     fig = figIn
@@ -163,26 +165,38 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
    
     
     # stylization
-    alphabet2semitones = {'H': 8, 'h': 4, 'm': 0, 'l' : -4, 'L' : -8} 
-    def relativePos2time(Pos, interval): 
-          return interval[0] + (int(Pos) - .5) / 3 * (interval[-1]-interval[0])
-
-    f_i = alphabet2semitones[style[0]]
-    f_f = alphabet2semitones[style[1]]
-    style_intv = [xticks_major[0],xticks_major[-1]]
-    style_pitch = [f_i,f_f]
-    if len(style) >=4:
-          f_p = alphabet2semitones[style[2]]
-          t_p = relativePos2time(style[3],xticks_major)
-          style_intv.insert(1,t_p)
-          style_pitch.insert(1,max([f_p,f_i+2,f_f+2]))
-
+    
+    def style2pitch(style,xmin,xmax, yoffset=0):
+        alphabet2semitones = {'H': 8, 'h': 4, 'm': 0, 'l' : -4, 'L' : -8} 
+        
+        def relativePos2time(Pos, interval): 
+            return interval[0] + (int(Pos) - .5) / 3 * (interval[-1]-interval[0])
+        f_i = alphabet2semitones[style[0]]+yoffset
+        f_f = alphabet2semitones[style[1]]+yoffset
+              
+        style_intv = [xmin,xmax]
+        style_pitch = [f_i,f_f]
+        if len(style) >=4:
+            f_p = alphabet2semitones[style[2]]+yoffset
+            t_p = relativePos2time(style[3],[xmin,xmax])
+            #print(style_intv)
+            style_intv.insert(1,t_p)
+            #print(style_intv)
+            style_pitch.insert(1,max([f_p,f_i+2,f_f+2]))
+        return style_intv,style_pitch
+        
+    #try:
+    style1_intv,style1_pitch = style2pitch(style1,xticks_major[0],xticks_major[-1])
+    #except:
+    #    print('Error in style2pitch: style = {}'.format(style1))
+    #    exit()
+    yoffset=hz2semitone(register_loc)-hz2semitone(register)
+    style2_intv,style2_pitch = style2pitch(style2,xticks_major[0],xticks_major[-1],yoffset)
+          
     # 2(+1) essential points
     ti,fr=identifyThreeEssentialPoints(smooth,time=time_org)
     essential_intv = sec2msec(np.array(ti))
     essential_pitch = fr
-    #print(ti)
-    #print(fr)
     
     if is_new_support:
         lns0=ax.plot(supp_intv,supp_org, 'b',linestyle=linestyle_pitch,markersize=markersize_pitch,linewidth=linewidth_pitch)
@@ -193,8 +207,8 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     if len(essential_intv)>2:
       # only show the significative main saliancy 
       lns4=ax.plot(essential_intv[1],essential_pitch[1],'ro',markersize=markersize_essentials,color=color_essentials)
-    lns3=ax.plot(style_intv,style_pitch,color=color_style,linewidth=linewidth_Style)
-
+    lns3=ax.plot(style1_intv,style1_pitch,color=color_style_styl,linewidth=linewidth_Style1)
+    lns3p=ax.plot(style2_intv,style2_pitch,color=color_style_sty2,linewidth=linewidth_Style2)
     
     #print(supp_intv)
     if is_new_support:
@@ -206,7 +220,7 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
           ax.set_ylabel('Frequencey (Hz)')
     
     # annotation
-    fig.subplots_adjust(top=0.9,bottom=0.125,left=0.075, right=0.925)
+    fig.subplots_adjust(top=0.9,bottom=0.14,left=0.075, right=0.925)
     xlim=ax.get_xlim()
     diff_xlim = max(xlim)-min(xlim)
     diff_ylim = max(ylim)-min(ylim)
@@ -218,24 +232,28 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     
     # interval label and symbolic annotation
     ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic')
-    ax.annotate(style,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center')
+    ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl)
+    ax.annotate(style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
+    
     
     # make 2nd freauency axis
     if is_new_support:
           ax2 = ax.twinx()
           # move the second axis to background
-          yticklabels_major = ['{:.0f} ST'.format(f) for f in yticks_major]
+          yticklabels_major = ['{:.0f}'.format(f) for f in yticks_major]
           yticklabels_minor = ['{:.0f}'.format(f) for f in yticks_minor]
           ax2.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks_major))
           ax2.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
           ax2.set_yticklabels(yticklabels_major,minor=False)
           ax2.set_yticklabels(yticklabels_minor,minor=True)
+          ax2.set_ylabel('Frequencey Relatvie to Global Register (semitones)')
     
     if is_new_support:
       ax.annotate(supp_mark,xy=(0.5,1.05),xycoords='axes fraction',fontsize=11,fontweight='medium',  horizontalalignment='center',fontstyle='italic')
       
-      ax2.legend(lns3+lns2+lns0+lnst5,\
-      ['Stylized + Smoothed Pitch',\
+      ax2.legend(lns3+lns3p+lns2+lns0+lnst5,\
+      ['Stylized @ GloReg + Smoothed Pitch',\
+      'Stylized @ LocReg + Smoothed Pitch',\
        'Smoothed Pitch (LOWESS)',\
        'Input Pitch',\
        #'Essential Points of Smoothed Pitch',\
@@ -339,13 +357,13 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
 
 """
 
-def stylizeObject(targetIntv,supportIntv,inputPitch,registers,stylizeFunction=SLAM1):
+def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction=SLAM1):
 
     #get stylization for an object that implements the xmin() and xmax() methods.
     [targetTimes,targetPitch] = intv2pitch(targetIntv,inputPitch)
     
     #do not process if no enough of sample
-    if len(targetPitch)<2:
+    if len(targetPitch)<2 :
           return None
         
     #get valide reference
@@ -354,20 +372,31 @@ def stylizeObject(targetIntv,supportIntv,inputPitch,registers,stylizeFunction=SL
           reference = registers
     else:
           try:
-              reference = registers[supportIntv.mark()]
-              if not is_numeric_paranoid(reference):
-                    raise
+              #reference = registers[supportIntvs[0].mark()]
+              supportObj = intv2customPitchObj(supportIntvs,inputPitch)
+              supportTimes,supportPitch = supportObj.time, supportObj.freq
+              if not len(supportPitch): return None
+              
+              # global register: reference as the average of F0 of support
+              register_glo = semitone2hz(np.mean(hz2semitone(supportPitch)))
+              
+              # local register: reference as the average of F0 of target
+              register_loc = semitone2hz(np.mean(hz2semitone(targetPitch)))
+              
+              #if not is_numeric_paranoid(reference):
+              #      raise
           except:
               #fail to get valide reference before precceding stylization
               return None
+        
+    #delta with reference in semitones and stylize it
+    deltaTargetPitch = [(hz2semitone(pitch) - hz2semitone(register_glo)) for pitch in targetPitch]
+    (style_glo,smoothed_glo) = stylizeFunction(deltaTargetPitch)
+    deltaTargetPitch = [(hz2semitone(pitch) - hz2semitone(register_loc)) for pitch in targetPitch]
+    (style_loc,smoothed_loc) = stylizeFunction(deltaTargetPitch)
+    #style_loc=style_glo
     
-    #delta with reference in semitones
-    deltaTargetPitch = [(hz2semitone(pitch) - hz2semitone(reference)) for pitch in targetPitch]
-    
-    #stylize if sample length enough 
-    (style,smoothed) = stylizeFunction(deltaTargetPitch)
-    
-    return (style,targetTimes,deltaTargetPitch,smoothed,reference)
+    return (style_glo,style_loc,targetTimes,deltaTargetPitch,smoothed_glo,register_glo,register_loc)
 
 # source:
 # https://stackoverflow.com/questions/500328/identifying-numeric-and-array-types-in-numpy
@@ -381,7 +410,7 @@ def is_numeric_paranoid(obj):
     else:
         return True
 
-def getSupportIntv(targetIntv,supportTier):
+def getSupportIntvs(targetIntv,supportTier):
       
       """
       this function returns the interval of 'supportTier' which 
@@ -399,9 +428,16 @@ def getSupportIntv(targetIntv,supportTier):
       labels = [intv.mark() for intv in supportIntvs]
       labelsCount = dict((label,labels.count(label)) for label in set(labels))
       bestLabel = max(labelsCount,key=labelsCount.get)
+      
+      """
       for intv in supportIntvs:
           if intv.mark() == bestLabel:
               return intv
+      """
+      # it can occur that 2+ intervals carry the same label, return all
+      # these sub-intervals to be complete
+      intvs = [intv for intv in supportIntvs if intv.mark() == bestLabel]
+      return intvs
                     
 def printIntv(intv):
         
@@ -418,11 +454,25 @@ class intv2customPitchObj():
       a class having the 3 follwing attributes: time, freq, label
       which is useful for tracing figure
       """
-      
-      def __init__(self,supportIntv, inputPitch):
-            self.label=supportIntv.mark()
-            [self.time,self.freq]=intv2pitch(supportIntv,inputPitch)
+      def __init__(self,supportIntvs, inputPitch):
+            
+            # check if all these intervals have the same label
+            if ([intv for intv in supportIntvs if intv.mark() == supportIntvs[0].mark()]):
+                   label = supportIntvs[0].mark()
+            else:
+                  print('Error: something may be wrong !')
+                  exit()
 
+            self.label=label
+            self.time = np.array([])
+            self.freq = np.array([])
+            for supportIntv in supportIntvs:
+                  [time,freq]=intv2pitch(supportIntv,inputPitch)
+                  # concatenate all time vectors in one time vector (same for freq.)
+                  self.time=np.concatenate((self.time,time))
+                  self.freq=np.concatenate((self.freq,freq))
+                  
+      
 #handy funciotns
 def get_extension(file): return os.path.splitext(file)[1]
 def get_basename(file): return os.path.splitext(os.path.basename(file))[0]

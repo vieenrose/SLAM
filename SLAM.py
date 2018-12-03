@@ -197,18 +197,26 @@ while tgFiles:
         if pos in POSdisplay:
             print 'stylizing: %d %%'%(pos/LEN*100.0)
 
-        supportIntv = stylize.getSupportIntv(targetIntv,supportTier=tg[speakerTier])
+        supportIntvs = stylize.getSupportIntvs(targetIntv,supportTier=tg[speakerTier])
         
         #compute style of current interval
         try:
-            (style,targetTimes,deltaTargetPitch, deltaTargetPitchSmooth, reference) = \
+              
+            (style_glo,style_loc,\
+            targetTimes,deltaTargetPitch, deltaTargetPitchSmooth, \
+            reference, reference_loc) = \
             stylize.stylizeObject(\
-            targetIntv = targetIntv, supportIntv = supportIntv,\
+            targetIntv = targetIntv, supportIntvs = supportIntvs,\
             inputPitch = inputPitch,\
             registers = registers)
         except TypeError:
             #print('Info. skip {}'.format(targetIntv.mark()))
             continue
+            
+        style = style_glo #debug
+        if len(style) <2: 
+              print('Error: style invalide {}'.format(style))
+              continue
             
         # debug
         """
@@ -239,7 +247,7 @@ while tgFiles:
             is_new_support = True
             # compute a new support if needed
             try: 
-                  if support.label != supportIntv.mark(): 
+                  if support.label != supportIntvs[0].mark(): 
                         # show and save figure before process the next support
                         #display figures on the screen
                         if len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount:
@@ -249,12 +257,12 @@ while tgFiles:
                         if exportFigures:
                               pdf.savefig(fig)
                         fig.clf()
-                        support = stylize.intv2customPitchObj(supportIntv,inputPitch)
+                        support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
                   else : # same supporr as the previous linguistic unit
                         is_new_support = False
                   
             except AttributeError: # read a 1st support
-                  support = stylize.intv2customPitchObj(supportIntv,inputPitch)
+                  support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
                   fig.clf()
                   
             # draw figure
@@ -262,9 +270,11 @@ while tgFiles:
             fig = stylize.show_stylization(\
                   original=deltaTargetPitch,\
                   smooth=deltaTargetPitchSmooth,\
-                  style=style,\
+                  style1=style_glo,\
+                  style2=style_loc,\
                   targetIntv=targetIntv,\
                   register=reference,\
+                  register_loc=reference_loc,\
                   support=support,\
                   time_org=targetTimes,\
                   figIn=fig, is_new_support=is_new_support)
