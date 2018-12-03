@@ -64,7 +64,7 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     background_color = 'lightgrey'
     color_style='seagreen'
     color_essentials = 'red'
-    linewidth_RelGrid_Major=2
+    linewidth_RelGrid_Major=.5
     linewidth_RelGrid_Minor=.5
     linewidth_AbsGrid = .35
     markersize_pitch = 2.5
