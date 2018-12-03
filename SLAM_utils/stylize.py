@@ -54,14 +54,25 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     num_freq_boundaries = 5
     freq_min = -10
     freq_max = +10
-    linewidth_RelGrid_Major=.75/3 * 2
-    linewidth_RelGrid_Minor=.375/3*2*2
-    linewidth_LocReg = .75*7.5
     linestyle_RelGrid_Major='-'
     linestyle_RelGrid_Minor='-'
+    color_LocReg = 'red'
+    linestyle_LocReg = ':'
+    color_GloReg = 'blue'
+    linestyle_GloReg =':'
     color_RelGrid_Minor = 'white'
-    background_color = 'lightgray'
+    background_color = 'lightgrey'
+    color_style='seagreen'
+    color_essentials = 'red'
+    linewidth_RelGrid_Major=2
+    linewidth_RelGrid_Minor=.5
     linewidth_AbsGrid = .5
+    markersize_pitch = 4
+    markersize_essentials = 5
+    linewidth_LocReg = .25*1.5*2
+    linewidth_GloReg = .25*1.5*2
+    linewidth_Style = .5*2*1.25
+    linewidth_smooth=.5*2
     
     fig = figIn
     ax = fig.gca()
@@ -121,8 +132,9 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
           ax2.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
           ax2.set_yticklabels(yticklabels_major,minor=False)
           ax2.set_yticklabels(yticklabels_minor,minor=True)
-          #ax.set_zorder(20) 
-          #ax.patch.set_visible(False)
+          # plot global register on support
+          xlim_support = [sec2msec(support.time[i])for i in [0,-1]]
+          lnst6=ax.plot(xlim_support,[0,0], '-',linewidth=linewidth_GloReg,zorder=0,linestyle=linestyle_GloReg,color=color_GloReg)
 
     # grid relative to local regster in bleu lines
     register_local = hz2semitone(np.mean([semitone2hz(f) for f in smooth]))
@@ -130,11 +142,11 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
         if offset :
             ax.plot(xticks_major,[register_local+offset,register_local+offset], linestyle=linestyle_RelGrid_Minor,color=color_RelGrid_Minor,linewidth=linewidth_RelGrid_Minor,zorder=0)
         else: # i.e. offset = 0
-            lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], 'w-',linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_RelGrid_Major)
+            lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], '-',linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
     
     pl.ylim(min(tot_yticks),max(tot_yticks))
     # draw support 
-    if is_new_support:
+    if is_new_support or True:
       supp_intv = sec2msec(support.time)
       supp_org = hz2semitone(support.freq) - hz2semitone(register)
       supp_mark = support.label
@@ -165,14 +177,14 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     #print(ti)
     #print(fr)
     
-    if is_new_support:
-        lns0=ax.plot(supp_intv,supp_org, 'b.',markersize=2.5)
+    if is_new_support or True:
+        lns0=ax.plot(supp_intv,supp_org, 'b.',markersize=markersize_pitch)
     #lns1=ax.plot(target_intv,original,'b',linewidth=2)
     
-    lns2=ax.plot(target_intv,smooth,'r',linewidth=.35)
-    lns4=ax.plot(essential_intv,essential_pitch,'ro',markersize=3)
-    lns3=ax.plot(style_intv,style_pitch,'g',linewidth=1.5)
-    
+    lns3=ax.plot(style_intv,style_pitch,color=color_style,linewidth=linewidth_Style)
+    lns2=ax.plot(target_intv,smooth,'r',linewidth=linewidth_smooth)
+    lns4=ax.plot(essential_intv,essential_pitch,'ro',markersize=markersize_essentials,color=color_essentials)
+
     
     #print(supp_intv)
     if is_new_support:
@@ -195,18 +207,19 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     ax.annotate('{:.0f} ms'.format(xticks_major[-1]-xticks_major[0]),xy=(x2/2+x1/2,-0.035),xycoords='axes fraction',fontsize=6,horizontalalignment='center')
     
     # interval label and symbolic annotation
-    ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04),xycoords=('data','axes fraction'),fontsize=11,fontweight='medium',horizontalalignment='center',fontstyle='italic')
-    ax.annotate(style,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.01),xycoords=('data','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='center')
+    ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic')
+    ax.annotate(style,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center')
     
     if is_new_support:
       ax.annotate(supp_mark,xy=(0.5,1.05),xycoords='axes fraction',fontsize=11,fontweight='medium',  horizontalalignment='center',fontstyle='italic')
       
-      ax2.legend(lns3+lns4+lnst5+lns2+lns0,\
+      ax2.legend(lns3+lns2+lns0+lns4+lnst6+lnst5,\
       ['Stylized + Smoothed Pitch',\
-      'Essential Points of Smoothed Pitch',\
-      'Local Register of Smoothed Pitch',\
-      'Smoothed Pitch (LOWESS)',\
-      'Input Pitch'],fontsize=7)
+       'Smoothed Pitch (LOWESS)',\
+       'Input Pitch',\
+       'Essential Points of Smoothed Pitch'
+       'Global Register',\
+       'Local Register'],fontsize=7)
 
     # let us make the figure!
     return fig
