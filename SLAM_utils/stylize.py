@@ -58,7 +58,7 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     linestyle_RelGrid_Minor='-'
     color_LocReg = 'red'
     linestyle_LocReg = ':'
-    color_GloReg = 'blue'
+    color_GloReg = 'k'
     linestyle_GloReg =':'
     color_RelGrid_Minor = 'white'
     background_color = 'lightgrey'
@@ -66,13 +66,13 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     color_essentials = 'red'
     linewidth_RelGrid_Major=2
     linewidth_RelGrid_Minor=.5
-    linewidth_AbsGrid = .5
-    markersize_pitch = 4
+    linewidth_AbsGrid = .35
+    markersize_pitch = 2.5
     markersize_essentials = 5
-    linewidth_LocReg = .25*1.5*2
-    linewidth_GloReg = .25*1.5*2
-    linewidth_Style = .5*2*1.25
-    linewidth_smooth=.5*2
+    linewidth_LocReg = .25*1.5*1.5*1.5
+    linewidth_GloReg = .25*1.5*1.5*1.5
+    linewidth_Style = .5*1.25*1.5*1.5
+    linewidth_smooth=.5*1.5*0.75
     
     fig = figIn
     ax = fig.gca()
@@ -121,7 +121,12 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     ylim = [min(tot_yticks),max(tot_yticks)]
     pl.ylim(ylim)
     
+    # plot global register on support
+    if is_new_support:
+          xlim_support = [sec2msec(support.time[i])for i in [0,-1]]
+          lnst6=ax.plot(xlim_support,[0,0], '-',linewidth=linewidth_GloReg,zorder=0,linestyle=linestyle_GloReg,color=color_GloReg)
     
+    """
     # make 2nd freauency axis
     if is_new_support:
           ax2 = ax.twinx()
@@ -132,10 +137,8 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
           ax2.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
           ax2.set_yticklabels(yticklabels_major,minor=False)
           ax2.set_yticklabels(yticklabels_minor,minor=True)
-          # plot global register on support
-          xlim_support = [sec2msec(support.time[i])for i in [0,-1]]
-          lnst6=ax.plot(xlim_support,[0,0], '-',linewidth=linewidth_GloReg,zorder=0,linestyle=linestyle_GloReg,color=color_GloReg)
-
+    """
+          
     # grid relative to local regster in bleu lines
     register_local = hz2semitone(np.mean([semitone2hz(f) for f in smooth]))
     for offset in [0,-2,2,-6,6,-10,10]:
@@ -181,9 +184,10 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
         lns0=ax.plot(supp_intv,supp_org, 'b.',markersize=markersize_pitch)
     #lns1=ax.plot(target_intv,original,'b',linewidth=2)
     
-    lns3=ax.plot(style_intv,style_pitch,color=color_style,linewidth=linewidth_Style)
+    
     lns2=ax.plot(target_intv,smooth,'r',linewidth=linewidth_smooth)
     lns4=ax.plot(essential_intv,essential_pitch,'ro',markersize=markersize_essentials,color=color_essentials)
+    lns3=ax.plot(style_intv,style_pitch,color=color_style,linewidth=linewidth_Style)
 
     
     #print(supp_intv)
@@ -210,6 +214,17 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
     ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic')
     ax.annotate(style,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center')
     
+    # make 2nd freauency axis
+    if is_new_support:
+          ax2 = ax.twinx()
+          # move the second axis to background
+          yticklabels_major = ['{:.0f} ST'.format(f) for f in yticks_major]
+          yticklabels_minor = ['{:.0f}'.format(f) for f in yticks_minor]
+          ax2.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks_major))
+          ax2.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
+          ax2.set_yticklabels(yticklabels_major,minor=False)
+          ax2.set_yticklabels(yticklabels_minor,minor=True)
+    
     if is_new_support:
       ax.annotate(supp_mark,xy=(0.5,1.05),xycoords='axes fraction',fontsize=11,fontweight='medium',  horizontalalignment='center',fontstyle='italic')
       
@@ -217,10 +232,10 @@ def show_stylization(time_org,original,smooth,style,targetIntv,register,figIn,su
       ['Stylized + Smoothed Pitch',\
        'Smoothed Pitch (LOWESS)',\
        'Input Pitch',\
-       'Essential Points of Smoothed Pitch'
+       'Essential Points of Smoothed Pitch',
        'Global Register',\
        'Local Register'],fontsize=7)
-
+       
     # let us make the figure!
     return fig
 
