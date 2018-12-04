@@ -47,6 +47,48 @@ def SLAM1(semitones):
     style = ''.join(style)
     return (style,smooth)
 
+def SLAM2(semitones, reference):
+
+    DOWNSAMPLE_ON = False
+
+    #this takes a sequence of semitones and applies the SLAM1 stylization
+
+    #first, smooth the semitones curves using LOWESS
+    if 100<len(semitones) and DOWNSAMPLE_ON: 
+        # ? why do a downsampling ?
+        # 1.assumed that the signal is of narraowband due to the
+        # the filtering processing by SWIPE
+        # 2.make acceleration
+        r = int(len(semitones)/100.0)
+        semitones = list(np.array(semitones)[::r])
+
+    t = np.array(range(len(semitones)))/float(len(semitones))
+    if 10<len(semitones):
+        import SLAM_utils.lowess as lowess
+        smooth = lowess.lowess(t,semitones)
+    else:
+        smooth = semitones
+
+    # identify the three essential points
+    ti,fr=identifyThreeEssentialPoints(smooth,thld=1)
+    
+    #style=''
+    # local register
+    style= relst2register(reference)
+    #print('style',style)#debug
+    
+    # transcript the model in SLAM2 annotation
+    style += relst2register2(fr[0])
+    style+= relst2register2(fr[-1])
+    
+    if len(fr)>=3:
+        style+=relst2register2(fr[1])
+        style+=str(int(1+math.floor(3*ti[1])))
+
+    style = ''.join(style)
+    return (style,smooth)
+
+
 def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register, register_loc,figIn,support, is_new_support=True):
 
     # parameters
@@ -54,29 +96,34 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     num_freq_boundaries = 5
     freq_min = -10
     freq_max = +10
-    linestyle_RelGrid_Major='-'
-    linestyle_RelGrid_Minor='-'
+    linestyle_RelGrid_Major='--'
+    linestyle_RelGrid_Minor='--'
+    linestyle_AbsGrid = '--'
     color_LocReg = 'red'
-    linestyle_LocReg = ':'
-    color_GloReg = 'k'
-    linestyle_GloReg =':'
-    linestyle_pitch = '-'
-    color_RelGrid_Minor = 'white'
-    background_color = 'lightgrey'
+    linestyle_LocReg = '--'
+    color_GloReg = 'b'
+    linestyle_GloReg ='--'
+    linestyle_pitch = ''
+    linestyle_style2 = '--'
+    markerstyle_pitch = '.'
+    color_RelGrid_Minor = 'lightgrey'
+    color_RelGrid_Major='k'
+    background_color = 'white'
     color_style_styl='seagreen'
-    color_style_sty2='orange'
-    color_essentials = 'red'
-    linewidth_RelGrid_Major=.5
-    linewidth_RelGrid_Minor=.5
-    linewidth_AbsGrid = .35
-    markersize_pitch = 2.5
+    color_style_sty2='red'
+    color_smooth = 'orange'
+    color_essentials = 'seagreen'
+    linewidth_RelGrid_Major=.5*.5
+    linewidth_RelGrid_Minor=.5*.5
+    linewidth_AbsGrid = .5*.5
+    markersize_pitch = 1
     markersize_essentials = 5
-    linewidth_LocReg = .25*1.5*1.5*1.5
-    linewidth_GloReg = .25*1.5*1.5*1.5
+    linewidth_LocReg = 1*.5
+    linewidth_GloReg = 1*.5
     
-    linewidth_smooth=.5*1.5*0.75
-    linewidth_Style1 = linewidth_smooth*4
-    linewidth_Style2=linewidth_smooth*4
+    linewidth_smooth=1
+    linewidth_Style1 = 1
+    linewidth_Style2=1
     linewidth_pitch=linewidth_smooth
     
     fig = figIn
@@ -111,7 +158,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     ax.set_xticklabels([],minor=False,fontsize=7)
     #ax.set_xticklabels(xticks_labels_minor,minor=True)
     
-    ax.grid(b=True,which='major', axis='x',color=color_RelGrid_Minor,linestyle=linestyle_RelGrid_Major,linewidth=linewidth_RelGrid_Major)
+    ax.grid(b=True,which='major', axis='x',color=color_RelGrid_Major,linestyle=linestyle_RelGrid_Major,linewidth=linewidth_RelGrid_Major)
     ax.grid(b=True,which='minor', axis='x',color=color_RelGrid_Minor,linestyle=linestyle_RelGrid_Minor,linewidth=linewidth_RelGrid_Minor)
     yticks_major=[-10,-6,-2,2,6,10]
     yticks_minor=[-8,-4,0,4,8]
@@ -127,11 +174,9 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     pl.ylim(ylim)
     
     # plot global register on support
-    """
     if is_new_support:
           xlim_support = [sec2msec(support.time[i])for i in [0,-1]]
           lnst6=ax.plot(xlim_support,[0,0], '-',linewidth=linewidth_GloReg,zorder=0,linestyle=linestyle_GloReg,color=color_GloReg)
-    """
     """
     # make 2nd freauency axis
     if is_new_support:
@@ -144,7 +189,8 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
           ax2.set_yticklabels(yticklabels_major,minor=False)
           ax2.set_yticklabels(yticklabels_minor,minor=True)
     """
-          
+   
+    """       
     # grid relative to local regster in bleu lines
     register_local = hz2semitone(np.mean([semitone2hz(f) for f in smooth]))
     for offset in [0,-2,2,-6,6,-10,10]:
@@ -152,6 +198,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
             ax.plot(xticks_major,[register_local+offset,register_local+offset], linestyle=linestyle_RelGrid_Minor,color=color_RelGrid_Minor,linewidth=linewidth_RelGrid_Minor,zorder=0)
         else: # i.e. offset = 0
             lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], '-',linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
+    """
     
     pl.ylim(min(tot_yticks),max(tot_yticks))
     # draw support 
@@ -185,13 +232,31 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
             style_pitch.insert(1,max([f_p,f_i+2,f_f+2]))
         return style_intv,style_pitch
         
+    def style2pitch2(style,xmin,xmax, yoffset=0):
+        alphabet2semitones = {'H': 4, 'h':2 , 'm': 0, 'l' : -2, 'L' : -4} 
+        
+        def relativePos2time(Pos, interval): 
+            return interval[0] + (int(Pos) - .5) / 3 * (interval[-1]-interval[0])
+        f_i = alphabet2semitones[style[0]]+yoffset
+        f_f = alphabet2semitones[style[1]]+yoffset
+              
+        style_intv = [xmin,xmax]
+        style_pitch = [f_i,f_f]
+        if len(style) >=4:
+            f_p = alphabet2semitones[style[2]]+yoffset
+            t_p = relativePos2time(style[3],[xmin,xmax])
+            #print(style_intv)
+            style_intv.insert(1,t_p)
+            #print(style_intv)
+            style_pitch.insert(1,max([f_p,f_i+2,f_f+2]))
+        return style_intv,style_pitch
+        
     #try:
     style1_intv,style1_pitch = style2pitch(style1,xticks_major[0],xticks_major[-1])
-    #except:
-    #    print('Error in style2pitch: style = {}'.format(style1))
-    #    exit()
-    yoffset=hz2semitone(register_loc)-hz2semitone(register)
-    style2_intv,style2_pitch = style2pitch(style2,xticks_major[0],xticks_major[-1],yoffset)
+    alphabet2semitones = {'H': 8, 'h': 4, 'm': 0, 'l' : -4, 'L' : -8}
+    yoffset=(alphabet2semitones[style2[0]])
+    print(style1,style2)
+    style2_intv,style2_pitch = style2pitch2(style2[1:],xticks_major[0],xticks_major[-1],yoffset)
           
     # 2(+1) essential points
     ti,fr=identifyThreeEssentialPoints(smooth,time=time_org)
@@ -199,22 +264,34 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     essential_pitch = fr
     
     if is_new_support:
-        lns0=ax.plot(supp_intv,supp_org, 'b',linestyle=linestyle_pitch,markersize=markersize_pitch,linewidth=linewidth_pitch)
+        lns0=ax.plot(supp_intv,supp_org, 'b',linestyle=linestyle_pitch,markersize=markersize_pitch,linewidth=linewidth_pitch, marker=markerstyle_pitch)
     #lns1=ax.plot(target_intv,original,'b',linewidth=2)
     
-    
-    lns2=ax.plot(target_intv,smooth,'r',linewidth=linewidth_smooth)
+    lns2=ax.plot(target_intv,smooth,color=color_smooth,linewidth=linewidth_smooth)
     if len(essential_intv)>2:
       # only show the significative main saliancy 
       lns4=ax.plot(essential_intv[1],essential_pitch[1],'ro',markersize=markersize_essentials,color=color_essentials)
     lns3=ax.plot(style1_intv,style1_pitch,color=color_style_styl,linewidth=linewidth_Style1)
-    lns3p=ax.plot(style2_intv,style2_pitch,color=color_style_sty2,linewidth=linewidth_Style2)
+    lns3p=ax.plot(style2_intv,style2_pitch,color=color_style_sty2,linewidth=linewidth_Style2,linestyle=linestyle_style2)
+
+    # grid relative to local regster
+    """
+    register_local = hz2semitone(np.mean([semitone2hz(f) for f in smooth]))
+    for offset in [0,-1,1,-3,3,-5,5]:
+        if offset :
+            ax.plot(xticks_major,[register_local+offset,register_local+offset], linestyle=linestyle_RelGrid_Minor,color=color_RelGrid_Minor,linewidth=linewidth_RelGrid_Minor,zorder=0)
+        else: # i.e. offset = 0
+            lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], '-',linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
+    """
+    offset = 0
+    register_local = hz2semitone(np.mean([semitone2hz(f) for f in smooth]))
+    lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], '-',linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
     
     #print(supp_intv)
     if is_new_support:
           tot_intv = np.concatenate((supp_intv,target_intv))
           pl.xlim(min(min(tot_intv),xticks[0]),max(max(tot_intv),xticks[-1]))
-          ax.grid(b=True,which='major', axis='y', color='0',linewidth=linewidth_AbsGrid)
+          ax.grid(b=True,which='major', axis='y', color='0',linestyle=linestyle_AbsGrid,linewidth=linewidth_AbsGrid)
           
     if is_new_support:
           ax.set_ylabel('Frequencey (Hz)')
@@ -233,8 +310,19 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     # interval label and symbolic annotation
     ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic')
     ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl)
-    ax.annotate(style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
+    txt_style2= style2
+    ax.annotate(txt_style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
     
+    
+    """
+    # grid relative to local regster in bleu lines
+    register_local = hz2semitone(np.mean([semitone2hz(f) for f in smooth]))
+    for offset in [0,-2,2,-6,6,-10,10]:
+        if offset :
+            ax.plot(xticks_major,[register_local+offset,register_local+offset], linestyle=linestyle_RelGrid_Minor,color=color_RelGrid_Minor,linewidth=linewidth_RelGrid_Minor,zorder=0)
+        else: # i.e. offset = 0
+            lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], '-',linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
+    """
     
     # make 2nd freauency axis
     if is_new_support:
@@ -246,19 +334,21 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
           ax2.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
           ax2.set_yticklabels(yticklabels_major,minor=False)
           ax2.set_yticklabels(yticklabels_minor,minor=True)
-          ax2.set_ylabel('Frequencey Relatvie to Global Register (semitones)')
+          ax2.set_ylabel('Frequencey Relative to Global Register (semitones)')
     
     if is_new_support:
       ax.annotate(supp_mark,xy=(0.5,1.05),xycoords='axes fraction',fontsize=11,fontweight='medium',  horizontalalignment='center',fontstyle='italic')
       
-      ax2.legend(lns3+lns3p+lns2+lns0+lnst5,\
+      lines = lns3+lns3p+lns2+lns0+lnst6+lnst5
+      ax2.legend(lines,\
       ['Stylized @ GloReg + Smoothed Pitch',\
       'Stylized @ LocReg + Smoothed Pitch',\
        'Smoothed Pitch (LOWESS)',\
-       'Input Pitch',\
-       #'Essential Points of Smoothed Pitch',\
-       #'Global Register',\
-       'Local Register'],fontsize=7)
+       'Input Cleaned Pitch',\
+       'Global Register',\
+       'Local Register'
+       #'Significtive Main Saliency on Smoothed Pitch'\
+       ],fontsize=7)
        
     # let us make the figure!
     return fig
@@ -357,7 +447,7 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
 
 """
 
-def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction=SLAM1):
+def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction1=SLAM1, stylizeFunction2=SLAM2):
 
     #get stylization for an object that implements the xmin() and xmax() methods.
     [targetTimes,targetPitch] = intv2pitch(targetIntv,inputPitch)
@@ -391,9 +481,10 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction=S
         
     #delta with reference in semitones and stylize it
     deltaTargetPitch = [(hz2semitone(pitch) - hz2semitone(register_glo)) for pitch in targetPitch]
-    (style_glo,smoothed_glo) = stylizeFunction(deltaTargetPitch)
+    (style_glo,smoothed_glo) = stylizeFunction1(deltaTargetPitch)
     deltaTargetPitch = [(hz2semitone(pitch) - hz2semitone(register_loc)) for pitch in targetPitch]
-    (style_loc,smoothed_loc) = stylizeFunction(deltaTargetPitch)
+    ref = hz2semitone(register_loc) - hz2semitone(register_glo)
+    (style_loc,smoothed_loc) = stylizeFunction2(deltaTargetPitch,reference= ref)
     #style_loc=style_glo
     
     return (style_glo,style_loc,targetTimes,deltaTargetPitch,smoothed_glo,register_glo,register_loc)
@@ -507,6 +598,19 @@ def relst2register(semitones):
         elif st > -2  : result.append('m')
         elif st > -6  : result.append('l')
         elif st < -6  : result.append('L')
+    return result
+    
+def relst2register2(semitones):
+    #from relative semitones to register
+    if isinstance(semitones,(int,float)):
+        semitones = [semitones]
+    result = []
+    for st in semitones:
+        if   st > 3  : result.append('H')
+        elif st > 1  : result.append('h')
+        elif st > -1  : result.append('m')
+        elif st > -3  : result.append('l')
+        elif st < -3  : result.append('L')
     return result
 
 def averageRegisters(swipeFile,speakerTier=None):
