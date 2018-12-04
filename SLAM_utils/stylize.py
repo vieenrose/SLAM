@@ -116,10 +116,10 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     linewidth_RelGrid_Major=.5
     linewidth_RelGrid_Minor=.5
     linewidth_AbsGrid = .5
-    markersize_pitch = 1
+    markersize_pitch = 2
     markersize_essentials = 5
-    linewidth_LocReg = 1
-    linewidth_GloReg = 1
+    linewidth_LocReg = .5
+    linewidth_GloReg = .5
     
     linewidth_smooth=1
     linewidth_Style1 = 1
