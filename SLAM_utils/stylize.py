@@ -96,9 +96,9 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     num_freq_boundaries = 5
     freq_min = -10
     freq_max = +10
-    linestyle_RelGrid_Major='--'
-    linestyle_RelGrid_Minor='--'
-    linestyle_AbsGrid = '--'
+    linestyle_RelGrid_Major=''
+    linestyle_RelGrid_Minor=''
+    linestyle_AbsGrid = ''
     color_LocReg = 'red'
     linestyle_LocReg = '--'
     color_GloReg = 'b'
@@ -113,13 +113,13 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     color_style_sty2='red'
     color_smooth = 'orange'
     color_essentials = color_smooth
-    linewidth_RelGrid_Major=.5*.5
-    linewidth_RelGrid_Minor=.5*.5
-    linewidth_AbsGrid = .5*.5
+    linewidth_RelGrid_Major=.5
+    linewidth_RelGrid_Minor=.5
+    linewidth_AbsGrid = .5
     markersize_pitch = 1
     markersize_essentials = 5
-    linewidth_LocReg = 1*.5
-    linewidth_GloReg = 1*.5
+    linewidth_LocReg = 1
+    linewidth_GloReg = 1
     
     linewidth_smooth=1
     linewidth_Style1 = 1
