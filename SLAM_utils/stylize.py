@@ -112,7 +112,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     color_style_styl='seagreen'
     color_style_sty2='red'
     color_smooth = 'orange'
-    color_essentials = 'seagreen'
+    color_essentials = color_smooth
     linewidth_RelGrid_Major=.5*.5
     linewidth_RelGrid_Minor=.5*.5
     linewidth_AbsGrid = .5*.5
@@ -255,7 +255,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     style1_intv,style1_pitch = style2pitch(style1,xticks_major[0],xticks_major[-1])
     alphabet2semitones = {'H': 8, 'h': 4, 'm': 0, 'l' : -4, 'L' : -8}
     yoffset=(alphabet2semitones[style2[0]])
-    print(style1,style2)
+    #print(style1,style2)
     style2_intv,style2_pitch = style2pitch2(style2[1:],xticks_major[0],xticks_major[-1],yoffset)
           
     # 2(+1) essential points
@@ -272,7 +272,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
       # only show the significative main saliancy 
       lns4=ax.plot(essential_intv[1],essential_pitch[1],'ro',markersize=markersize_essentials,color=color_essentials)
     lns3=ax.plot(style1_intv,style1_pitch,color=color_style_styl,linewidth=linewidth_Style1)
-    lns3p=ax.plot(style2_intv,style2_pitch,color=color_style_sty2,linewidth=linewidth_Style2,linestyle=linestyle_style2)
+    #lns3p=ax.plot(style2_intv,style2_pitch,color=color_style_sty2,linewidth=linewidth_Style2,linestyle=linestyle_style2)
 
     # grid relative to local regster
     """
@@ -311,7 +311,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic')
     ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl)
     txt_style2= style2
-    ax.annotate(txt_style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
+    #ax.annotate(txt_style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
     
     
     """
@@ -339,10 +339,11 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     if is_new_support:
       ax.annotate(supp_mark,xy=(0.5,1.05),xycoords='axes fraction',fontsize=11,fontweight='medium',  horizontalalignment='center',fontstyle='italic')
       
-      lines = lns3+lns3p+lns2+lns0+lnst6+lnst5
+      #lines = lns3+lns3p+lns2+lns0+lnst6+lnst5
+      lines = lns3+lns2+lns0+lnst6+lnst5
       ax2.legend(lines,\
       ['Stylized @ GloReg + Smoothed Pitch',\
-      'Stylized @ LocReg + Smoothed Pitch',\
+     # 'Stylized @ LocReg + Smoothed Pitch',\
        'Smoothed Pitch (LOWESS)',\
        'Input Cleaned Pitch',\
        'Global Register',\
