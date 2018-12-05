@@ -98,7 +98,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     freq_max = +10
     linestyle_RelGrid_Major=':'
     linestyle_RelGrid_Minor=''
-    linestyle_AbsGrid = ':'
+    linestyle_AbsGrid = ''
     color_LocReg = 'red'
     linestyle_LocReg = ':'
     color_GloReg = 'b'
@@ -118,15 +118,16 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     linewidth_AbsGrid = .5
     markersize_pitch = 2
     markersize_essentials = 5
-    linewidth_LocReg = .5*2
-    linewidth_GloReg = .5*2
+    linewidth_LocReg = .5
+    linewidth_GloReg = .5
     
     linewidth_smooth=1
     linewidth_Style1 = 1
     linewidth_Style2=1
     linewidth_pitch=linewidth_smooth
     # define the softness of boundelines of ranger of register 
-    alpha = 5
+    alphaGlo = 2
+    alphaLoc = 5
     
     fig = figIn
     ax = fig.gca()
@@ -273,8 +274,8 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
         # in logarithmic scale
         # we implement, in  the below, for example alpha = 5
 
-        stat_max_freq = np.percentile(supp_org, 100-alpha)
-        stat_min_freq = np.percentile(supp_org, alpha)
+        stat_max_freq = np.percentile(supp_org, 100-alphaGlo)
+        stat_min_freq = np.percentile(supp_org, alphaGlo)
         range_of_register = \
             register *(semitone2hz(stat_max_freq)) - \
             register *(semitone2hz(stat_min_freq))
@@ -308,8 +309,8 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], '-',linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
     
     ones_vec = np.ones(len(xticks_major))
-    soft_min_LocReg = np.percentile(smooth, alpha)
-    soft_max_LocReg = np.percentile(smooth, 100-alpha)
+    soft_min_LocReg = np.percentile(smooth, alphaLoc)
+    soft_max_LocReg = np.percentile(smooth, 100-alphaLoc)
     ax.plot(xticks_major,ones_vec*soft_min_LocReg, linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
     ax.plot(xticks_major,ones_vec*soft_max_LocReg, linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
     
