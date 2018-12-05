@@ -125,6 +125,8 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     linewidth_Style1 = 1
     linewidth_Style2=1
     linewidth_pitch=linewidth_smooth
+    # define the softness of boundelines of ranger of register 
+    alpha = 5
     
     fig = figIn
     ax = fig.gca()
@@ -270,7 +272,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
         # range here is defined as the (100-a)-th percentiele - the a-th percentiele
         # in logarithmic scale
         # we implement, in  the below, for example alpha = 5
-        alpha = 5
+
         stat_max_freq = np.percentile(supp_org, 100-alpha)
         stat_min_freq = np.percentile(supp_org, alpha)
         range_of_register = \
@@ -304,6 +306,12 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     offset = 0
     register_local = hz2semitone(np.mean([semitone2hz(f) for f in smooth]))
     lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], '-',linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
+    
+    ones_vec = np.ones(len(xticks_major))
+    soft_min_LocReg = np.percentile(smooth, alpha)
+    soft_max_LocReg = np.percentile(smooth, 100-alpha)
+    ax.plot(xticks_major,ones_vec*soft_min_LocReg, linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
+    ax.plot(xticks_major,ones_vec*soft_max_LocReg, linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
     
     #print(supp_intv)
     if is_new_support:
