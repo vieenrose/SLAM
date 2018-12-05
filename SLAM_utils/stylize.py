@@ -100,9 +100,9 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     linestyle_RelGrid_Minor=''
     linestyle_AbsGrid = ':'
     color_LocReg = 'red'
-    linestyle_LocReg = '--'
+    linestyle_LocReg = ':'
     color_GloReg = 'b'
-    linestyle_GloReg ='--'
+    linestyle_GloReg =':'
     linestyle_pitch = ''
     linestyle_style2 = '--'
     markerstyle_pitch = '.'
@@ -118,8 +118,8 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     linewidth_AbsGrid = .5
     markersize_pitch = 2
     markersize_essentials = 5
-    linewidth_LocReg = .5
-    linewidth_GloReg = .5
+    linewidth_LocReg = .5*2
+    linewidth_GloReg = .5*2
     
     linewidth_smooth=1
     linewidth_Style1 = 1
@@ -177,7 +177,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     # plot global register on support
     if is_new_support:
           xlim_support = [sec2msec(support.time[i])for i in [0,-1]]
-          lnst6=ax.plot(xlim_support,[0,0], '-',linewidth=linewidth_GloReg,zorder=0,linestyle=linestyle_GloReg,color=color_GloReg)
+          lnst6=ax.plot(xlim_support,[0,0], linewidth=linewidth_GloReg,zorder=0,linestyle=linestyle_GloReg,color=color_GloReg)
     """
     # make 2nd freauency axis
     if is_new_support:
@@ -266,6 +266,23 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     
     if is_new_support:
         lns0=ax.plot(supp_intv,supp_org, 'b',linestyle=linestyle_pitch,markersize=markersize_pitch,linewidth=linewidth_pitch, marker=markerstyle_pitch)
+        # compute range
+        # range here is defined as the (100-a)-th percentiele - the a-th percentiele
+        # in logarithmic scale
+        # we implement, in  the below, for example alpha = 5
+        alpha = 5
+        stat_max_freq = np.percentile(supp_org, 100-alpha)
+        stat_min_freq = np.percentile(supp_org, alpha)
+        range_of_register = \
+            register *(semitone2hz(stat_max_freq)) - \
+            register *(semitone2hz(stat_min_freq))
+            
+
+        # plot the soft / statistical upper and lower bounds of freq.
+        lnsu=ax.plot(supp_intv,stat_min_freq*np.ones(len(supp_intv)),linestyle=linestyle_GloReg,color=color_GloReg,linewidth=linewidth_GloReg)
+        lnsl=ax.plot(supp_intv,stat_max_freq*np.ones(len(supp_intv)),linestyle=linestyle_GloReg,color=color_GloReg,linewidth=linewidth_GloReg)
+        
+      
     #lns1=ax.plot(target_intv,original,'b',linewidth=2)
     
     lns2=ax.plot(target_intv,smooth,color=color_smooth,linewidth=linewidth_smooth)
@@ -297,7 +314,6 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     if is_new_support:
           ax.set_ylabel('Frequencey (Hz)')
     
-    # annotation
     fig.subplots_adjust(top=0.9,bottom=0.14,left=0.075, right=0.925)
     xlim=ax.get_xlim()
     diff_xlim = max(xlim)-min(xlim)
@@ -305,13 +321,16 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     x1 = (xticks_major[0]-xlim[0])/diff_xlim
     x2 = (xticks_major[1]-xlim[0])/diff_xlim
     
-    # time label
+    # duration label
     ax.annotate('{:.0f} ms'.format(xticks_major[-1]-xticks_major[0]),xy=(x2/2+x1/2,-0.035),xycoords='axes fraction',fontsize=6,horizontalalignment='center')
     
-    # interval label and symbolic annotation
+    # target label
     ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic')
+    
+    # its stlization in symbolic form
     ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl)
     txt_style2= style2
+    
     #ax.annotate(txt_style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
     
     
@@ -337,7 +356,10 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
           ax2.set_yticklabels([ticks2style[tick]for tick in yticks_minor],minor=True,color=color_style_styl,fontweight='semibold')
           ax2.set_ylabel('Frequencey Relative to Global Register (semitones)')
     
+    # support label
     if is_new_support:
+      key_of_register = register  
+      supp_mark += ', key: {:.0f} Hz, range: {:.0f} Hz'.format(key_of_register, range_of_register)
       ax.annotate(supp_mark,xy=(0.5,1.05),xycoords='axes fraction',fontsize=11,fontweight='medium',  horizontalalignment='center',fontstyle='italic')
       
       #lines = lns3+lns3p+lns2+lns0+lnst6+lnst5
@@ -347,7 +369,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
      # 'Stylized @ LocReg + Smoothed Pitch',\
        'Smoothed Pitch (LOWESS)',\
        'Input Cleaned Pitch',\
-       'Global Register',\
+       'Global Register (Key and Range)',\
        'Local Register'
        #'Significtive Main Saliency on Smoothed Pitch'\
        ],fontsize=7)
