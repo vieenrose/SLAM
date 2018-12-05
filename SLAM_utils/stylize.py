@@ -96,9 +96,9 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     num_freq_boundaries = 5
     freq_min = -10
     freq_max = +10
-    linestyle_RelGrid_Major=''
+    linestyle_RelGrid_Major=':'
     linestyle_RelGrid_Minor=''
-    linestyle_AbsGrid = ''
+    linestyle_AbsGrid = ':'
     color_LocReg = 'red'
     linestyle_LocReg = '--'
     color_GloReg = 'b'
@@ -162,6 +162,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     ax.grid(b=True,which='minor', axis='x',color=color_RelGrid_Minor,linestyle=linestyle_RelGrid_Minor,linewidth=linewidth_RelGrid_Minor)
     yticks_major=[-10,-6,-2,2,6,10]
     yticks_minor=[-8,-4,0,4,8]
+    ticks2style={0:'m',-4:'l',-8:'L',4:'h',8:'H'}
     ytick2labels_major = ['{:.0f} Hz'.format(register*semitone2hz(y)) for y in yticks_major]
     ytick2labels_minor = ['{:.0f}'.format(register*semitone2hz(y)) for y in yticks_minor]
     if is_new_support:
@@ -333,7 +334,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
           ax2.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks_major))
           ax2.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
           ax2.set_yticklabels(yticklabels_major,minor=False)
-          ax2.set_yticklabels(yticklabels_minor,minor=True)
+          ax2.set_yticklabels([ticks2style[tick]for tick in yticks_minor],minor=True,color=color_style_styl,fontweight='semibold')
           ax2.set_ylabel('Frequencey Relative to Global Register (semitones)')
     
     if is_new_support:
@@ -470,6 +471,32 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction1=
               
               # global register: reference as the average of F0 of support
               register_glo = semitone2hz(np.mean(hz2semitone(supportPitch)))
+              
+              """
+              #estimate register using Hann window
+              r = 0.0
+              c = 0.0
+
+              targetTimeCenter = targetTimes[len(targetTimes)//2]
+              half_width = max(\
+                  targetTimeCenter - supportTimes[0] + 1,\
+                  supportTimes[-1] - targetTimeCenter + 1)
+              for intv in supportIntvs:
+                  indices = swipeFile.time_bisect(intv.xmin(),intv.xmax())
+                  for i in indices:
+                        #compute a Hann window
+                        w = 0.0
+                        #convoluate it with a rectangular function with its support as our target
+                        for tau in targetTimes:
+                            
+                            w += (np.cos(np.pi / 2.0 / float(half_width) * (t - tau))) ** 2
+                        #w = 1 #debug: constant window
+                        r += w * swipeFile.pitch[i]
+                        print('w:',w)
+                        c += w
+              if c: r = r / c # normalization
+              print('dynamic register:',r)
+              """
               
               # local register: reference as the average of F0 of target
               register_loc = semitone2hz(np.mean(hz2semitone(targetPitch)))

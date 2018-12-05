@@ -57,7 +57,7 @@ voicedThreshold = 0.2 #for swipe
 
 #Tiers for the speaker and the target intervals, put your own tier names
 speakerTier= 'Biola-IP' 
-targetTier = 'mot'
+targetTier = 'Syllables'
 
 #display and exportation
 examplesDisplayCount = 5 #number of example plots to do. Possibly 0
