@@ -57,7 +57,7 @@ voicedThreshold = 0.2 #for swipe
 
 #Tiers for the speaker and the target intervals, put your own tier names
 speakerTier= 'Biola-IP' 
-targetTier = 'Syllables'
+targetTier = 'mot'
 
 #display and exportation
 examplesDisplayCount = 5 #number of example plots to do. Possibly 0
@@ -204,7 +204,7 @@ while tgFiles:
               
             (style_glo,style_loc,\
             targetTimes,deltaTargetPitch, deltaTargetPitchSmooth, \
-            reference, reference_loc) = \
+            reference, reference_loc, rangeRegisterInSemitones) = \
             stylize.stylizeObject(\
             targetIntv = targetIntv, supportIntvs = supportIntvs,\
             inputPitch = inputPitch,\
@@ -277,7 +277,8 @@ while tgFiles:
                   register_loc=reference_loc,\
                   support=support,\
                   time_org=targetTimes,\
-                  figIn=fig, is_new_support=is_new_support)
+                  figIn=fig, is_new_support=is_new_support,
+                  rangeRegisterInSemitones = rangeRegisterInSemitones)
 
     #done, now writing tier into textgrid and saving textgrid
     print 'Saving computed styles in file %s'%outputTextgridFile
