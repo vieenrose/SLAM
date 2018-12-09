@@ -37,7 +37,7 @@ def SLAM1(semitones, rangeRegisterInSemitones = 20):
     numQuantizationRegions = 5
     minDELTA=1#4.0 #debug
     DELTA = max(rangeRegisterInSemitones / numQuantizationRegions,minDELTA)
-    print("SLAM1: DELTA=",DELTA)#debug
+    #print("SLAM1: DELTA=",DELTA)#debug
     delta = DELTA / 2
 
     # identify the three essential points
@@ -237,7 +237,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     # stylization
     # rangeRegisterInHz
     def style2pitch(style,xmin,xmax, yoffset=0, DELTA = 4):
-        print('style2pitch:style=',style) #debug
+        #print('style2pitch:style=',style) #debug
         alphabet2semitones = {'H': 8, 'h': 4, 'm': 0, 'l' : -4, 'L' : -8} 
         
         def relativePos2time(Pos, interval): 
@@ -276,11 +276,11 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
         return style_intv,style_pitch
         
     #try:
-    print("show_sty:style1=",style1)#debug
+    #print("show_sty:style1=",style1)#debug
     #DELTA = max(rangeRegisterInSemitones / 5,4.0)
-    print("show_sty:DELTA = ", DELTA)#debug
+    #print("show_sty:DELTA = ", DELTA)#debug
     style1_intv,style1_pitch = style2pitch(style1,xticks_major[0],xticks_major[-1], DELTA=DELTA)
-    print('style1_pitch:',style1_pitch)#debug
+    #print('style1_pitch:',style1_pitch)#debug
     alphabet2semitones = {'H': 8, 'h': 4, 'm': 0, 'l' : -4, 'L' : -8}
     yoffset=(alphabet2semitones[style2[0]])
     #print(style1,style2)
@@ -329,7 +329,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
             lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], '-',linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
     """
     offset = 0
-    register_local = hz2semitone(np.mean([semitone2hz(f) for f in smooth]))
+    register_local = hz2semitone(register_loc)-hz2semitone(register) #hz2semitone(np.mean([semitone2hz(f) for f in smooth])) #debug
     lnst5=ax.plot(xticks_major,[register_local+offset,register_local+offset], '-',linewidth=linewidth_LocReg,zorder=0,linestyle=linestyle_LocReg,color=color_LocReg)
     
     ones_vec = np.ones(len(xticks_major))
@@ -358,18 +358,18 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     ax.annotate('{:.0f} ms'.format(xticks_major[-1]-xticks_major[0]),xy=(x2/2+x1/2,-0.035),xycoords='axes fraction',fontsize=6,horizontalalignment='center')
     if is_new_support:
        # support label
-       ax.annotate(supp_mark,xy=(0.5,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=12,fontweight='medium',horizontalalignment='center',fontstyle='italic')
-       ax.annotate('Support:',xy=(0,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=12,fontweight='semibold',horizontalalignment='right',fontstyle='normal')
+       ax.annotate(supp_mark,xy=(0.5,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='medium',horizontalalignment='center',fontstyle='italic')
+       ax.annotate('Support:',xy=(0,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',fontstyle='normal')
     
     # target label
     ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04-0.08-0.01),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic')
-    ax.annotate('Target:',xy=(0,-0.13+.04-0.08-0.01),xycoords=('axes fraction','axes fraction'),fontsize=12,fontweight='semibold',horizontalalignment='right',fontstyle='normal')
+    ax.annotate('Target:',xy=(0,-0.13+.04-0.08-0.01),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',fontstyle='normal')
     
     # its stlization in symbolic form
-    ax.annotate('Global Labels:',xy=(0,-0.19+.04+.02-0.08-0.01-0.02),xycoords=('axes fraction','axes fraction'),fontsize=12,fontweight='semibold',horizontalalignment='right',color=color_style_styl)
+    ax.annotate('Global Labels:',xy=(0,-0.19+.04+.02-0.08-0.01-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl)
     ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl)
     txt_style2= style2
-    ax.annotate('Local Labels:',xy=(0,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=12,fontweight='semibold',horizontalalignment='right',color=color_style_sty2)
+    ax.annotate('Local Labels:',xy=(0,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_sty2)
     #ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
     
     #ax.annotate(txt_style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
@@ -412,7 +412,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
        'Smoothed Pitch (LOWESS)',\
        'Cleaned Pitch',\
        'Global Register (Key)',\
-       'Local Register (Key)'
+       'Dynamic Local Register (Key)'
        #'Significtive Main Saliency on Smoothed Pitch'\
        ],fontsize=11)
        
@@ -537,33 +537,36 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction1=
               register_glo = semitone2hz(np.mean(hz2semitone(supportPitch)))
               
               """
+              """
               #estimate register using Hann window
-              r = 0.0
-              c = 0.0
-
+              loccalDynamicRegister = 0.0
+              sumOfWeights = 0.0
+              
               targetTimeCenter = targetTimes[len(targetTimes)//2]
-              half_width = max(\
+              halfwidthOfSupport = max(\
                   targetTimeCenter - supportTimes[0] + 1,\
                   supportTimes[-1] - targetTimeCenter + 1)
-              for intv in supportIntvs:
-                  indices = swipeFile.time_bisect(intv.xmin(),intv.xmax())
-                  for i in indices:
-                        #compute a Hann window
-                        w = 0.0
-                        #convoluate it with a rectangular function with its support as our target
-                        for tau in targetTimes:
-                            
-                            w += (np.cos(np.pi / 2.0 / float(half_width) * (t - tau))) ** 2
-                        #w = 1 #debug: constant window
-                        r += w * swipeFile.pitch[i]
-                        print('w:',w)
-                        c += w
-              if c: r = r / c # normalization
-              print('dynamic register:',r)
+
+              for i, n in enumerate(supportTimes):
+                  #convoluate it with a rectangular function with its support as our target
+                  weight = 0.0
+                  #sum of all shifted version of Hann windows where center isloacted in target
+                  for k in targetTimes:
+                      #compute a Hann window or its value for time n
+                      subweigth = (np.cos(np.pi / 2.0 / float(halfwidthOfSupport) * (n - k))) ** 2
+                      weight += subweigth
+                      #print('kernal({:8.4f},{:8.4f})=f({:8.4f})={:8.4f}'.format(n,k,n-k,subweigth))
+                  #print('weight[{:d}]={:8.4f}'.format(i,weight))
+                  loccalDynamicRegister += weight * supportPitch[i]
+                  sumOfWeights += weight
+              if sumOfWeights: loccalDynamicRegister = loccalDynamicRegister / sumOfWeights # normalization
+              #print('stylizeobj:dynamic local register:',r)
+              """
               """
               
               # local register: reference as the average of F0 of target
-              register_loc = semitone2hz(np.mean(hz2semitone(targetPitch)))
+              register_loc = semitone2hz(np.mean(hz2semitone(targetPitch)))#debug
+              #print('stylizeobj: (locReg,loccalDynamicRegister)=({:.0f},{:.0f})'.format(register_loc,loccalDynamicRegister))
               
               #if not is_numeric_paranoid(reference):
               #      raise
@@ -577,7 +580,7 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction1=
     rangeRegisterInSemitones = \
     rangeRegisterFunc(pitchOverSupportInHz, keyRegiserInHz = register_glo, alpha = 2.0)
     
-    print('show_sty.:rangeRegisterInSemitones=',rangeRegisterInSemitones)#debug
+    #print('show_sty.:rangeRegisterInSemitones=',rangeRegisterInSemitones)#debug
     deltaTargetPitch = [(hz2semitone(pitch) - hz2semitone(register_glo)) for pitch in targetPitch]
     (style_glo,smoothed_glo) = stylizeFunction1(deltaTargetPitch,rangeRegisterInSemitones)
     
@@ -586,7 +589,7 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction1=
     (style_loc,smoothed_loc) = stylizeFunction2(deltaTargetPitch,reference= ref)
     #style_loc=style_glo
     
-    return (style_glo,style_loc,targetTimes,deltaTargetPitch,smoothed_glo,register_glo,register_loc, rangeRegisterInSemitones)
+    return (style_glo,style_loc,targetTimes,deltaTargetPitch,smoothed_glo,register_glo,register_loc, rangeRegisterInSemitones, loccalDynamicRegister)
 
 # source:
 # https://stackoverflow.com/questions/500328/identifying-numeric-and-array-types-in-numpy
@@ -743,7 +746,7 @@ def rangeRegisterFunc(pitchOverSupportInHz, keyRegiserInHz, alpha = 2.0):
       minFreqInSemitones = np.percentile(pitchOverSupportInSemitones,       alpha)
       maxFreqInSemitones = np.percentile(pitchOverSupportInSemitones, 100 - alpha)
       
-      print('minFreqInSemitones,maxFreqInSemitones',minFreqInSemitones,maxFreqInSemitones)
+      #print('minFreqInSemitones,maxFreqInSemitones',minFreqInSemitones,maxFreqInSemitones)#debug
       return 2*max(abs(minFreqInSemitones),abs(maxFreqInSemitones))
     
 def relst2register2(semitones):

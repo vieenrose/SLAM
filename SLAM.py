@@ -204,7 +204,7 @@ while tgFiles:
               
             (style_glo,style_loc,\
             targetTimes,deltaTargetPitch, deltaTargetPitchSmooth, \
-            reference, reference_loc, rangeRegisterInSemitones) = \
+            reference, reference_loc, rangeRegisterInSemitones, loccalDynamicRegister) = \
             stylize.stylizeObject(\
             targetIntv = targetIntv, supportIntvs = supportIntvs,\
             inputPitch = inputPitch,\
@@ -265,6 +265,7 @@ while tgFiles:
                   support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
                   fig.clf()
                   
+            # #register_loc=reference_loc,\
             # draw figure
             fig = pl.gcf()
             fig = stylize.show_stylization(\
@@ -274,7 +275,7 @@ while tgFiles:
                   style2=style_loc,\
                   targetIntv=targetIntv,\
                   register=reference,\
-                  register_loc=reference_loc,\
+                  register_loc=loccalDynamicRegister,\
                   support=support,\
                   time_org=targetTimes,\
                   figIn=fig, is_new_support=is_new_support,
