@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-    #tode: 1.refine the identification of prominence. 2.indicate the main saliency in the output figure produced by show_stylization()
+   memo: 
+   1. estimation of key of register and reference frequency
+      - factorGlobality = 0 (completely local)
+      - factorGlobality -> inifity (completely global)
+   2. adaptation of frequency quantization step size to ranger of register
+   DELTAmin = 0 (full adaptive)
+   DELTAmin = 4 (similar to SLAM)
 
 """
 import matplotlib
@@ -110,7 +116,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     color_GloReg = 'b'
     linestyle_GloReg =':'
     linestyle_pitch = ''
-    linestyle_style2 = '--'
+    linestyle_style2 = '-'
     markerstyle_pitch = '.'
     color_RelGrid_Minor = 'lightgrey'
     color_RelGrid_Major='k'
