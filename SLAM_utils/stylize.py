@@ -255,7 +255,8 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
             #print(style_intv)
             style_pitch.insert(1,max([f_p,f_i+DELTA/2.0,f_f+DELTA/2.0]))
         return style_intv,style_pitch
-        
+    
+    """    
     def style2pitch2(style,xmin,xmax, yoffset=0):
         alphabet2semitones = {'H': 4, 'h':2 , 'm': 0, 'l' : -2, 'L' : -4} 
         
@@ -274,7 +275,10 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
             #print(style_intv)
             style_pitch.insert(1,max([f_p,f_i+2,f_f+2]))
         return style_intv,style_pitch
+    """
         
+    #register_loc = register*semitone2hz(np.mean(smooth)) #debug
+    #print('show_sty.: register_loc=',register_loc)
     #try:
     #print("show_sty:style1=",style1)#debug
     #DELTA = max(rangeRegisterInSemitones / 5,4.0)
@@ -282,9 +286,9 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     style1_intv,style1_pitch = style2pitch(style1,xticks_major[0],xticks_major[-1], DELTA=DELTA)
     #print('style1_pitch:',style1_pitch)#debug
     alphabet2semitones = {'H': 8, 'h': 4, 'm': 0, 'l' : -4, 'L' : -8}
-    yoffset=(alphabet2semitones[style2[0]])
+    yoffset=hz2semitone(register_loc)-hz2semitone(register)
     #print(style1,style2)
-    style2_intv,style2_pitch = style2pitch2(style2[1:],xticks_major[0],xticks_major[-1],yoffset)
+    style2_intv,style2_pitch = style2pitch(style2,xticks_major[0],xticks_major[-1],DELTA=DELTA, yoffset=yoffset)
           
     # 2(+1) essential points
     ti,fr=identifyThreeEssentialPoints(smooth,time=time_org, thld=DELTA / 2)
@@ -317,7 +321,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
       # only show the significative main saliancy 
       lns4=ax.plot(essential_intv[1],essential_pitch[1],'ro',markersize=markersize_essentials,color=color_essentials)
     lns3=ax.plot(style1_intv,style1_pitch,color=color_style_styl,linewidth=linewidth_Style1)
-    #lns3p=ax.plot(style2_intv,style2_pitch,color=color_style_sty2,linewidth=linewidth_Style2,linestyle=linestyle_style2)
+    lns3p=ax.plot(style2_intv,style2_pitch,color=color_style_sty2,linewidth=linewidth_Style2,linestyle=linestyle_style2)
 
     # grid relative to local regster
     """
@@ -370,6 +374,8 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl)
     txt_style2= style2
     ax.annotate('Local Labels:',xy=(0,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_sty2)
+    
+    ax.annotate(style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
     #ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
     
     #ax.annotate(txt_style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
@@ -401,15 +407,15 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     if is_new_support:
       key_of_register = register  
       #supp_mark += ', key: {:.0f} Hz, range: {:.0f} Hz'.format(key_of_register, range_of_register)
-      text_key_range = 'key: {:.0f} Hz, range: {:.0f} Hz'.format(key_of_register, range_of_register)
+      text_key_range = 'Global Key: {:.0f} Hz, Global Range: {:.0f} Hz'.format(key_of_register, range_of_register)
       ax.annotate(text_key_range,xy=(0.5,1.025),xycoords='axes fraction',fontsize=11,fontweight='medium',  horizontalalignment='center',fontstyle='italic')
       
       #lines = lns3+lns3p+lns2+lns0+lnst6+lnst5
-      lines = lns3+lns2+lns0+lnst6+lnst5
+      lines = lns3+lns3p+lns2+lns0+lnst6+lnst5
       ax2.legend(lines,\
-      ['Stylized @ GloReg + Smoothed Pitch',\
-     # 'Stylized @ LocReg + Smoothed Pitch',\
-       'Smoothed Pitch (LOWESS)',\
+      ['Stylized @ GloReg',\
+      'Stylized @ DynLocReg',\
+       'Smoothed Cleaned Pitch (LOWESS)',\
        'Cleaned Pitch',\
        'Global Register (Key)',\
        'Dynamic Local Register (Key)'
@@ -541,7 +547,7 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction1=
               #estimate register using Hann window
               loccalDynamicRegister = 0.0
               sumOfWeights = 0.0
-              
+              factorGlobality = 0.01
               targetTimeCenter = targetTimes[len(targetTimes)//2]
               halfwidthOfSupport = max(\
                   targetTimeCenter - supportTimes[0] + 1,\
@@ -553,7 +559,10 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction1=
                   #sum of all shifted version of Hann windows where center isloacted in target
                   for k in targetTimes:
                       #compute a Hann window or its value for time n
-                      subweigth = (np.cos(np.pi / 2.0 / float(halfwidthOfSupport) * (n - k))) ** 2
+                      if 2*abs(n-k) <= halfwidthOfSupport*factorGlobality:
+                        subweigth = (np.cos(np.pi / 2.0 / float(halfwidthOfSupport*factorGlobality) * (n - k))) ** 2
+                      else:
+                        subweigth = 0
                       weight += subweigth
                       #print('kernal({:8.4f},{:8.4f})=f({:8.4f})={:8.4f}'.format(n,k,n-k,subweigth))
                   #print('weight[{:d}]={:8.4f}'.format(i,weight))
@@ -584,10 +593,10 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction1=
     deltaTargetPitch = [(hz2semitone(pitch) - hz2semitone(register_glo)) for pitch in targetPitch]
     (style_glo,smoothed_glo) = stylizeFunction1(deltaTargetPitch,rangeRegisterInSemitones)
     
-    deltaTargetPitch = [(hz2semitone(pitch) - hz2semitone(register_loc)) for pitch in targetPitch]
-    ref = hz2semitone(register_loc) - hz2semitone(register_glo)
-    (style_loc,smoothed_loc) = stylizeFunction2(deltaTargetPitch,reference= ref)
-    #style_loc=style_glo
+    deltaTargetPitch2 = [(hz2semitone(pitch) - hz2semitone(loccalDynamicRegister)) for pitch in targetPitch]
+    (style_loc,smoothed_loc) = stylizeFunction1(deltaTargetPitch2,rangeRegisterInSemitones)
+    
+    print('stylizeObj.:',style_glo,style_loc)#debug
     
     return (style_glo,style_loc,targetTimes,deltaTargetPitch,smoothed_glo,register_glo,register_loc, rangeRegisterInSemitones, loccalDynamicRegister)
 
