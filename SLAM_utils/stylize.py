@@ -5,8 +5,8 @@
       - factorGlobality = 0 (completely local)
       - factorGlobality -> inifity (completely global)
    2. adaptation of frequency quantization step size to ranger of register
-   DELTAmin = 0 (full adaptive)
-   DELTAmin = 4 (similar to SLAM)
+   minDELTA = 0 (full adaptive)
+   minDELTA = 4 (similar to SLAM)
 
 """
 import matplotlib
@@ -17,6 +17,9 @@ from SLAM_utils import praatUtil
 from SLAM_utils import swipe
 import os, math
 
+
+minDELTA=4
+factorGlobality = 0.01
 
 def SLAM1(semitones, rangeRegisterInSemitones = 20):
 
@@ -41,7 +44,7 @@ def SLAM1(semitones, rangeRegisterInSemitones = 20):
         smooth = semitones
 
     numQuantizationRegions = 5
-    minDELTA=1#4.0 #debug
+    #minDELTA=4#4.0 #debug
     DELTA = max(rangeRegisterInSemitones / numQuantizationRegions,minDELTA)
     #print("SLAM1: DELTA=",DELTA)#debug
     delta = DELTA / 2
@@ -101,7 +104,7 @@ def SLAM2(semitones, reference):
     return (style,smooth)
 
 
-def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register, register_loc,figIn,support,rangeRegisterInSemitones, is_new_support=True ):
+def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register, register_loc,figIn,support,rangeRegisterInSemitones,alpha, is_new_support=True ):
 
     # parameters
     num_time_partitions_per_target = 3
@@ -138,8 +141,8 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     linewidth_Style2=1*2
     linewidth_pitch=linewidth_smooth
     # define the softness of boundelines of ranger of register 
-    alphaGlo = 2
-    alphaLoc = 2
+    alphaGlo = alpha
+    alphaLoc = alpha
     
     fig = figIn
     ax = fig.gca()
@@ -175,8 +178,9 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     
     ax.grid(b=True,which='major', axis='x',color=color_RelGrid_Major,linestyle=linestyle_RelGrid_Major,linewidth=linewidth_RelGrid_Major)
     ax.grid(b=True,which='minor', axis='x',color=color_RelGrid_Minor,linestyle=linestyle_RelGrid_Minor,linewidth=linewidth_RelGrid_Minor)
-    minDELTA=1#4.0 #debug
+    #minDELTA=4#4.0 #debug
     DELTA = max(rangeRegisterInSemitones / 5,minDELTA)
+    #print("show_styl.: DELTA=",DELTA)
     yticks_major=\
     [-3*DELTA,\
     -2.5*DELTA, \
@@ -189,15 +193,22 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     #[-10,-6,-2,2,6,10]
     yticks_minor=[-2*DELTA,-DELTA,0, DELTA,2*DELTA]
     #yticks_minor=[-8,-4,0,4,8]
-    ticks2style={yticks_minor[2]:'m',yticks_minor[1]:'l',yticks_minor[0]:'L',yticks_minor[3]:'h',yticks_minor[4]:'H'}
+    #ticks2style={yticks_minor[2]:'m',yticks_minor[1]:'l',yticks_minor[0]:'L',yticks_minor[3]:'h',yticks_minor[4]:'H'}
+    #def findlabel(ytick, yticks_minor):
+    #      labs = ['L','l','m','h','H']
+    #      return labs[np.argmin(abs(np.array(yticks_minor) - ytick))]
+          
     #{0:'m',-4:'l',-8:'L',4:'h',8:'H'}
     ytick2labels_major = ['{:.0f} Hz'.format(register*semitone2hz(y)) for y in yticks_major]
     ytick2labels_minor = ['{:.0f}'.format(register*semitone2hz(y)) for y in yticks_minor]
     if is_new_support:
+          #print('show_styl. yticks_major=',yticks_major)#debug
+          #print('show_styl. yticks_minor=',yticks_minor)#debug
           ax.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks_major))
           ax.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
           ax.set_yticklabels(ytick2labels_major,minor=False)
           ax.set_yticklabels(ytick2labels_minor,minor=True)
+          
     tot_yticks = np.concatenate((yticks_major,yticks_minor))
     ylim = [min(tot_yticks),max(tot_yticks)]
     pl.ylim(ylim)
@@ -398,22 +409,26 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     """
     
     # make 2nd freauency axis
+    # bug (solved by add synchronization): when support = target, this axis sffuers of an offset !!!
     if is_new_support:
           ax2 = ax.twinx()
+          ax2.set_ylim(ax.get_ylim()) # synchronize two y-axis
           # move the second axis to background
           yticklabels_major = ['{:.2f}'.format(f) for f in yticks_major]
-          yticklabels_minor = ['{:.2f}'.format(f) for f in yticks_minor]
+          yticklabels_minor = ['L','l','m','h','H'] #['{:.2f}'.format(f) for f in yticks_minor]
           ax2.yaxis.set_major_locator(matplotlib.ticker.FixedLocator(yticks_major))
           ax2.yaxis.set_minor_locator(matplotlib.ticker.FixedLocator(yticks_minor))
           ax2.set_yticklabels(yticklabels_major,minor=False)
-          ax2.set_yticklabels([ticks2style[tick]for tick in yticks_minor],minor=True,color=color_style_styl,fontweight='semibold')
+          #print('show_styl. yticks_major=',yticks_major)#debug
+          #print('show_styl. yticks_minor=',yticks_minor)#debug
+          ax2.set_yticklabels(yticklabels_minor,minor=True,color=color_style_styl,fontweight='semibold')
           ax2.set_ylabel('Frequencey Relative to Global Register (semitones)')
-    
+
     # support label
     if is_new_support:
       key_of_register = register  
       #supp_mark += ', key: {:.0f} Hz, range: {:.0f} Hz'.format(key_of_register, range_of_register)
-      text_key_range = 'Global Key: {:.0f} Hz, Global Range: {:.0f} Hz'.format(key_of_register, range_of_register)
+      text_key_range = 'Global Key: {:.0f} Hz, Global Range: {:.0f} Hz, DELTA = {} (semitones), alpha = {:4.2f}'.format(key_of_register, range_of_register, DELTA,alpha)
       ax.annotate(text_key_range,xy=(0.5,1.025),xycoords='axes fraction',fontsize=11,fontweight='medium',  horizontalalignment='center',fontstyle='italic')
       
       #lines = lns3+lns3p+lns2+lns0+lnst6+lnst5
@@ -525,7 +540,11 @@ def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunct
 
 """
 
-def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction1=SLAM1, stylizeFunction2=SLAM2):
+def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunction1=SLAM1, stylizeFunction2=SLAM2):
+
+    # skip unlabeled
+    if targetIntv.mark()=='_': #or (all ([i for i in supportIntvs]) == '_'):
+      return None
 
     #get stylization for an object that implements the xmin() and xmax() methods.
     [targetTimes,targetPitch] = intv2pitch(targetIntv,inputPitch)
@@ -553,7 +572,7 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction1=
               #estimate register using Hann window
               loccalDynamicRegister = 0.0
               sumOfWeights = 0.0
-              factorGlobality = 0.01
+              #factorGlobality = 0.01
               targetTimeCenter = targetTimes[len(targetTimes)//2]
               halfwidthOfSupport = max(\
                   targetTimeCenter - supportTimes[0] + 1,\
@@ -593,7 +612,7 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction1=
     pitchOverSupportInHz = supportPitch
     register_glo = semitone2hz(np.mean(hz2semitone(supportPitch))) # debug
     rangeRegisterInSemitones = \
-    rangeRegisterFunc(pitchOverSupportInHz, keyRegiserInHz = register_glo, alpha = 2.0)
+    rangeRegisterFunc(pitchOverSupportInHz, keyRegiserInHz = register_glo, alpha = alpha)
     
     #print('show_sty.:rangeRegisterInSemitones=',rangeRegisterInSemitones)#debug
     deltaTargetPitch = [(hz2semitone(pitch) - hz2semitone(register_glo)) for pitch in targetPitch]
@@ -602,7 +621,7 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,stylizeFunction1=
     deltaTargetPitch2 = [(hz2semitone(pitch) - hz2semitone(loccalDynamicRegister)) for pitch in targetPitch]
     (style_loc,smoothed_loc) = stylizeFunction1(deltaTargetPitch2,rangeRegisterInSemitones)
     
-    print('stylizeObj.:',style_glo,style_loc)#debug
+    #print('stylizeObj.:',style_glo,style_loc)#debug
     
     return (style_glo,style_loc,targetTimes,deltaTargetPitch,smoothed_glo,register_glo,register_loc, rangeRegisterInSemitones, loccalDynamicRegister)
 
@@ -646,9 +665,11 @@ def getSupportIntvs(targetIntv,supportTier):
       # it can occur that 2+ intervals carry the same label, return all
       # these sub-intervals to be complete
       intvs = [intv for intv in supportIntvs if intv.mark() == bestLabel]
-      print('getSupportIntvs:targetIntv:(xmin,xmax)=',targetIntv.xmin(),targetIntv.xmax())#debug
+      #print('getSupportIntvs:targetIntv:(xmin,xmax)=',targetIntv.xmin(),targetIntv.xmax())#debug
+      """
       for intv in intvs:
             print('getSupportIntvs:SupportIntv:(xmin,xmax)=',intv.xmin(),intv.xmax())#debug
+      """
       return intvs
                     
 def printIntv(intv):

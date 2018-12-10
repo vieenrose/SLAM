@@ -54,14 +54,16 @@ display & export:
 
 timeStep = .001 #in seconds, step for swipe pitch analysis
 voicedThreshold = 0.2 #for swipe
+alpha = 1 # for ranger of register
+
 
 #Tiers for the speaker and the target intervals, put your own tier names
 speakerTier= 'Macro'
-targetTier = 'syllabe'
+targetTier = 'pivot'
 
 #display and exportation
-examplesDisplayCount = 5 #number of example plots to do. Possibly 0
-minLengthDisplay = 1 #min number of f0 points for an interval to be displayed
+examplesDisplayCount = 3 #number of example plots to do. Possibly 0
+minLengthDisplay = 30 #min number of f0 points for an interval to be displayed
 exportFigures = True
 
 
@@ -179,8 +181,11 @@ while tgFiles:
         continue
 
     print 'Computing average register for each speaker' 
-    registers = stylize.averageRegisters(inputPitch, tg[speakerTier])
-    
+    #debug
+    try:
+        registers = stylize.averageRegisters(inputPitch, tg[speakerTier])
+    except:
+        continue
     
     print 'Stylizing each interval of the target tier'
 
@@ -211,7 +216,7 @@ while tgFiles:
             stylize.stylizeObject(\
             targetIntv = targetIntv, supportIntvs = supportIntvs,\
             inputPitch = inputPitch,\
-            registers = registers)
+            registers = registers, alpha=alpha)
         except TypeError:
             #print('Info. skip {}'.format(targetIntv.mark()))
             continue
@@ -240,8 +245,16 @@ while tgFiles:
                 smooth_total = np.concatenate((smooth_total,smooth_hz))
                 time_total = np.concatenate((time_total,targetTimes))
             
-        stylesGlo += [style_glo]
-        stylesDynLoc += [style_loc]
+        # for experiments only: we filter only support as marked PreN which means
+        # 'left-dislocation' in the model of Rhaspodie
+        LaeblOnSupport = supportIntvs[0].mark()
+        keyword = 'PreN'
+        labelWanted = False
+        if LaeblOnSupport[:len(keyword)] == keyword:
+            labelWanted = True
+            #print('main: included support label = ', LaeblOnSupport)#debug
+            stylesGlo += [style_glo]
+            stylesDynLoc += [style_loc]
             
         #then add an interval with that style to the (new) style tier
         newInterval = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(), style_glo)
@@ -250,8 +263,8 @@ while tgFiles:
         newTierLoc.append(newIntervalLoc)
         
         #compute figure either for examples or for export in PDF file
-        if (len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount) \
-            or exportFigures:
+        if ((len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount) \
+            or exportFigures) and labelWanted:
                   
             is_new_support = True
             # compute a new support if needed
@@ -288,7 +301,7 @@ while tgFiles:
                   support=support,\
                   time_org=targetTimes,\
                   figIn=fig, is_new_support=is_new_support,
-                  rangeRegisterInSemitones = rangeRegisterInSemitones)
+                  rangeRegisterInSemitones = rangeRegisterInSemitones, alpha=alpha)
 
     #done, now writing tier into textgrid and saving textgrid
     print 'Saving computed styles in file %s'%outputTextgridFile
@@ -329,15 +342,15 @@ for i,styles in enumerate([stylesGlo,stylesDynLoc]):
       total = float(sum(unsorted_values))
       L = min(len(count.keys()),20)
       print """
-      ------------------------------------------------------------------
-      SLAM analysis overall summary:
-      ------------------------------------------------------------------
-      - %d intervals to stylize.
-      - %d intervals with a non empty style (others are unvoiced)
-      - %d resulting styles appearing in total
-      - %d resulting nonnegligible styles (appearing more than 0.5%% of the time)
-      ------------------------------------------------------------------
-      - The %d most important nonnegligible styles along with their frequency are:"""%(
+------------------------------------------------------------------
+SLAM analysis overall summary:
+------------------------------------------------------------------
+- %d intervals to stylize.
+- %d intervals with a non empty style (others are unvoiced)
+- %d resulting styles appearing in total
+- %d resulting nonnegligible styles (appearing more than 0.5%% of the time)
+------------------------------------------------------------------
+- The %d most important nonnegligible styles along with their frequency are:"""%(
       totalN,                                                                                 
       len(styles),
       len(set(styles)),
@@ -349,10 +362,10 @@ for i,styles in enumerate([stylesGlo,stylesDynLoc]):
           print '\t%s\t:\t%4.2f%% (%d occurrences)'%(styleName,count[styleName]/total*100.0,count[styleName])
       print '''
 
-      x------------------------------------------x---------------------x
-      | explained proportion of the observations | number of styles    |
-      |         (percents)                       |                     |
-      x------------------------------------------x---------------------x'''
+x------------------------------------------x---------------------x
+| explained proportion of the observations | number of styles    |
+|         (percents)                       |                     |
+x------------------------------------------x---------------------x'''
 
       cumulative_values = np.cumsum(sorted_values)
       cumulative_values = cumulative_values/float(cumulative_values[-1])
