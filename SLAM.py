@@ -56,8 +56,8 @@ timeStep = .001 #in seconds, step for swipe pitch analysis
 voicedThreshold = 0.2 #for swipe
 
 #Tiers for the speaker and the target intervals, put your own tier names
-speakerTier= 'Biola-IP' 
-targetTier = 'mot'
+speakerTier= 'Macro'
+targetTier = 'syllabe'
 
 #display and exportation
 examplesDisplayCount = 5 #number of example plots to do. Possibly 0
@@ -104,7 +104,8 @@ if len(change):
   
   
 #all styles, for statistics
-styles = []
+stylesGlo = []
+stylesDynLoc = []
 totalN=0
 
 #seperate input files into tgFiles and srcFiles
@@ -149,8 +150,10 @@ while tgFiles:
         speakerTier=raw_input('Type the tier name indicating speaker/support Tier (or any categorizing variable):')
         
     #create interval tier for output
-    newTier = TextGrid.IntervalTier(name = '%sStyle'%targetTier, 
-                  xmin = tg[targetTier].xmin(), xmax=tg[targetTier].xmax())    
+    newTier = TextGrid.IntervalTier(name = '%sStyleGlo'%targetTier, 
+                  xmin = tg[targetTier].xmin(), xmax=tg[targetTier].xmax()) 
+    newTierLoc = TextGrid.IntervalTier(name = '%sStyleLoc'%targetTier, 
+                  xmin = tg[targetTier].xmin(), xmax=tg[targetTier].xmax()) 
             
     #Create swipe object from wave file or external PitchTier file
     inputPitch = None
@@ -213,11 +216,14 @@ while tgFiles:
             #print('Info. skip {}'.format(targetIntv.mark()))
             continue
             
-        style = style_glo #debug
-        if len(style) <2: 
-              print('Error: style invalide {}'.format(style))
+        #style = style_glo #debug
+        if len(style_glo) <2 : 
+              print('Error: style invalide {}'.format(style_glo))
               continue
-            
+        if len(style_loc) <2 : 
+              print('Error: style invalide {}'.format(style_loc))
+              continue
+                
         # debug
         """
         stylize.printIntv(supportIntv)
@@ -234,11 +240,14 @@ while tgFiles:
                 smooth_total = np.concatenate((smooth_total,smooth_hz))
                 time_total = np.concatenate((time_total,targetTimes))
             
-        styles += [style] 
+        stylesGlo += [style_glo]
+        stylesDynLoc += [style_loc]
             
         #then add an interval with that style to the (new) style tier
-        newInterval = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(), style)
-        newTier.append(newInterval)    
+        newInterval = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(), style_glo)
+        newTier.append(newInterval)  
+        newIntervalLoc = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(), style_loc)
+        newTierLoc.append(newIntervalLoc)
         
         #compute figure either for examples or for export in PDF file
         if (len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount) \
@@ -284,6 +293,7 @@ while tgFiles:
     #done, now writing tier into textgrid and saving textgrid
     print 'Saving computed styles in file %s'%outputTextgridFile
     tg.append(newTier)
+    tg.append(newTierLoc)
     tg.write(outputTextgridFile)
     print 'Exporting smoothed pitchs in Binary PitchTierfile %s'%outputPitchTierFile
     praatUtil.writeBinPitchTier(outputPitchTierFile,time_total,smooth_total)
@@ -293,59 +303,62 @@ while tgFiles:
 
 #Now output statistics
 #---------------------
-count = {}
-for unique_style in set(styles):
-    if not len(unique_style):continue
-    count[unique_style] = styles.count(unique_style)
+labs = ['stylesGlo','stylesDynLoc']
+for i,styles in enumerate([stylesGlo,stylesDynLoc]):
+      print('style name:{}'.format(labs[i]))
+      count = {}
+      for unique_style in set(styles):
+          if not len(unique_style):continue
+          count[unique_style] = styles.count(unique_style)
 
 
-#valeurs triees par importance decroissante
-unsorted_values = np.array(count.values())
-nbStylesRaw = len(unsorted_values)
-total = float(sum(unsorted_values))
+      #valeurs triees par importance decroissante
+      unsorted_values = np.array(count.values())
+      nbStylesRaw = len(unsorted_values)
+      total = float(sum(unsorted_values))
 
-#remove styles that appear less than 0.5 percents of the time
-for style in count.keys():
-    if count[style]/total < 0.005: del count[style]
+      #remove styles that appear less than 0.5 percents of the time
+      for style in count.keys():
+          if count[style]/total < 0.005: del count[style]
 
-unsorted_values = np.array(count.values())
-stylesNames = count.keys()
-argsort = np.argsort(unsorted_values)[::-1] # from most to less important
-sorted_values = unsorted_values[argsort]
+      unsorted_values = np.array(count.values())
+      stylesNames = count.keys()
+      argsort = np.argsort(unsorted_values)[::-1] # from most to less important
+      sorted_values = unsorted_values[argsort]
 
-total = float(sum(unsorted_values))
-L = min(len(count.keys()),20)
-print """
-------------------------------------------------------------------
-SLAM analysis overall summary:
-------------------------------------------------------------------
-- %d intervals to stylize.
-- %d intervals with a non empty style (others are unvoiced)
-- %d resulting styles appearing in total
-- %d resulting nonnegligible styles (appearing more than 0.5%% of the time)
-------------------------------------------------------------------
-- The %d most important nonnegligible styles along with their frequency are:"""%(
-totalN,                                                                                 
-len(styles),
-len(set(styles)),
-len(count),
-L)
-styleNames=sorted(count,key=count.get)
-styleNames.reverse()
-for styleName in styleNames[:L]:
-    print '\t%s\t:\t%4.2f%% (%d occurrences)'%(styleName,count[styleName]/total*100.0,count[styleName])
-print '''
+      total = float(sum(unsorted_values))
+      L = min(len(count.keys()),20)
+      print """
+      ------------------------------------------------------------------
+      SLAM analysis overall summary:
+      ------------------------------------------------------------------
+      - %d intervals to stylize.
+      - %d intervals with a non empty style (others are unvoiced)
+      - %d resulting styles appearing in total
+      - %d resulting nonnegligible styles (appearing more than 0.5%% of the time)
+      ------------------------------------------------------------------
+      - The %d most important nonnegligible styles along with their frequency are:"""%(
+      totalN,                                                                                 
+      len(styles),
+      len(set(styles)),
+      len(count),
+      L)
+      styleNames=sorted(count,key=count.get)
+      styleNames.reverse()
+      for styleName in styleNames[:L]:
+          print '\t%s\t:\t%4.2f%% (%d occurrences)'%(styleName,count[styleName]/total*100.0,count[styleName])
+      print '''
 
-x------------------------------------------x---------------------x
-| explained proportion of the observations | number of styles    |
-|         (percents)                       |                     |
-x------------------------------------------x---------------------x'''
+      x------------------------------------------x---------------------x
+      | explained proportion of the observations | number of styles    |
+      |         (percents)                       |                     |
+      x------------------------------------------x---------------------x'''
 
-cumulative_values = np.cumsum(sorted_values)
-cumulative_values = cumulative_values/float(cumulative_values[-1])
+      cumulative_values = np.cumsum(sorted_values)
+      cumulative_values = cumulative_values/float(cumulative_values[-1])
 
-for P in [70, 75, 80, 85, 90, 95, 99]:
-    N = np.nonzero(cumulative_values>float(P)/100.0)[0][0]+1
-    print '|                %2.0f                        |         %2.0f          |'%(P,N)
-print 'x------------------------------------------x---------------------x'
-    
+      for P in [70, 75, 80, 85, 90, 95, 99]:
+          N = np.nonzero(cumulative_values>float(P)/100.0)[0][0]+1
+          print '|                %2.0f                        |         %2.0f          |'%(P,N)
+      print 'x------------------------------------------x---------------------x'
+          

@@ -633,6 +633,7 @@ def getSupportIntvs(targetIntv,supportTier):
 
       trgt,spprt = targetIntv,supportTier #alias
       supportIntvs = tg.getMatchingIntervals([trgt],spprt,strict=False,just_intersection=True)
+      if not supportIntvs: return supportIntvs
       labels = [intv.mark() for intv in supportIntvs]
       labelsCount = dict((label,labels.count(label)) for label in set(labels))
       bestLabel = max(labelsCount,key=labelsCount.get)
@@ -645,6 +646,9 @@ def getSupportIntvs(targetIntv,supportTier):
       # it can occur that 2+ intervals carry the same label, return all
       # these sub-intervals to be complete
       intvs = [intv for intv in supportIntvs if intv.mark() == bestLabel]
+      print('getSupportIntvs:targetIntv:(xmin,xmax)=',targetIntv.xmin(),targetIntv.xmax())#debug
+      for intv in intvs:
+            print('getSupportIntvs:SupportIntv:(xmin,xmax)=',intv.xmin(),intv.xmax())#debug
       return intvs
                     
 def printIntv(intv):
