@@ -16,7 +16,7 @@
 
 
 # -*- coding: utf-8 -*-
-""""
+"""
 #####################################################################
 Automatic Stylizer.
 #####################################################################
@@ -54,16 +54,15 @@ display & export:
 
 timeStep = .001 #in seconds, step for swipe pitch analysis
 voicedThreshold = 0.2 #for swipe
-alpha = 1 # for ranger of register
-
+alpha = 1 # for register ranger estimation
 
 #Tiers for the speaker and the target intervals, put your own tier names
-speakerTier= 'Macro'
-targetTier = 'pivot'
+speakerTier= 'UI'
+targetTier = 'Macro'
 
 #display and exportation
 examplesDisplayCount = 3 #number of example plots to do. Possibly 0
-minLengthDisplay = 30 #min number of f0 points for an interval to be displayed
+minLengthDisplay = 1 #min number of f0 points for an interval to be displayed
 exportFigures = True
 
 
@@ -78,9 +77,6 @@ import matplotlib.backends.backend_pdf as pdfLib
 import matplotlib.pylab as pl
 import SLAM_utils.TextGrid as tgLib
 
-
-
-              
 change = raw_input("""
 Current parameters are:
   tier to use for categorizing registers : %s
@@ -102,9 +98,7 @@ if len(change):
     if len(new):examplesDisplayCount=int(new)
     new = raw_input('export figures in PDF file (empty = keep %d) : '%examplesDisplayCount)
     if len(new):exportFigures=int(new)
-    
-  
-  
+
 #all styles, for statistics
 stylesGlo = []
 stylesDynLoc = []
@@ -218,25 +212,15 @@ while tgFiles:
             inputPitch = inputPitch,\
             registers = registers, alpha=alpha)
         except TypeError:
-            #print('Info. skip {}'.format(targetIntv.mark()))
             continue
-            
-        #style = style_glo #debug
-        if len(style_glo) <2 : 
-              print('Error: style invalide {}'.format(style_glo))
+
+        if len(style_glo) <2 :
+              print('Error: global style invalide {}'.format(style_glo))
               continue
-        if len(style_loc) <2 : 
-              print('Error: style invalide {}'.format(style_loc))
+        if len(style_loc) <2 :
+              print('Error: local style invalide {}'.format(style_loc))
               continue
-                
-        # debug
-        """
-        stylize.printIntv(supportIntv)
-        stylize.printIntv(targetIntv)
-        print(['reference(Hz): ',registers[supportIntv.mark()]])
-        print(['style: ',style])
-        """
-            
+
         #prepare exportation of smoothed
         if isinstance(deltaTargetPitchSmooth, (np.ndarray,list)):
             if len(deltaTargetPitchSmooth)==len(targetTimes):
@@ -244,28 +228,20 @@ while tgFiles:
                 smooth_hz = [stylize.semitone2hz(delta + reference_semitones) for delta in deltaTargetPitchSmooth]
                 smooth_total = np.concatenate((smooth_total,smooth_hz))
                 time_total = np.concatenate((time_total,targetTimes))
-            
-        # for experiments only: we filter only support as marked PreN which means
-        # 'left-dislocation' in the model of Rhaspodie
-        LaeblOnSupport = supportIntvs[0].mark()
-        keyword = 'PreN'
-        labelWanted = False
-        if LaeblOnSupport[:len(keyword)] == keyword:
-            labelWanted = True
-            #print('main: included support label = ', LaeblOnSupport)#debug
-            stylesGlo += [style_glo]
-            stylesDynLoc += [style_loc]
-            
+
+        stylesGlo += [style_glo]
+        stylesDynLoc += [style_loc]
+
         #then add an interval with that style to the (new) style tier
         newInterval = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(), style_glo)
-        newTier.append(newInterval)  
+        newTier.append(newInterval)
         newIntervalLoc = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(), style_loc)
         newTierLoc.append(newIntervalLoc)
         
         #compute figure either for examples or for export in PDF file
         if ((len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount) \
-            or exportFigures) and labelWanted:
-                  
+            or exportFigures):
+
             is_new_support = True
             # compute a new support if needed
             try: 
@@ -282,12 +258,11 @@ while tgFiles:
                         support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
                   else : # same supporr as the previous linguistic unit
                         is_new_support = False
-                  
+
             except AttributeError: # read a 1st support
                   support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
                   fig.clf()
-                  
-            # #register_loc=reference_loc,\
+
             # draw figure
             fig = pl.gcf()
             fig = stylize.show_stylization(\
@@ -351,7 +326,7 @@ SLAM analysis overall summary:
 - %d resulting nonnegligible styles (appearing more than 0.5%% of the time)
 ------------------------------------------------------------------
 - The %d most important nonnegligible styles along with their frequency are:"""%(
-      totalN,                                                                                 
+      totalN,
       len(styles),
       len(set(styles)),
       len(count),

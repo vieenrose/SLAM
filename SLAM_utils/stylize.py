@@ -1,14 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-   memo: 
-   1. estimation of key of register and reference frequency
-      - factorGlobality = 0 (completely local)
-      - factorGlobality -> inifity (completely global)
-   2. adaptation of frequency quantization step size to ranger of register
-   minDELTA = 0 (full adaptive)
-   minDELTA = 4 (similar to SLAM)
 
-"""
 import matplotlib
 import matplotlib.pylab as pl
 import numpy as np
@@ -18,7 +9,7 @@ from SLAM_utils import swipe
 import os, math
 
 
-minDELTA=4
+minDELTA=3
 factorGlobality = 0.01
 
 def SLAM1(semitones, rangeRegisterInSemitones = 20):
@@ -421,7 +412,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
           ax2.set_yticklabels(yticklabels_major,minor=False)
           #print('show_styl. yticks_major=',yticks_major)#debug
           #print('show_styl. yticks_minor=',yticks_minor)#debug
-          ax2.set_yticklabels(yticklabels_minor,minor=True,color=color_style_styl,fontweight='semibold')
+          #ax2.set_yticklabels(yticklabels_minor,minor=True,color=color_style_styl,fontweight='semibold')
           ax2.set_ylabel('Frequencey Relative to Global Register (semitones)')
 
     # support label
@@ -435,7 +426,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
       lines = lns3+lns3p+lns2+lns0+lnst6+lnst5
       ax2.legend(lines,\
       ['Stylized @ GloReg',\
-      'Stylized @ DynLocReg',\
+      'Stylized @ LocReg',\
        'Smoothed Cleaned Pitch (LOWESS)',\
        'Cleaned Pitch',\
        'Global Register (Key)',\
