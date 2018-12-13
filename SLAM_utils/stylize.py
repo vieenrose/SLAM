@@ -276,26 +276,6 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
             style_pitch.insert(1,max([f_p,f_i+DELTA/2.0,f_f+DELTA/2.0]))
         return style_intv,style_pitch
     
-    """    
-    def style2pitch2(style,xmin,xmax, yoffset=0):
-        alphabet2semitones = {'H': 4, 'h':2 , 'm': 0, 'l' : -2, 'L' : -4} 
-        
-        def relativePos2time(Pos, interval): 
-            return interval[0] + (int(Pos) - .5) / 3 * (interval[-1]-interval[0])
-        f_i = alphabet2semitones[style[0]]+yoffset
-        f_f = alphabet2semitones[style[1]]+yoffset
-              
-        style_intv = [xmin,xmax]
-        style_pitch = [f_i,f_f]
-        if len(style) >=4:
-            f_p = alphabet2semitones[style[2]]+yoffset
-            t_p = relativePos2time(style[3],[xmin,xmax])
-            #print(style_intv)
-            style_intv.insert(1,t_p)
-            #print(style_intv)
-            style_pitch.insert(1,max([f_p,f_i+2,f_f+2]))
-        return style_intv,style_pitch
-    """
         
     #register_loc = register*semitone2hz(np.mean(smooth)) #debug
     #print('show_sty.: register_loc=',register_loc)
@@ -448,100 +428,6 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
        
     # let us make the figure!
     return fig
-
-"""
-def stylizeObject(target,swipeFile, speakerTier=None,registers=None,stylizeFunction=SLAM1,estimate_mode=1):
-
-    targetIntv = target
-
-    #get stylization for an object that implements the xmin() and xmax() methods.
-    [times_C,pitchs_C] = intv2pitch(target,swipeFile)
-
-    #skipping interval (unvoiced)
-    if len(pitchs_C)<2: return ('_',[],[],[],[],[],[])
-
-    #get corresponding interval in the speaker (i.e. support) tier
-    [optSpeaker,optIntv, candiateIntvs] = getMaxMatchIntv([targetIntv],speakerTier)
-
-    speaker = optSpeaker
-    speakers_intervals=candiateIntvs
-
-    #if estimate_mode == 2:
-    if True:
-        print('========== EXPERIMENT START ====')
-        #get temporal indices
-        #for target
-        imin,imax = swipeFile.time_bisect(target.xmin(),target.xmax())
-        if imin < imax: upper_bound = imax
-        else: upper_bound = imax + 1
-        target_int = range(imin,upper_bound)
-        #for support
-        support_int = []
-        for i in speakers_intervals:
-            if i.mark() == speaker:
-                imin,imax = swipeFile.time_bisect(i.xmin(),i.xmax())
-                if imin < imax: upper_bound = imax
-                else: upper_bound = imax + 1
-                support_int += range(imin,upper_bound)
-        #get the temporal index of
-        #the center of intersection of the support and the target
-        inter = list(set(target_int) & (set(support_int)))
-        center = inter[len(inter) // 2]
-
-        #estimate register using Hann window
-        r = 0.0
-        c = 0.0
-        half_width = max(center - support_int[0] + 1, support_int[-1] - center + 1)
-        for t in support_int:
-            #compute a Hann window
-            w = 0.0
-            #convoluate it with a rectangular function with its support as our target
-            for center_mobile in inter:
-                w += (np.cos(np.pi / 2.0 / float(half_width) * (t - center_mobile))) ** 2
-            #w = 1 #debug: constant window
-            r += w * swipeFile.pitch[t]
-            c += w
-        if c: r = r / c # normalization
-
-    #get corresponding register value
-    if not registers:
-        #if a speaker tier is provided and registers is not already computed,
-        #compute it.
-        registers = averageRegisters(swipeFile,speakerTier)
-
-    if speaker:
-        #reference is the value of the registers for this speaker
-        reference = registers[speaker]
-        if not reference: return ('',[],[],[],[],[],[]) #bugfix
-    else: #speaker == None
-        if not is_numeric_paranoid(registers):
-            print('WARNING : no speaker tier provided and reference is not numeric ! not stylizing.')
-            return ('',[],[],[],[],[],[])
-        #no speaker/support tier was provided, registers is only the average f0
-        reference = registers
-
-    if estimate_mode == 2:
-        try:
-            print('(new register, old register,diff): ({},{},{})'.format(r,reference, abs(r-reference)))
-        except:
-            print('(new register, old register): ({},{})'.format(r,reference))
-            print(registers)
-            exit(1)
-        reference = r
-        print('========== EXPERIMENT END ======')
-
-
-    #delta with reference in semitones
-    delta_pitchs_C = [(hz2semitone(pitch) - hz2semitone(reference)) for pitch in pitchs_C]
-    (style,smoothed) = stylizeFunction(delta_pitchs_C,tier=target,register=reference)
-
-    smoothed_out = [cent2hz((100*delta + hz2cent(reference))) for delta in smoothed]
-    #print(reference)
-    supportIntv = intv2pitch(optIntv,swipeFile)
-    supportIntv.append(optIntv.mark())
-    return (style,delta_pitchs_C,smoothed,times_C, smoothed_out, reference,supportIntv)
-
-"""
 
 def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunction1=SLAM1, stylizeFunction2=SLAM2):
 
@@ -748,25 +634,7 @@ def relst2register(semitones, DELTA = 4):
         elif st < -1.5 * DELTA  : result.append('L')
     return result
     
-"""
- def style2pitch(style,xmin,xmax, yoffset=0):
-        alphabet2semitones = {'H': 8, 'h': 4, 'm': 0, 'l' : -4, 'L' : -8} 
-        
-        def relativePos2time(Pos, interval): 
-            return interval[0] + (int(Pos) - .5) / 3 * (interval[-1]-interval[0])
-        f_i = alphabet2semitones[style[0]]+yoffset
-        f_f = alphabet2semitones[style[1]]+yoffset
-              
-        style_intv = [xmin,xmax]
-        style_pitch = [f_i,f_f]
-        if len(style) >=4:
-            f_p = alphabet2semitones[style[2]]+yoffset
-            t_p = relativePos2time(style[3],[xmin,xmax])
-            #print(style_intv)
-            style_intv.insert(1,t_p)
-            #print(style_intv)
-            style_pitch.insert(1,max([f_p,f_i+2,f_f+2]))
-"""
+
 def register2relst(style, DELTA = 4):
       st = []
       #print ('register2relst:',DELTA,style) #debug
@@ -779,13 +647,7 @@ def register2relst(style, DELTA = 4):
             else           : st.append(c)
       return st
       
-"""
-stat_max_freq = np.percentile(supp_org, 100-alphaGlo)
-        stat_min_freq = np.percentile(supp_org, alphaGlo)
-        range_of_register = \
-            register *(semitone2hz(stat_max_freq)) - \
-            register *(semitone2hz(stat_min_freq))
-"""
+
 def rangeRegisterFunc(pitchOverSupportInHz, keyRegiserInHz, alpha = 2.0):
       pitchOverSupportInSemitones = hz2semitone(pitchOverSupportInHz) - hz2semitone(keyRegiserInHz)
       minFreqInSemitones = np.percentile(pitchOverSupportInSemitones,       alpha)

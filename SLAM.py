@@ -52,13 +52,13 @@ display & export:
 #####################################################################"""
 
 
-timeStep = .001 #in seconds, step for swipe pitch analysis
+timeStep = .01 #in seconds, step for swipe pitch analysis
 voicedThreshold = 0.2 #for swipe
 alpha = 1 # for register ranger estimation
 
 #Tiers for the speaker and the target intervals, put your own tier names
-speakerTier= 'locuteur'
-targetTier = 'syll'
+speakerTier= 'periode'
+targetTier = 'pivot'
 
 #display and exportation
 examplesDisplayCount = 1000 #number of example plots to do. Possibly 0
@@ -242,41 +242,10 @@ while tgFiles:
         newTierLoc.append(newIntervalLoc)
 
         #compute figure either for examples or for export in PDF file
-        """
-        if ((len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount) \
-            or exportFigures):
-
-            #print("ploting") #debug
-           
-            # compute a new support if needed
-            try:  
-                  #print("ploting") #debug
-                  if (support.label != supportIntvs[0].mark()): 
-                        is_new_support = True
-                        # show and save figure before process the next support
-                        #display figures on the screen
-                        #print("ploting") #debug
-                        if len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount:
-                              #print("ploting") #debug
-                              pl.show()
-                              examplesDisplayCount-=1
-                        #export figures in PDF
-                        if exportFigures:
-                              pdf.savefig(fig)
-                        fig.clf()
-                        support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
-                  else : # same supporr as the previous linguistic unit
-                        is_new_support = False
-
-            except AttributeError: # read a 1st support
-                  support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
-                  fig.clf()
-            """
-      
         if support != None:
-            supportPreviousLabel = support.label
+            supportPreviousXmin = support.time[0]
             support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
-            is_new_support = (support.label != supportPreviousLabel) 
+            is_new_support = (support.time[0] != supportPreviousXmin)
             
             if exportFigures and is_new_support and haveImgInbuf:
                   pdf.savefig(fig)
@@ -284,13 +253,10 @@ while tgFiles:
                   fig.clf()
                   haveImgInbuf = False
         else :
-            supportPreviousLabel = None
+            supportPreviousXmin = None
             support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
             is_new_support = True
 
-        #print('main: draw {}'.format(support.label))# debug
-        #print('styleGlo',style_glo)
-        #print('styleLoc',style_loc)
         # draw figure
         try:
               fig = pl.gcf()
@@ -310,10 +276,7 @@ while tgFiles:
 
         except:
               pass
-      
-        #print('is_new_support,exportFigures,haveImgInbuf,pos,')
-        #print(is_new_support,exportFigures,haveImgInbuf,pos)
-        
+              
     if exportFigures and haveImgInbuf:
             pdf.savefig(fig)
             if examplesDisplayCount: pl.show(); examplesDisplayCount-=1
