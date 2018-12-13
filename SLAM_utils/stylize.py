@@ -718,7 +718,7 @@ def hz2semitone(f0_Hz):
 def semitone2hz(semitone):
     return np.double(2.0**(np.double(semitone) / 12.0))
 def sec2msec(sec):
-    return 1000.0 * sec
+    return 1000.0 * np.array(sec)
 
 def relst2register(semitones, DELTA = 4):
     #from relative semitones to register
