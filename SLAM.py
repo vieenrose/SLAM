@@ -61,8 +61,8 @@ speakerTier= 'locuteur'
 targetTier = 'syll'
 
 #display and exportation
-examplesDisplayCount = 1 #number of example plots to do. Possibly 0
-minLengthDisplay = 10 #min number of f0 points for an interval to be displayed
+examplesDisplayCount = 1000 #number of example plots to do. Possibly 0
+#minLengthDisplay = 0 #min number of f0 points for an interval to be displayed
 exportFigures = True
 
 
@@ -97,7 +97,7 @@ if len(change):
     if len(new):targetTier=new
     new = stylize.input_SLAM('number of displays (empty = keep %d) : '%examplesDisplayCount)
     if len(new):examplesDisplayCount=int(new)
-    new = input('export figures in PDF file (empty = keep %d) : '%examplesDisplayCount)
+    new = input('export figures in PDF file (empty = keep %d) : '%exportFigures)
     if len(new):exportFigures=int(new)
 
 #all styles, for statistics
@@ -195,9 +195,11 @@ while tgFiles:
     pl.rcParams["figure.figsize"] = [12,6]
     fig = pl.figure()
     support = None
+    haveImgInbuf = False
     if exportFigures:
         pdf = pdfLib.PdfPages(outputFigureFile)
 
+    #posLimit = len(tg[targetTier])-1
     for pos,targetIntv in enumerate(tg[targetTier]):
         if pos in POSdisplay:
             print('stylizing: %d %%'%(pos/LEN*100.0))
@@ -240,16 +242,22 @@ while tgFiles:
         newTierLoc.append(newIntervalLoc)
 
         #compute figure either for examples or for export in PDF file
+        """
         if ((len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount) \
             or exportFigures):
 
-            is_new_support = True
+            #print("ploting") #debug
+           
             # compute a new support if needed
-            try: 
-                  if support.label != supportIntvs[0].mark(): 
+            try:  
+                  #print("ploting") #debug
+                  if (support.label != supportIntvs[0].mark()): 
+                        is_new_support = True
                         # show and save figure before process the next support
                         #display figures on the screen
+                        #print("ploting") #debug
                         if len(deltaTargetPitch)>=minLengthDisplay and examplesDisplayCount:
+                              #print("ploting") #debug
                               pl.show()
                               examplesDisplayCount-=1
                         #export figures in PDF
@@ -263,10 +271,30 @@ while tgFiles:
             except AttributeError: # read a 1st support
                   support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
                   fig.clf()
+            """
+      
+        if support != None:
+            supportPreviousLabel = support.label
+            support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
+            is_new_support = (support.label != supportPreviousLabel) 
+            
+            if exportFigures and is_new_support and haveImgInbuf:
+                  pdf.savefig(fig)
+                  if examplesDisplayCount: pl.show(); examplesDisplayCount-=1
+                  fig.clf()
+                  haveImgInbuf = False
+        else :
+            supportPreviousLabel = None
+            support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
+            is_new_support = True
 
-            # draw figure
-            fig = pl.gcf()
-            fig = stylize.show_stylization(\
+        print('main: draw {}'.format(support.label))# debug
+        print('styleGlo',style_glo)
+        print('styleLoc',style_loc)
+        # draw figure
+        try:
+              fig = pl.gcf()
+              fig = stylize.show_stylization(\
                   original=deltaTargetPitch,\
                   smooth=deltaTargetPitchSmooth,\
                   style1=style_glo,\
@@ -278,6 +306,19 @@ while tgFiles:
                   time_org=targetTimes,\
                   figIn=fig, is_new_support=is_new_support,
                   rangeRegisterInSemitones = rangeRegisterInSemitones, alpha=alpha)
+              haveImgInbuf = True
+
+        except:
+              pass
+      
+        print('is_new_support,exportFigures,haveImgInbuf,pos,')
+        print(is_new_support,exportFigures,haveImgInbuf,pos)
+        
+    if exportFigures and haveImgInbuf:
+            pdf.savefig(fig)
+            if examplesDisplayCount: pl.show(); examplesDisplayCount-=1
+            fig.clf()
+            haveImgInbuf = False
 
     #done, now writing tier into textgrid and saving textgrid
     print(('Saving computed styles in file %s'%outputTextgridFile))
