@@ -58,7 +58,7 @@ alpha = 1 # for register ranger estimation
 
 #Tiers for the speaker and the target intervals, put your own tier names
 speakerTier= 'UI'
-targetTier = 'Macro'
+targetTier = 'pivot'
 
 #display and exportation
 examplesDisplayCount = 3 #number of example plots to do. Possibly 0
