@@ -6,7 +6,7 @@ import numpy as np
 import SLAM_utils.TextGrid as tg
 from SLAM_utils import praatUtil
 from SLAM_utils import swipe
-import os, math
+import os, math, sys
 
 
 minDELTA=3
@@ -22,8 +22,8 @@ def SLAM1(semitones, rangeRegisterInSemitones = 20):
     if 100<len(semitones) and DOWNSAMPLE_ON: 
         # ? why do a downsampling ?
         # 1.assumed that the signal is of narraowband due to the
-        # the filtering processing by SWIPE
-        # 2.make acceleration
+        # the filtering processing by SWIPE ?
+        # 2.make acceleration ?
         r = int(len(semitones)/100.0)
         semitones = list(np.array(semitones)[::r])
 
@@ -51,6 +51,16 @@ def SLAM1(semitones, rangeRegisterInSemitones = 20):
         style+=str(int(1+math.floor(3*ti[1])))
 
     style = ''.join(style)
+    
+    # debug
+    if not style : 
+          #print('SLAM1: fr', fr); 
+          #print('SLAM1: len(smooth)', len(smooth)); 
+          #print('SLAM1: smooth',smooth)
+          print('SLAM1: semitones', semitones)
+          #exit() #debug
+          pass
+    
     return (style,smooth)
 
 def SLAM2(semitones, reference):
@@ -610,6 +620,8 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunc
     (style_glo,smoothed_glo) = stylizeFunction1(deltaTargetPitch,rangeRegisterInSemitones)
     
     deltaTargetPitch2 = [(hz2semitone(pitch) - hz2semitone(loccalDynamicRegister)) for pitch in targetPitch]
+    
+    #print(np.around(deltaTargetPitch2,decimals=2))#debug
     (style_loc,smoothed_loc) = stylizeFunction1(deltaTargetPitch2,rangeRegisterInSemitones)
     
     #print('stylizeObj.:',style_glo,style_loc)#debug
@@ -703,11 +715,11 @@ def get_basename(file): return os.path.splitext(os.path.basename(file))[0]
 
 #read a PitchTier as swipe file
 class readPitchtier(swipe.Swipe):
-	def __init__(self, file):
-                try:
-		    [self.time, self.pitch] = praatUtil.readBinPitchTier(file)
-                except:
-		    [self.time, self.pitch] = praatUtil.readPitchTier(file)
+    def __init__(self, file):
+        try:
+            [self.time, self.pitch] = praatUtil.readBinPitchTier(file)
+        except:
+            [self.time, self.pitch] = praatUtil.readPitchTier(file)
 
 def hz2cent(f0_Hz):
     return 1200.0*np.log2( np.maximum(1E-5,np.double(f0_Hz) ))
@@ -833,7 +845,7 @@ def identifyThreeEssentialPoints(freq,time=None, thld=2):
     k = (np.array(freq)).argmax()
     maximum = freq[k]
  
-    if all((maximum - np.array(f)) > thld): 
+    if (maximum >= f[0] + thld) and (maximum >= f[-1] + thld): 
           t.insert(1,time[k])
           f.insert(1,maximum)
     return t,f
@@ -857,3 +869,9 @@ def getMaxMatchIntv(target,support):
         optMark = marks[0]
     optIntv = [intv for intv in candidateIntvs if intv.mark() == optMark][0]
     return optMark, optIntv, candidateIntvs
+
+# a simple Python 2/3 compatible input()
+def input_SLAM(inp):
+    vers = sys.version_info.major
+    if vers > 2: return input(inp) # Python 3
+    else: return raw_input(inp) # Python 2

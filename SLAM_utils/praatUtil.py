@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 """
 
 @package praatUtil This module contains some utility functions to seamlessly
@@ -31,57 +31,81 @@ def writeBinPitchTier(fileName, dataX, dataY):
       with open(fileName, "wb") as bin :
             
             # check data lengths
-            if len(dataX) <> len(dataY):
+            if len(dataX) != len(dataY):
                   raise IOError('dataX and dataY should have the same length !')
       
             # metadata & data format
             mdType = numpy.dtype([\
-                  ('header',str, 22),
+                  ('header','S22'),
                   ('xMin','>d'),\
                   ('xMax','>d'),\
                   ('nb','>i4')])
                   
             numpy.array([\
-                  ("ooBinaryFile\x09PitchTier",\
+                  ("ooBinaryFile\tPitchTier",\
                   min(dataX),\
                   max(dataX),\
                   len(dataX))],\
                   dtype=mdType).tofile(bin)
       
-            # read data as 2D-array
+            # write data as 2D-array
             dType = numpy.dtype([('x','>d'),('y','>d')])
-            numpy.array(zip(dataX,dataY),dtype=dType).tofile(bin)
+            dataXY = [(x,y) for x,y in zip(dataX,dataY)]
+            Z = numpy.array(dataXY,dtype=dType)
+            Z.tofile(bin)
+            
+def isGoodMonoWav(fileName):
+    metadataType = numpy.dtype([\
+          ('FileTypeBlocID','S4'),
+          ('FileSize'      ,'i4'),\
+          ('FileFormatID'  ,'S4'),\
+          ('FormatBlocID'  ,'S4'),\
+          ('BlocSize'      ,'i4'),\
+          ('AudioFormat'   ,'i2'),\
+          ('NbrCanaux'     ,'i2'),\
+          ('Frequence'     ,'i4'),\
+          ('BytePerSec'    ,'i4'),\
+          ('BytePerBloc'   ,'i4'),\
+          ('BitsPerSample' ,'i4'),\
+          ('DataBlocID'    ,'S4'),\
+          ('DataSize'      ,'i4')])
+
+    with open(fileName,"rb") as bin :
+        md = numpy.fromfile(bin, dtype=metadataType, count=1)[0]
+
+    FileTypeBlocID = md['FileTypeBlocID'].astype(str)
+    FileFormatID = md['FileFormatID'].astype(str)
+    NbrCanaux = md['NbrCanaux'].astype(int)
+
+    if NbrCanaux > 1: print('Error: Swipe requires monochannel wav but {} contains {} channels !'.format(fileName, NbrCanaux))
+
+    return (FileTypeBlocID == 'RIFF' and FileFormatID == 'WAVE' and NbrCanaux == 1)
 
 def readBinPitchTier(fileName):
-
-      metadata=None
-      dataX=None
-      dataY=None
+      metadataType = numpy.dtype([\
+           ('header','S22'),\
+           ('xMin'  ,'>d'),\
+           ('xMax'  ,'>d'),\
+           ('nb'    ,'>i4')])
+      dataType = numpy.dtype([('x','>d'),('y','>d')])
       with open(fileName, "rb") as bin :
-
-          # metadata & data format
-          mdType = numpy.dtype([\
-          ('header',str, 22),
-          ('xMin','>d'),\
-          ('xMax','>d'),\
-          ('nb','>i4')])
-          dType = numpy.dtype([('x','>d'),('y','>d')])
           try:
-              metadata = numpy.fromfile(bin, dtype=mdType, count=1)
+              # header
+              md = numpy.fromfile(bin, dtype=metadataType, count=1)[0]
               # check file header
-              if not(metadata['header'] == 'ooBinaryFile\x09PitchTier'):
+              header = md['header'].astype(str)
+              nb = md['nb'].astype(int)
+              if header != 'ooBinaryFile\tPitchTier':
                   raise IOError('file header not recongized !')
               # read data as 2D-array
-              data = numpy.fromfile(bin, dtype=dType, count=metadata['nb'])
+              data = numpy.fromfile(bin, dtype=dataType, count=nb)
               # check file end
-              if bin.read() != '':
+              if len(bin.read()) > 0:
                   raise EOFError
           except:
               raise
 
-          dataX = data['x']
-          dataY = data['y']
-          return(dataX, dataY)
+          return(data['x'], data['y'])
 
 def readPitchTier(fileName):
 	"""
