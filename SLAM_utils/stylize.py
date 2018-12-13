@@ -9,10 +9,10 @@ from SLAM_utils import swipe
 import os, math, sys
 
 
-minDELTA=3
+minDELTA=4
 factorGlobality = 0.01
 
-def SLAM1(semitones, rangeRegisterInSemitones = 20):
+def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
 
     DOWNSAMPLE_ON = False
 
@@ -43,14 +43,18 @@ def SLAM1(semitones, rangeRegisterInSemitones = 20):
     delta = DELTA / 2
 
     # identify the three essential points
-    ti,fr=identifyThreeEssentialPoints(smooth, thld=delta)
+    ti,fr=identifyThreeEssentialPoints(smooth, time = time, thld=delta)
     
     # transcript the model in SLAM annotation
     style = relst2register(fr[0], DELTA=DELTA)
     style+= relst2register(fr[-1], DELTA=DELTA)
     if len(fr)>=3:
-        style+=relst2register(fr[1], DELTA=DELTA)
-        style+=str(int(1+math.floor(3*ti[1])))
+        denum = ti[-1] - ti[0]
+        if abs(denum) > 0:
+            tNotmalized = (ti[1] - ti[0]) / denum
+            style += relst2register(fr[1], DELTA=DELTA)
+            positionId = int(math.ceil(3*tNotmalized))
+            style+= str(positionId)
 
     style = ''.join(style)
     
@@ -64,48 +68,6 @@ def SLAM1(semitones, rangeRegisterInSemitones = 20):
           pass
     
     return (style,smooth)
-
-def SLAM2(semitones, reference):
-
-    DOWNSAMPLE_ON = False
-
-    #this takes a sequence of semitones and applies the SLAM1 stylization
-
-    #first, smooth the semitones curves using LOWESS
-    if 100<len(semitones) and DOWNSAMPLE_ON: 
-        # ? why do a downsampling ?
-        # 1.assumed that the signal is of narraowband due to the
-        # the filtering processing by SWIPE
-        # 2.make acceleration
-        r = int(len(semitones)/100.0)
-        semitones = list(np.array(semitones)[::r])
-
-    t = np.array(range(len(semitones)))/float(len(semitones))
-    if 10<len(semitones):
-        import SLAM_utils.lowess as lowess
-        smooth = lowess.lowess(t,semitones)
-    else:
-        smooth = semitones
-
-    # identify the three essential points
-    ti,fr=identifyThreeEssentialPoints(smooth,thld=1)
-    
-    #style=''
-    # local register
-    style= relst2register(reference)
-    #print('style',style)#debug
-    
-    # transcript the model in SLAM2 annotation
-    style += relst2register2(fr[0])
-    style+= relst2register2(fr[-1])
-    
-    if len(fr)>=3:
-        style+=relst2register2(fr[1])
-        style+=str(int(1+math.floor(3*ti[1])))
-
-    style = ''.join(style)
-    return (style,smooth)
-
 
 def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register, register_loc,figIn,support,rangeRegisterInSemitones,alpha, is_new_support=True ):
 
@@ -429,7 +391,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     # let us make the figure!
     return fig
 
-def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunction1=SLAM1, stylizeFunction2=SLAM2):
+def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunction1=SLAM1, stylizeFunction2=SLAM1):
 
     # skip unlabeled
     if targetIntv.mark()=='_': #or (all ([i for i in supportIntvs]) == '_'):
@@ -505,12 +467,12 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunc
     
     #print('show_sty.:rangeRegisterInSemitones=',rangeRegisterInSemitones)#debug
     deltaTargetPitch = [(hz2semitone(pitch) - hz2semitone(register_glo)) for pitch in targetPitch]
-    (style_glo,smoothed_glo) = stylizeFunction1(deltaTargetPitch,rangeRegisterInSemitones)
+    (style_glo,smoothed_glo) = stylizeFunction1(deltaTargetPitch,targetTimes,rangeRegisterInSemitones)
     
     deltaTargetPitch2 = [(hz2semitone(pitch) - hz2semitone(loccalDynamicRegister)) for pitch in targetPitch]
     
     #print(np.around(deltaTargetPitch2,decimals=2))#debug
-    (style_loc,smoothed_loc) = stylizeFunction1(deltaTargetPitch2,rangeRegisterInSemitones)
+    (style_loc,smoothed_loc) = stylizeFunction1(deltaTargetPitch2,targetTimes,rangeRegisterInSemitones)
     
     #print('stylizeObj.:',style_glo,style_loc)#debug
     
@@ -709,7 +671,7 @@ def identifyThreeEssentialPoints(freq,time=None, thld=2):
     k = (np.array(freq)).argmax()
     maximum = freq[k]
  
-    if (maximum >= f[0] + thld) and (maximum >= f[-1] + thld): 
+    if (maximum >= f[0] + thld) and (maximum >= f[-1] + thld):
           t.insert(1,time[k])
           f.insert(1,maximum)
     return t,f
