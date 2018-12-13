@@ -69,7 +69,7 @@ def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
     
     return (style,smooth)
 
-def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register, register_loc,figIn,support,rangeRegisterInSemitones,alpha, is_new_support=True ):
+def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register, register_loc,figIn,support,rangeRegisterInSemitones,alpha, tag,is_new_support=True ):
 
     # parameters
     num_time_partitions_per_target = 3
@@ -313,7 +313,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     if is_new_support:
           ax.set_ylabel('Frequencey (Hz)')
     
-    fig.subplots_adjust(top=0.95,bottom=0.23,left=0.115, right=0.925)
+    fig.subplots_adjust(top=0.95,bottom=0.27,left=0.115, right=0.925)
     xlim=ax.get_xlim()
     diff_xlim = max(xlim)-min(xlim)
     diff_ylim = max(ylim)-min(ylim)
@@ -341,7 +341,9 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     #ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
     
     #ax.annotate(txt_style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
+    ax.annotate('Tag:',xy=(0,-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color='blue')
     
+    ax.annotate(tag,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color='blue')
     
     """
     # grid relative to local regster in bleu lines
@@ -524,6 +526,25 @@ def getSupportIntvs(targetIntv,supportTier):
             print('getSupportIntvs:SupportIntv:(xmin,xmax)=',intv.xmin(),intv.xmax())#debug
       """
       return intvs
+      
+def getTags(targetIntv,tagTier):
+      
+      """
+      this function returns the interval of 'supportTier' which 
+      matchs the best with the given 'targetIntv'. 
+      
+      inputs
+            targetIntv
+            supportTier
+      return
+            supportIntv
+      """
+
+      trgt,lb = targetIntv,tagTier #alias
+      supportIntvs = tg.getMatchingIntervals([trgt],lb,strict=False,just_intersection=True)
+      labels = [intv.mark() for intv in supportIntvs]
+      return u' '.join(labels)
+
                     
 def printIntv(intv):
         

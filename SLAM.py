@@ -52,16 +52,20 @@ display & export:
 #####################################################################"""
 
 
-timeStep = .01 #in seconds, step for swipe pitch analysis
+timeStep = .001 #in seconds, step for swipe pitch analysis
 voicedThreshold = 0.2 #for swipe
 alpha = 1 # for register ranger estimation
 
 #Tiers for the speaker and the target intervals, put your own tier names
+#speakerTier= 'periode'
+#targetTier = 'pivot'
+
 speakerTier= 'periode'
-targetTier = 'pivot'
+targetTier = 'Macro'
+tagTier= 'pivot'
 
 #display and exportation
-examplesDisplayCount = 1000 #number of example plots to do. Possibly 0
+examplesDisplayCount = 3 #number of example plots to do. Possibly 0
 #minLengthDisplay = 0 #min number of f0 points for an interval to be displayed
 exportFigures = True
 
@@ -205,6 +209,8 @@ while tgFiles:
             print('stylizing: %d %%'%(pos/LEN*100.0))
 
         supportIntvs = stylize.getSupportIntvs(targetIntv,supportTier=tg[speakerTier])
+        tag = stylize.getTags(targetIntv,tg[tagTier])
+        #print(tag) #debug
         #compute style of current interval
         try:
             (style_glo,style_loc,\
@@ -271,7 +277,7 @@ while tgFiles:
                   support=support,\
                   time_org=targetTimes,\
                   figIn=fig, is_new_support=is_new_support,
-                  rangeRegisterInSemitones = rangeRegisterInSemitones, alpha=alpha)
+                  rangeRegisterInSemitones = rangeRegisterInSemitones, alpha=alpha, tag =tag)
               haveImgInbuf = True
 
         except:
