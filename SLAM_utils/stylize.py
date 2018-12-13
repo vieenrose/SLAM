@@ -19,6 +19,7 @@ def SLAM1(semitones, rangeRegisterInSemitones = 20):
     #this takes a sequence of semitones and applies the SLAM1 stylization
 
     #first, smooth the semitones curves using LOWESS
+    """
     if 100<len(semitones) and DOWNSAMPLE_ON: 
         # ? why do a downsampling ?
         # 1.assumed that the signal is of narraowband due to the
@@ -26,6 +27,7 @@ def SLAM1(semitones, rangeRegisterInSemitones = 20):
         # 2.make acceleration ?
         r = int(len(semitones)/100.0)
         semitones = list(np.array(semitones)[::r])
+    """
 
     t = np.array(range(len(semitones)))/float(len(semitones))
     if 10<len(semitones):

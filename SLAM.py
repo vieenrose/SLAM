@@ -288,9 +288,9 @@ while tgFiles:
             support = stylize.intv2customPitchObj(supportIntvs,inputPitch)
             is_new_support = True
 
-        print('main: draw {}'.format(support.label))# debug
-        print('styleGlo',style_glo)
-        print('styleLoc',style_loc)
+        #print('main: draw {}'.format(support.label))# debug
+        #print('styleGlo',style_glo)
+        #print('styleLoc',style_loc)
         # draw figure
         try:
               fig = pl.gcf()
@@ -311,8 +311,8 @@ while tgFiles:
         except:
               pass
       
-        print('is_new_support,exportFigures,haveImgInbuf,pos,')
-        print(is_new_support,exportFigures,haveImgInbuf,pos)
+        #print('is_new_support,exportFigures,haveImgInbuf,pos,')
+        #print(is_new_support,exportFigures,haveImgInbuf,pos)
         
     if exportFigures and haveImgInbuf:
             pdf.savefig(fig)
