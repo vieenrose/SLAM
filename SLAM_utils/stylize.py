@@ -9,8 +9,8 @@ from SLAM_utils import swipe
 import os, math, sys
 
 
-minDELTA=4
-factorGlobality = 0.01
+minDELTA=0
+locality = 100
 
 def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
 
@@ -417,48 +417,41 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunc
               supportTimes,supportPitch = supportObj.time, supportObj.freq
               if not len(supportPitch): return None
               
-              # global register: reference as the average of F0 of support
-              register_glo = semitone2hz(np.mean(hz2semitone(supportPitch)))
-              
               """
-              """
-              #estimate register using Hann window
-              loccalDynamicRegister = 0.0
-              sumOfWeights = 0.0
-              #factorGlobality = 0.01
-              targetTimeCenter = targetTimes[len(targetTimes)//2]
-              halfwidthOfSupport = max(\
-                  targetTimeCenter - supportTimes[0] + 1,\
-                  supportTimes[-1] - targetTimeCenter + 1)
-
-              for i, n in enumerate(supportTimes):
-                  #convoluate it with a rectangular function with its support as our target
-                  weight = 0.0
-                  #sum of all shifted version of Hann windows where center isloacted in target
-                  for k in targetTimes:
-                      #compute a Hann window or its value for time n
-                      if 2*abs(n-k) <= halfwidthOfSupport*factorGlobality:
-                        subweigth = (np.cos(np.pi / 2.0 / float(halfwidthOfSupport*factorGlobality) * (n - k))) ** 2
-                      else:
-                        subweigth = 0
-                      weight += subweigth
-                      #print('kernal({:8.4f},{:8.4f})=f({:8.4f})={:8.4f}'.format(n,k,n-k,subweigth))
-                  #print('weight[{:d}]={:8.4f}'.format(i,weight))
-                  loccalDynamicRegister += weight * supportPitch[i]
-                  sumOfWeights += weight
-              if sumOfWeights: loccalDynamicRegister = loccalDynamicRegister / sumOfWeights # normalization
-              #print('stylizeobj:dynamic local register:',r)
-              """
+              estimation of key of register using 'numpy.convolve' function
+              note: not very approritate for non-regular time step sampling pitch
               """
               
-              # local register: reference as the average of F0 of target
-              register_loc = semitone2hz(np.mean(hz2semitone(targetPitch)))#debug
-              #print('stylizeobj: (locReg,loccalDynamicRegister)=({:.0f},{:.0f})'.format(register_loc,loccalDynamicRegister))
+              kMaxTarget = (np.abs(supportObj.time - targetTimes[-1])).argmin()
+              kMinTarget = (np.abs(supportObj.time - targetTimes[ 0])).argmin()
+              kMinSupport = 0
+              KMaxSupport = len(supportObj.time) - 1
               
-              #if not is_numeric_paranoid(reference):
-              #      raise
+              spanOfKInWindow = range(kMinSupport - kMaxTarget, KMaxSupport - kMinTarget + 1)
+              lenSpanOfWindow = len(spanOfKInWindow)
+              minSpanOfKInWindow = min(spanOfKInWindow)
+              maxSpanOfKInWindow = max(spanOfKInWindow)
+              width = 2 * max(abs(maxSpanOfKInWindow), abs(maxSpanOfKInWindow))
+              if lenSpanOfWindow:
+                  windowVect = np.array([])
+                  for k in reversed(spanOfKInWindow):
+                        scaled_k = locality * k
+                        if scaled_k > maxSpanOfKInWindow or scaled_k < minSpanOfKInWindow: weight = 0.0
+                        else: weight = 0.5 + 0.5 * np.cos(np.pi * (scaled_k / float(width)))
+                        windowVect = np.append(windowVect, [weight])
+                  unitPitch = np.ones(len(supportPitch))
+                  estDynLocReg  = np.convolve(windowVect, supportPitch, mode = 'valid')
+                  unitDynLocReg = np.convolve(windowVect, unitPitch   , mode = 'valid')
+                  normUnitDynLocReg = sum(unitDynLocReg)
+                  if normUnitDynLocReg: estDynLocReg = sum(estDynLocReg) / sum(unitDynLocReg)
+                  else:                 estDynLocReg = 0
+              else:
+                  estDynLocReg = supportPitch[kMinTarget]
+  
+              loccalDynamicRegister=estDynLocReg
+              register_loc = loccalDynamicRegister
+              
           except:
-              #fail to get valide reference before precceding stylization
               return None
         
     #delta with reference in semitones and stylize it
@@ -466,17 +459,11 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunc
     register_glo = semitone2hz(np.mean(hz2semitone(supportPitch))) # debug
     rangeRegisterInSemitones = \
     rangeRegisterFunc(pitchOverSupportInHz, keyRegiserInHz = register_glo, alpha = alpha)
-    
-    #print('show_sty.:rangeRegisterInSemitones=',rangeRegisterInSemitones)#debug
     deltaTargetPitch = [(hz2semitone(pitch) - hz2semitone(register_glo)) for pitch in targetPitch]
     (style_glo,smoothed_glo) = stylizeFunction1(deltaTargetPitch,targetTimes,rangeRegisterInSemitones)
-    
     deltaTargetPitch2 = [(hz2semitone(pitch) - hz2semitone(loccalDynamicRegister)) for pitch in targetPitch]
-    
-    #print(np.around(deltaTargetPitch2,decimals=2))#debug
     (style_loc,smoothed_loc) = stylizeFunction1(deltaTargetPitch2,targetTimes,rangeRegisterInSemitones)
     
-    #print('stylizeObj.:',style_glo,style_loc)#debug
     
     return (style_glo,style_loc,targetTimes,deltaTargetPitch,smoothed_glo,register_glo,register_loc, rangeRegisterInSemitones, loccalDynamicRegister)
 
