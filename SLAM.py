@@ -212,16 +212,20 @@ while tgFiles:
         tag = stylize.getTags(targetIntv,tg[tagTier])
         #print(tag) #debug
         #compute style of current interval
-        try:
-            (style_glo,style_loc,\
-            targetTimes,deltaTargetPitch, deltaTargetPitchSmooth, \
-            reference, reference_loc, rangeRegisterInSemitones, loccalDynamicRegister) = \
+        #try:
+        out = \
             stylize.stylizeObject(\
             targetIntv = targetIntv, supportIntvs = supportIntvs,\
             inputPitch = inputPitch,\
             registers = registers, alpha=alpha)
-        except TypeError:
+        if out == None: 
             continue
+        else:
+            (style_glo,style_loc,\
+            targetTimes,deltaTargetPitch, deltaTargetPitchSmooth, \
+            reference, reference_loc, rangeRegisterInSemitones, loccalDynamicRegister) = out
+        #except TypeError:
+        #    continue
 
         if len(style_glo) !=2 and len(style_glo) !=4 :
               print(('Error: global style invalide {}'.format(style_glo)))

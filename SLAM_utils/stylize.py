@@ -469,10 +469,25 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunc
     rangeRegisterInSemitones = \
     rangeRegisterFunc(pitchOverSupportInHz, keyRegiserInHz = register_glo, alpha = alpha)
     deltaTargetPitch = [(hz2semitone(pitch) - hz2semitone(register_glo)) for pitch in targetPitch]
-    (style_glo,smoothed_glo) = stylizeFunction1(deltaTargetPitch,targetTimes,rangeRegisterInSemitones)
+    out = stylizeFunction1(deltaTargetPitch,targetTimes,rangeRegisterInSemitones)
+    if out == None:return None
+    else:(style_glo,smoothed_glo) = out
+    """
+    try:
+        (style_glo,smoothed_glo) = stylizeFunction1(deltaTargetPitch,targetTimes,rangeRegisterInSemitones)
+    except TypeError: 
+          return None
+    """
     deltaTargetPitch2 = [(hz2semitone(pitch) - hz2semitone(loccalDynamicRegister)) for pitch in targetPitch]
-    (style_loc,smoothed_loc) = stylizeFunction1(deltaTargetPitch2,targetTimes,rangeRegisterInSemitones)
-    
+    out = stylizeFunction1(deltaTargetPitch2,targetTimes,rangeRegisterInSemitones)
+    if out == None:return None
+    else:(style_loc,smoothed_loc) = out
+    """
+    try:
+        (style_loc,smoothed_loc) = 
+    except TypeError:
+          return None
+    """
     
     return (style_glo,style_loc,targetTimes,deltaTargetPitch,smoothed_glo,register_glo,register_loc, rangeRegisterInSemitones, loccalDynamicRegister)
 
