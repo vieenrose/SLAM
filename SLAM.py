@@ -65,7 +65,7 @@ targetTier = 'Macro'
 tagTier= 'pivot'
 
 #display and exportation
-examplesDisplayCount = 3 #number of example plots to do. Possibly 0
+examplesDisplayCount = 1 #number of example plots to do. Possibly 0
 #minLengthDisplay = 0 #min number of f0 points for an interval to be displayed
 exportFigures = True
 
@@ -223,10 +223,10 @@ while tgFiles:
         except TypeError:
             continue
 
-        if len(style_glo) <2 :
+        if len(style_glo) !=2 and len(style_glo) !=4 :
               print(('Error: global style invalide {}'.format(style_glo)))
               continue
-        if len(style_loc) <2 :
+        if len(style_loc) !=2 and len(style_loc) !=4 :
               print(('Error: local style invalide {}'.format(style_loc)))
               continue
 
@@ -238,8 +238,16 @@ while tgFiles:
                 smooth_total = np.concatenate((smooth_total,smooth_hz))
                 time_total = np.concatenate((time_total,targetTimes))
 
-        stylesGlo += [style_glo]
-        stylesDynLoc += [style_loc]
+        #exp
+        EXP_TOPICAL_MARKER = False
+        if EXP_TOPICAL_MARKER:
+              if 'preN'.lower() in (targetIntv.mark()).lower():
+                  stylesGlo += [style_glo]
+                  stylesDynLoc += [style_loc]
+                  print(u'{}: {},{}'.format(targetIntv.mark(),style_glo,style_loc))#debug
+        else:
+              stylesGlo += [style_glo]
+              stylesDynLoc += [style_loc]
 
         #then add an interval with that style to the (new) style tier
         newInterval = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(), style_glo)
@@ -254,10 +262,18 @@ while tgFiles:
             is_new_support = (support.time[0] != supportPreviousXmin)
             
             if exportFigures and is_new_support and haveImgInbuf:
-                  pdf.savefig(fig)
-                  if examplesDisplayCount: pl.show(); examplesDisplayCount-=1
-                  fig.clf()
-                  haveImgInbuf = False
+                  try:
+                        pdf.savefig(fig)
+                        if examplesDisplayCount: pl.show(); examplesDisplayCount-=1
+                        fig.clf()
+                        haveImgInbuf = False
+                  except:
+                        # debug
+                        print('Fail to save figures in PDF !')
+                        print(fig)
+                        pl.show();
+                        fig.clf()
+                        haveImgInbuf = False
         else :
             supportPreviousXmin = None
             support = stylize.intv2customPitchObj(supportIntvs,inputPitch)

@@ -37,13 +37,17 @@ def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
         smooth = semitones
 
     numQuantizationRegions = 5
-    #minDELTA=4#4.0 #debug
     DELTA = max(rangeRegisterInSemitones / numQuantizationRegions,minDELTA)
-    #print("SLAM1: DELTA=",DELTA)#debug
     delta = DELTA / 2
 
     # identify the three essential points
-    ti,fr=identifyThreeEssentialPoints(smooth, time = time, thld=delta)
+    if len(smooth) >= 3:
+      ti,fr=identifyThreeEssentialPoints(smooth, time = time, thld=delta)
+    else: 
+      if DELTA == 0: # len(smooth) < 2 and DELTA = 0, no stylizaiton possible
+            return None
+      else:
+            ti,fr = time, smooth
     
     # transcript the model in SLAM annotation
     style = relst2register(fr[0], DELTA=DELTA)
@@ -59,14 +63,17 @@ def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
     style = ''.join(style)
     
     # debug
-    if not style : 
-          #print('SLAM1: fr', fr); 
-          #print('SLAM1: len(smooth)', len(smooth)); 
-          #print('SLAM1: smooth',smooth)
+    """
+    if len(style) != 2 and len(style) != 4 : 
           print('SLAM1: semitones', semitones)
-          #exit() #debug
-          pass
-    
+          print('len(style) = {}, style = {}'.format(len(style),style))
+          print('ti,fr',ti,fr)
+          print('time',time)
+          print('smooth',smooth)
+          print('relst2register(fr[0], DELTA=DELTA)',relst2register(float(fr[0]), DELTA=DELTA))
+          exit() #debug
+    """
+          
     return (style,smooth)
 
 def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register, register_loc,figIn,support,rangeRegisterInSemitones,alpha, tag,is_new_support=True ):
@@ -313,35 +320,37 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     if is_new_support:
           ax.set_ylabel('Frequencey (Hz)')
     
-    fig.subplots_adjust(top=0.95,bottom=0.27,left=0.115, right=0.925)
+    fig.subplots_adjust(top=0.95,bottom=0.27,left=0.2, right=0.925)
     xlim=ax.get_xlim()
     diff_xlim = max(xlim)-min(xlim)
     diff_ylim = max(ylim)-min(ylim)
     x1 = (xticks_major[0]-xlim[0])/diff_xlim
     x2 = (xticks_major[1]-xlim[0])/diff_xlim
     
+    labelsLeftPos = -0.1
+    
     # duration label
     ax.annotate('{:.0f} ms'.format(xticks_major[-1]-xticks_major[0]),xy=(x2/2+x1/2,-0.035),xycoords='axes fraction',fontsize=6,horizontalalignment='center')
     if is_new_support:
        # support label
        ax.annotate(supp_mark,xy=(0.5,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='medium',horizontalalignment='center',fontstyle='italic')
-       ax.annotate('Support:',xy=(0,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',fontstyle='normal')
+       ax.annotate('Support:',xy=(labelsLeftPos,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',fontstyle='normal')
     
     # target label
     ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04-0.08-0.01),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic')
-    ax.annotate('Target:',xy=(0,-0.13+.04-0.08-0.01),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',fontstyle='normal')
+    ax.annotate('Target:',xy=(-0.1,-0.13+.04-0.08-0.01),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',fontstyle='normal')
     
     # its stlization in symbolic form
-    ax.annotate('Global Labels:',xy=(0,-0.19+.04+.02-0.08-0.01-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl)
+    ax.annotate('Global Labels:',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl)
     ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl)
     txt_style2= style2
-    ax.annotate('Local Labels:',xy=(0,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_sty2)
+    ax.annotate('Local Labels:',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_sty2)
     
     ax.annotate(style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
     #ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
     
     #ax.annotate(txt_style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
-    ax.annotate('Tag:',xy=(0,-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color='blue')
+    ax.annotate('Tag:',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color='blue')
     
     ax.annotate(tag,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color='blue')
     
