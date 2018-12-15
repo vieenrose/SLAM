@@ -1,38 +1,38 @@
 SLAM+
 ====
 
-**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM**, a language independent software dedicated to the data-driven melodic annotation of speech corpora. In comparaison to **SLAM**, there are 2 extensions we introduce in **SLAM+**:
+**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a language independent software dedicated to the data-driven melodic annotation of speech corpora. In comparaison to **SLAM**, there are 2 extensions we introduce in **SLAM+**:
 1) Support for **Praat PitchTier** file (in addition to **WAVE** file) as audio input.
 2) Two (instead of one in **SLAM**) stylization based on two intonational registers: *global* and *local registers*.
 
 Note: 
 1. **SLAM+** is compatible with **Python 2 and 3** but optimized only for Linux distributions.
 2. **SLAM+** support **mono-channel WAVE** files and binary and short text **PitchTier** as input source.
+3. **SLAM+** integrates an [Python implementaiton](https://gist.github.com/agramfort/850437) of *LOWESS* algorithm [4] for pitch smoothing.  
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
-Example of visualization of pitch contours analysis on *'euh on est partis au Portugal'* (Uh, we went to Portugal entirely.) (Rhap-D1003) from [Rhapsodie Treebank](https://www.projet-rhapsodie.fr/)
+Example of visualization of pitch contours analysis on *'euh on est partis au Portugal complètement'* (Uh, we went to Portugal entirely.) (Rhap-D1003) from [Rhapsodie Treebank](https://www.projet-rhapsodie.fr/) [3]
 
 ## How to cite **SLAM+**
 
-[1] L. Liu, A. Lacheret, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (Manuscript submitted for publication).
+L. Liu, A. Lacheret, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (Manuscript submitted for publication).
 
-[2] N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). [*SLAM: Automatic Stylization and Labelling of Speech Melody*](https://halshs.archives-ouvertes.fr/hal-00968950). Speech Prosody, 246-250.
+
 
 ## How to install **SLAM+**
 0) Download or clone [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev) and [**swipe-installer**](https://github.com/vieenrose/swipe-installer) and put them in the same repository.
 
 1) Install *Swipe* module (only necessary if you want also to read **WAVE** files in addition to **PitchTier** files)
 
-Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is a pitch estimation algorithm which is required for **SLAM+** to work with **WAVE** files. Sources of swipe are provided in the swipe-installer directory. These are **slightly modified versions** different from the official *GitHub* release. Modifications are only for the purpose of *Swipe* compiling under *C89* instead of *C99* standards.
+Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is a pitch estimation algorithm [1], which is required for **SLAM+** to work with **WAVE** files. Sources of swipe are provided in the swipe-installer directory. These are **slightly modified versions** different from the official *GitHub* release. Modifications are only for the purpose of *Swipe* compiling under *C89* instead of *C99* standards.
   
 2) Install the following libraries required by **SLAM+**:
 
             sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
   
 ## How to Use **SLAM+**
-1) Drop your **mono-channel WAVE** (or **PitchTier**) files and **TextGrid** files in the sub-directory *data* of the corresponding **SLAM** directory. **WAVE** (or **PitchTier**) files must come in pair of *the same name* with **TextGrid** files
+1) Drop your **mono-channel WAVE** (or **PitchTier**) files and **TextGrid** files in the sub-directory *data* of the corresponding **SLAM** directory. **WAVE** (or **PitchTier**) files must come in pair of *the same name* with **TextGrid** files. As an example: 
 
-     Example: 
      "myfile1.PitchTier" "myfile1.TextGrid" "myfile2.wav" "myfile2.TextGrid"
 
 2) Open a terminal and go to the **SLAM** directory
@@ -44,3 +44,13 @@ Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is 
 
 ## How to Configure **SLAM+**
 You can open SLAM.py and modify the parameters to suit your needs. 
+
+## Bibliography ##
+
+[1] Camacho, A. (2007). [SWIPE: A sawtooth waveform inspired pitch estimator for speech and music](https://www.cise.ufl.edu/~acamacho/publications/dissertation.pdf). Gainesville: University of Florida.
+
+[2] Cleveland, W. S. (1981). LOWESS: A program for smoothing scatterplots by robust locally weighted regression. American Statistician, 35(1), 54.
+
+[3] Lacheret, A., Kahane, S., Beliao, J., Dister, A., Gerdes, K., Goldman, J. P., ... & Tchobanov, A. (2014, May). [Rhapsodie: a prosodic-syntactic treebank for spoken french](https://hal.sorbonne-universite.fr/file/index/docid/968959/filename/LREC2014_AL.pdf). In Language Resources and Evaluation Conference.
+
+[4] N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). [*SLAM: Automatic Stylization and Labelling of Speech Melody*](https://halshs.archives-ouvertes.fr/hal-00968950). Speech Prosody, 246-250.
