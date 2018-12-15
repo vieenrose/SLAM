@@ -1,22 +1,22 @@
 SLAM+
 ====
 
-**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM**, a language independent software dedicated to the data-driven melodic annotation of speech corpora. There are 2 extensions we introduce in **SLAM+**:
-1) Support external *Pitch* as input, provied as *Praat PitchTier*.
-2) Two stylization based on two intonational registers: *global* and *local registers*.
+**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM**, a language independent software dedicated to the data-driven melodic annotation of speech corpora. In comparaison to **SLAM**, there are 2 extensions we introduce in **SLAM+**:
+1) Support for **Praat PitchTier** file (in addition to **WAVE** file) as audio input.
+2) Two (instead of one in **SLAM**) stylization based on two intonational registers: *global* and *local registers*.
 
 Note: 
 1. **SLAM+** is compatible with **Python 2 and 3*** but optimized only for Linux distributions.
 2. **SLAM+** support **mono-channel WAVE** files and binary and short text **PitchTier** as input source.
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
-Figure: Example of visualization of pitch contours analysis on *'euh on est partis au Portugal'* (Uh, we went to Portugal entirely.) (Rhap-D1003) from [Rhapsodie Treebank](https://www.projet-rhapsodie.fr/)
+Example of visualization of pitch contours analysis on *'euh on est partis au Portugal'* (Uh, we went to Portugal entirely.) (Rhap-D1003) from [Rhapsodie Treebank](https://www.projet-rhapsodie.fr/)
 
 ## How to cite **SLAM+**
 
-L. Liu, A. Lacheret, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (manuscript).
+[1] L. Liu, A. Lacheret, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (Manuscript submitted for publication).
 
-N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). *SLAM: Automatic Stylization and Labelling of Speech Melody*. Speech Prosody, 246-250.
+[2] N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). [*SLAM: Automatic Stylization and Labelling of Speech Melody*](https://halshs.archives-ouvertes.fr/hal-00968950). Speech Prosody, 246-250.
 
 ## How to install **SLAM+**
 0) Download or clone [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev) and [**swipe-installer**](https://github.com/vieenrose/swipe-installer) and put them in the same repository.
@@ -30,9 +30,10 @@ Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is 
             sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
   
 ## How to Use **SLAM+**
-1) Drop your *mono-channel WAVE* files (or *PitchTier* files) and textgrid files in the corresponding directories. *WAVE* and *Praat TextGrid* files must come in pair of the same name 
+1) Drop your **mono-channel WAVE** (or **PitchTier**) files and **TextGrid** files in the sub-directory *data* of the corresponding **SLAM** directory. **WAVE** (or **PitchTier**) files must come in pair of *the same name* with **TextGrid** files
+
      Example: 
-     "myfile1.wav" "myfile1.TextGrid" "myfile2.PitchTier" "myfile2.TextGrid"
+     "myfile1.PitchTier" "myfile1.TextGrid" "myfile2.wav" "myfile2.TextGrid"
 
 2) Open a terminal and go to the **SLAM** directory
 3) Execute
