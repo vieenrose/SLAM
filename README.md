@@ -30,9 +30,8 @@ Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is 
             sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
   
 ## How to Use **SLAM+**
-1) Drop your **mono-channel WAVE** (or **PitchTier**) files and **TextGrid** files in the sub-directory *data* of the corresponding **SLAM** directory. **WAVE** (or **PitchTier**) files must come in pair of *the same name* with **TextGrid** files
+1) Drop your **mono-channel WAVE** (or **PitchTier**) files and **TextGrid** files in the sub-directory *data* of the corresponding **SLAM** directory. **WAVE** (or **PitchTier**) files must come in pair of *the same name* with **TextGrid** files. As an example: 
 
-     Example: 
      "myfile1.PitchTier" "myfile1.TextGrid" "myfile2.wav" "myfile2.TextGrid"
 
 2) Open a terminal and go to the **SLAM** directory
