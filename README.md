@@ -2,10 +2,12 @@ SLAM+
 ====
 
 **SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM**, a language independent software dedicated to the data-driven melodic annotation of speech corpora. There are 2 extensions we introduce in **SLAM+**:
-1) Support *Pitch* Input, provied in (Binary and Short Text) *Praat PitchTier*  
-2) Account for two intonational registers: *global* and *local registers* in stylization. 
+1) Support *Pitch* Input, provied in *Praat PitchTier*  
+2) Account in stylization for two intonational registers: *global* and *local registers* 
 
-Note: ***SLAM+** is optimized only for Linux distributions, compatible with **Python 2 and 3***.
+Note 
+1. ***SLAM+** is optimized only for Linux distributions, compatible with **Python 2 and 3***.
+2. ***SLAM+** is only support for mono-channel WAVE files and binary and short text PitchTier as source input
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
 *Figure: Visualization of Pitch Contours and its Analysis in **SLAM+***
@@ -26,7 +28,7 @@ Sources of swipe are provided in the swipe-installer directory. These are slight
             sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
   
 ## How to Use **SLAM+**
-1) Drop your wav files (or PitchTier files) and textgrid files in the corresponding directories. wav and textgrid files must come in pair of the same name 
+1) Drop your *mono-channel* WAVE files (or PitchTier files) and textgrid files in the corresponding directories. WAVE and textgrid files must come in pair of the same name 
      Example: 
      "myfile1.wav" "myfile1.TextGrid" "myfile2.PitchTier" "myfile2.TextGrid"
 
