@@ -2,12 +2,12 @@ SLAM+
 ====
 
 **SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM**, a language independent software dedicated to the data-driven melodic annotation of speech corpora. There are 2 extensions we introduce in **SLAM+**:
-1) Support *Pitch* Input, provied in *Praat PitchTier*  
-2) Account in stylization for two intonational registers: *global* and *local registers* 
+1) Support external *Pitch* as input, provied as *Praat PitchTier*.
+2) Two stylization based on two intonational registers: *global* and *local registers*.
 
 Note 
-1. **SLAM+** is optimized only for Linux distributions, compatible with **Python 2 and 3***.
-2. **SLAM+** is only support for mono-channel WAVE files and binary and short text PitchTier as source input
+1. **SLAM+** is compatible with **Python 2 and 3*** but optimized only for Linux distributions.
+2. **SLAM+** support mono-channel WAVE files and binary and short text PitchTier as input source.
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
 *Figure: Visualization of Pitch Contours and its Analysis in **SLAM+***
@@ -20,8 +20,7 @@ N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). SLAM: Automatic Stylization 
 
 1) Install *Swipe* module (only necessary if you want also to read *WAVE* files in addition to *Praat PitchTier* files)
 
-Swipe, by Kyle Gorman (http://ling.upenn.edu/~kgorman/c/swipe/),  is a pitch estimation algorithm which is required for **SLAM+** to work. 
-Sources of swipe are provided in the swipe-installer directory. These are slightly modified versions different from the official github release. Modifications are only for the purpose of *Swipe* compiling under *C89* instead of *C99* standards.
+Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is a pitch estimation algorithm which is required for **SLAM+** to work with WAVE files. Sources of swipe are provided in the swipe-installer directory. These are **slightly modified versions** different from the official *GitHub* release. Modifications are only for the purpose of *Swipe* compiling under *C89* instead of *C99* standards.
   
 2) Install the following libraries required by **SLAM+**:
 
