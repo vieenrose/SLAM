@@ -14,9 +14,9 @@ Note:
 
 ## How to cite **SLAM+**
 
-L. Liu, A. Lacheret, N. Obin (2018), AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ? (manuscript).
+L. Liu, A. Lacheret, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (manuscript).
 
-N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). SLAM: Automatic Stylization and Labelling of Speech Melody. Speech Prosody, 246-250.
+N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). *SLAM: Automatic Stylization and Labelling of Speech Melody*. Speech Prosody, 246-250.
 
 ## How to install **SLAM+**
 0) Download or clone [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev) and [**swipe-installer**](https://github.com/vieenrose/swipe-installer) and put them in the same repository.
