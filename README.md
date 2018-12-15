@@ -10,7 +10,7 @@ Note:
 2. **SLAM+** support mono-channel WAVE files and binary and short text PitchTier as input source.
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
-*Figure: Visualization of Pitch Contours and its Analysis in **SLAM+***
+Figure: Example of visualization of pitch contours analysis on *'euh on est partis au Portugal'* (Uh, we went to Portugal entirely.) (Rhap-D1003) from [Rhapsodie Treebank](https://www.projet-rhapsodie.fr/)
 
 ## How to cite **SLAM+**
 
