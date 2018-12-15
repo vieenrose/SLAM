@@ -5,7 +5,7 @@ SLAM+
 1) Support external *Pitch* as input, provied as *Praat PitchTier*.
 2) Two stylization based on two intonational registers: *global* and *local registers*.
 
-Note 
+Note: 
 1. **SLAM+** is compatible with **Python 2 and 3*** but optimized only for Linux distributions.
 2. **SLAM+** support mono-channel WAVE files and binary and short text PitchTier as input source.
 
@@ -13,6 +13,9 @@ Note
 *Figure: Visualization of Pitch Contours and its Analysis in **SLAM+***
 
 ## How to cite **SLAM+**
+
+L. Liu, A. Lacheret, N. Obin (2018), AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ? (manuscript).
+
 N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). SLAM: Automatic Stylization and Labelling of Speech Melody. Speech Prosody, 246-250.
 
 ## How to install **SLAM+**
@@ -39,4 +42,4 @@ Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is 
 4) Follow the instructions.
 
 ## How to Configure **SLAM+**
-you can open SLAM.py and modify the parameters to suit your needs. 
+You can open SLAM.py and modify the parameters to suit your needs. 
