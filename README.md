@@ -46,8 +46,8 @@ You can open SLAM.py and modify the parameters to suit your needs.
 
 ## Bibliography ##
 
-[1] Camacho, A. (2007). SWIPE: A sawtooth waveform inspired pitch estimator for speech and music. Gainesville: University of Florida.
+[1] Camacho, A. (2007). [SWIPE: A sawtooth waveform inspired pitch estimator for speech and music](https://www.cise.ufl.edu/~acamacho/publications/dissertation.pdf). Gainesville: University of Florida.
 
-[2] Lacheret, A., Kahane, S., Beliao, J., Dister, A., Gerdes, K., Goldman, J. P., ... & Tchobanov, A. (2014, May). Rhapsodie: a prosodic-syntactic treebank for spoken french. In Language Resources and Evaluation Conference.
+[2] Lacheret, A., Kahane, S., Beliao, J., Dister, A., Gerdes, K., Goldman, J. P., ... & Tchobanov, A. (2014, May). [Rhapsodie: a prosodic-syntactic treebank for spoken french](https://hal.sorbonne-universite.fr/file/index/docid/968959/filename/LREC2014_AL.pdf). In Language Resources and Evaluation Conference.
 
 [3] N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). [*SLAM: Automatic Stylization and Labelling of Speech Melody*](https://halshs.archives-ouvertes.fr/hal-00968950). Speech Prosody, 246-250.
