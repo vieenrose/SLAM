@@ -6,8 +6,8 @@ SLAM+
 2) Account in stylization for two intonational registers: *global* and *local registers* 
 
 Note 
-1. ***SLAM+** is optimized only for Linux distributions, compatible with **Python 2 and 3***.
-2. ***SLAM+** is only support for mono-channel WAVE files and binary and short text PitchTier as source input
+1. **SLAM+** is optimized only for Linux distributions, compatible with **Python 2 and 3***.
+2. **SLAM+** is only support for mono-channel WAVE files and binary and short text PitchTier as source input
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
 *Figure: Visualization of Pitch Contours and its Analysis in **SLAM+***
