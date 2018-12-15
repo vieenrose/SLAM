@@ -1,7 +1,7 @@
 SLAM+
 ====
 
-**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM**, a language independent software dedicated to the data-driven melodic annotation of speech corpora. In comparaison to **SLAM**, there are 2 extensions we introduce in **SLAM+**:
+**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [3], a language independent software dedicated to the data-driven melodic annotation of speech corpora. In comparaison to **SLAM**, there are 2 extensions we introduce in **SLAM+**:
 1) Support for **Praat PitchTier** file (in addition to **WAVE** file) as audio input.
 2) Two (instead of one in **SLAM**) stylization based on two intonational registers: *global* and *local registers*.
 
@@ -10,20 +10,20 @@ Note:
 2. **SLAM+** support **mono-channel WAVE** files and binary and short text **PitchTier** as input source.
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
-Example of visualization of pitch contours analysis on *'euh on est partis au Portugal'* (Uh, we went to Portugal entirely.) (Rhap-D1003) from [Rhapsodie Treebank](https://www.projet-rhapsodie.fr/)
+Example of visualization of pitch contours analysis on *'euh on est partis au Portugal'* (Uh, we went to Portugal entirely.) (Rhap-D1003) from [Rhapsodie Treebank](https://www.projet-rhapsodie.fr/) [2]
 
 ## How to cite **SLAM+**
 
 L. Liu, A. Lacheret, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (Manuscript submitted for publication).
 
-N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). [*SLAM: Automatic Stylization and Labelling of Speech Melody*](https://halshs.archives-ouvertes.fr/hal-00968950). Speech Prosody, 246-250.
+
 
 ## How to install **SLAM+**
 0) Download or clone [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev) and [**swipe-installer**](https://github.com/vieenrose/swipe-installer) and put them in the same repository.
 
 1) Install *Swipe* module (only necessary if you want also to read **WAVE** files in addition to **PitchTier** files)
 
-Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is a pitch estimation algorithm which is required for **SLAM+** to work with **WAVE** files. Sources of swipe are provided in the swipe-installer directory. These are **slightly modified versions** different from the official *GitHub* release. Modifications are only for the purpose of *Swipe* compiling under *C89* instead of *C99* standards.
+Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is a pitch estimation algorithm [1], which is required for **SLAM+** to work with **WAVE** files. Sources of swipe are provided in the swipe-installer directory. These are **slightly modified versions** different from the official *GitHub* release. Modifications are only for the purpose of *Swipe* compiling under *C89* instead of *C99* standards.
   
 2) Install the following libraries required by **SLAM+**:
 
@@ -49,3 +49,5 @@ You can open SLAM.py and modify the parameters to suit your needs.
 [1] Camacho, A. (2007). SWIPE: A sawtooth waveform inspired pitch estimator for speech and music. Gainesville: University of Florida.
 
 [2] Lacheret, A., Kahane, S., Beliao, J., Dister, A., Gerdes, K., Goldman, J. P., ... & Tchobanov, A. (2014, May). Rhapsodie: a prosodic-syntactic treebank for spoken french. In Language Resources and Evaluation Conference.
+
+[3] N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). [*SLAM: Automatic Stylization and Labelling of Speech Melody*](https://halshs.archives-ouvertes.fr/hal-00968950). Speech Prosody, 246-250.
