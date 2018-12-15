@@ -7,7 +7,7 @@ SLAM+
 
 Note: 
 1. **SLAM+** is compatible with **Python 2 and 3*** but optimized only for Linux distributions.
-2. **SLAM+** support mono-channel WAVE files and binary and short text PitchTier as input source.
+2. **SLAM+** support **mono-channel WAVE** files and binary and short text **PitchTier** as input source.
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
 Figure: Example of visualization of pitch contours analysis on *'euh on est partis au Portugal'* (Uh, we went to Portugal entirely.) (Rhap-D1003) from [Rhapsodie Treebank](https://www.projet-rhapsodie.fr/)
@@ -23,18 +23,18 @@ N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). *SLAM: Automatic Stylization
 
 1) Install *Swipe* module (only necessary if you want also to read *WAVE* files in addition to *Praat PitchTier* files)
 
-Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is a pitch estimation algorithm which is required for **SLAM+** to work with WAVE files. Sources of swipe are provided in the swipe-installer directory. These are **slightly modified versions** different from the official *GitHub* release. Modifications are only for the purpose of *Swipe* compiling under *C89* instead of *C99* standards.
+Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is a pitch estimation algorithm which is required for **SLAM+** to work with *WAVE* files. Sources of swipe are provided in the swipe-installer directory. These are **slightly modified versions** different from the official *GitHub* release. Modifications are only for the purpose of *Swipe* compiling under *C89* instead of *C99* standards.
   
 2) Install the following libraries required by **SLAM+**:
 
             sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
   
 ## How to Use **SLAM+**
-1) Drop your *mono-channel* WAVE files (or PitchTier files) and textgrid files in the corresponding directories. WAVE and textgrid files must come in pair of the same name 
+1) Drop your *mono-channel WAVE* files (or *PitchTier* files) and textgrid files in the corresponding directories. *WAVE* and *Praat TextGrid* files must come in pair of the same name 
      Example: 
      "myfile1.wav" "myfile1.TextGrid" "myfile2.PitchTier" "myfile2.TextGrid"
 
-2) Open a terminal and go to the SLAM directory
+2) Open a terminal and go to the **SLAM** directory
 3) Execute
 
         python SLAM.py
