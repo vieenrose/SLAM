@@ -11,7 +11,7 @@ Note:
 3. **SLAM+** integrates an [Python implementaiton](https://gist.github.com/agramfort/850437) of *LOWESS* algorithm [4] for pitch smoothing.  
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
-Example of visualization of pitch contours analysis on *'euh on est partis au Portugal'* (Uh, we went to Portugal entirely.) (Rhap-D1003) from [Rhapsodie Treebank](https://www.projet-rhapsodie.fr/) [3]
+Example of visualization of pitch contours analysis on *'euh on est partis au Portugal complètement'* (Uh, we went to Portugal entirely.) (Rhap-D1003) from [Rhapsodie Treebank](https://www.projet-rhapsodie.fr/) [3]
 
 ## How to cite **SLAM+**
 
