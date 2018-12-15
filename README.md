@@ -21,9 +21,9 @@ Example of visualization of pitch contours analysis on *'euh on est partis au Po
 ## How to install **SLAM+**
 0) Download or clone [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev) and [**swipe-installer**](https://github.com/vieenrose/swipe-installer) and put them in the same repository.
 
-1) Install *Swipe* module (only necessary if you want also to read *WAVE* files in addition to *Praat PitchTier* files)
+1) Install *Swipe* module (only necessary if you want also to read **WAVE** files in addition to **PitchTier** files)
 
-Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is a pitch estimation algorithm which is required for **SLAM+** to work with *WAVE* files. Sources of swipe are provided in the swipe-installer directory. These are **slightly modified versions** different from the official *GitHub* release. Modifications are only for the purpose of *Swipe* compiling under *C89* instead of *C99* standards.
+Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is a pitch estimation algorithm which is required for **SLAM+** to work with **WAVE** files. Sources of swipe are provided in the swipe-installer directory. These are **slightly modified versions** different from the official *GitHub* release. Modifications are only for the purpose of *Swipe* compiling under *C89* instead of *C99* standards.
   
 2) Install the following libraries required by **SLAM+**:
 
