@@ -697,3 +697,12 @@ def input_SLAM(inp):
     vers = sys.version_info.major
     if vers > 2: return input(inp) # Python 3
     else: return raw_input(inp) # Python 2
+    
+# code taken from https://github.com/vieenrose/tonalizer/blob/master/differential_tone_coding.py
+def get_duration(t1_secs, t2_secs) :
+      secs = abs(t1_secs - t2_secs)
+      days = secs // 86400
+      hours = secs // 3600 - days * 24
+      minutes = secs // 60 - hours * 60 - days * 60 * 24
+      secondes = int(secs) % 60
+      return '{:>02.0f}:{:>02.0f}:{:>02.0f}:{:>02d}'.format(days, hours, minutes, secondes)

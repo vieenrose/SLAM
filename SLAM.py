@@ -74,7 +74,7 @@ exportFigures = True
 
 #imports
 from SLAM_utils import TextGrid, swipe, stylize, praatUtil
-import sys, glob, os, re
+import sys, glob, os, re,time
 import numpy as np
 import matplotlib.backends.backend_pdf as pdfLib
 import matplotlib.pylab as pl
@@ -120,7 +120,7 @@ while tmpFiles:
         srcFiles.append(filename)
 
 
-
+t1 = time.time()
 while tgFiles:
     #take a tg file from tgFiles and its related src file(s) from SrcFiles
     inputTextgridFile = tgFiles.pop(0)
@@ -240,7 +240,7 @@ while tgFiles:
                 time_total = np.concatenate((time_total,targetTimes))
 
         #exp
-        EXP_TOPICAL_MARKER = False
+        EXP_TOPICAL_MARKER = True
         if EXP_TOPICAL_MARKER:
               if 'preN'.lower() in (targetIntv.mark()).lower():
                   stylesGlo += [style_glo]
@@ -375,3 +375,5 @@ x------------------------------------------x---------------------x''')
           N = np.nonzero(cumulative_values>float(P)/100.0)[0][0]+1
           print('|                %2.0f                        |         %2.0f          |'%(P,N))
       print('x------------------------------------------x---------------------x')
+
+print "... done in", stylize.get_duration(t1_secs = t1, t2_secs = time.time())
