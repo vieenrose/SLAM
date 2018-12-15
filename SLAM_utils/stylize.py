@@ -384,7 +384,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     # let us make the figure!
     return fig
 
-def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunction1=SLAM1):
+def stylizeObject(targetIntv,supportIntvs,inputPitch,alpha,stylizeFunction1=SLAM1):
 
     # skip unlabeled
     if targetIntv.mark()=='_': #or (all ([i for i in supportIntvs]) == '_'):
@@ -398,52 +398,54 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunc
           return None
         
     #get valide reference
+    """
     if is_numeric_paranoid(registers): 
           #no speaker/support tier was provided, registers is only the average f0
           reference = registers
-    else:
-          try:
-              #reference = registers[supportIntvs[0].mark()]
-              supportObj = intv2customPitchObj(supportIntvs,inputPitch)
-              supportTimes,supportPitch = supportObj.time, supportObj.freq
-              if not len(supportPitch): return None
-              
-              """
-              estimation of key of register using 'numpy.convolve' function
-              note: not very approritate for non-regular time step sampling pitch
-              """
-              
-              kMaxTarget = (np.abs(supportObj.time - targetTimes[-1])).argmin()
-              kMinTarget = (np.abs(supportObj.time - targetTimes[ 0])).argmin()
-              kMinSupport = 0
-              KMaxSupport = len(supportObj.time) - 1
-              
-              spanOfKInWindow = range(kMinSupport - kMaxTarget, KMaxSupport - kMinTarget + 1)
-              lenSpanOfWindow = len(spanOfKInWindow)
-              minSpanOfKInWindow = min(spanOfKInWindow)
-              maxSpanOfKInWindow = max(spanOfKInWindow)
-              width = 2 * max(abs(maxSpanOfKInWindow), abs(maxSpanOfKInWindow))
-              if lenSpanOfWindow:
-                  windowVect = np.array([])
-                  for k in reversed(spanOfKInWindow):
-                        scaled_k = locality * k
-                        if scaled_k > maxSpanOfKInWindow or scaled_k < minSpanOfKInWindow: weight = 0.0
-                        else: weight = 0.5 + 0.5 * np.cos(np.pi * (scaled_k / float(width)))
-                        windowVect = np.append(windowVect, [weight])
-                  unitPitch = np.ones(len(supportPitch))
-                  estDynLocReg  = np.convolve(windowVect, supportPitch, mode = 'valid')
-                  unitDynLocReg = np.convolve(windowVect, unitPitch   , mode = 'valid')
-                  normUnitDynLocReg = sum(unitDynLocReg)
-                  if normUnitDynLocReg: estDynLocReg = sum(estDynLocReg) / sum(unitDynLocReg)
-                  else:                 estDynLocReg = 0
-              else:
-                  estDynLocReg = supportPitch[kMinTarget]
-  
-              loccalDynamicRegister=estDynLocReg
-              register_loc = loccalDynamicRegister
-              
-          except:
-              return None
+    """
+    #else:
+    try:
+        #reference = registers[supportIntvs[0].mark()]
+        supportObj = intv2customPitchObj(supportIntvs,inputPitch)
+        supportTimes,supportPitch = supportObj.time, supportObj.freq
+        if not len(supportPitch): return None
+        
+        """
+        estimation of key of register using 'numpy.convolve' function
+        note: not very approritate for non-regular time step sampling pitch
+        """
+        
+        kMaxTarget = (np.abs(supportObj.time - targetTimes[-1])).argmin()
+        kMinTarget = (np.abs(supportObj.time - targetTimes[ 0])).argmin()
+        kMinSupport = 0
+        KMaxSupport = len(supportObj.time) - 1
+        
+        spanOfKInWindow = range(kMinSupport - kMaxTarget, KMaxSupport - kMinTarget + 1)
+        lenSpanOfWindow = len(spanOfKInWindow)
+        minSpanOfKInWindow = min(spanOfKInWindow)
+        maxSpanOfKInWindow = max(spanOfKInWindow)
+        width = 2 * max(abs(maxSpanOfKInWindow), abs(maxSpanOfKInWindow))
+        if lenSpanOfWindow:
+            windowVect = np.array([])
+            for k in reversed(spanOfKInWindow):
+                  scaled_k = locality * k
+                  if scaled_k > maxSpanOfKInWindow or scaled_k < minSpanOfKInWindow: weight = 0.0
+                  else: weight = 0.5 + 0.5 * np.cos(np.pi * (scaled_k / float(width)))
+                  windowVect = np.append(windowVect, [weight])
+            unitPitch = np.ones(len(supportPitch))
+            estDynLocReg  = np.convolve(windowVect, supportPitch, mode = 'valid')
+            unitDynLocReg = np.convolve(windowVect, unitPitch   , mode = 'valid')
+            normUnitDynLocReg = sum(unitDynLocReg)
+            if normUnitDynLocReg: estDynLocReg = sum(estDynLocReg) / sum(unitDynLocReg)
+            else:                 estDynLocReg = 0
+        else:
+            estDynLocReg = supportPitch[kMinTarget]
+
+        loccalDynamicRegister=estDynLocReg
+        register_loc = loccalDynamicRegister
+        
+    except:
+        return None
         
     #delta with reference in semitones and stylize it
     pitchOverSupportInHz = supportPitch
@@ -461,6 +463,7 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunc
     
     return (style_glo,style_loc,targetTimes,deltaTargetPitch,smoothed_glo,register_glo,register_loc, rangeRegisterInSemitones, loccalDynamicRegister)
 
+"""
 # source:
 # https://stackoverflow.com/questions/500328/identifying-numeric-and-array-types-in-numpy
 def is_numeric_paranoid(obj):
@@ -472,7 +475,7 @@ def is_numeric_paranoid(obj):
         return False
     else:
         return True
-
+"""
 def getSupportIntvs(targetIntv,supportTier):
       
       """

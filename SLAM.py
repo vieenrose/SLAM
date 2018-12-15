@@ -182,10 +182,13 @@ while tgFiles:
         continue
 
     print('Computing average register for each speaker')
+    
+    """
     try:
         registers = stylize.averageRegisters(inputPitch, tg[speakerTier])
     except:
         continue
+    """
 
     print('Stylizing each interval of the target tier')
 
@@ -213,8 +216,7 @@ while tgFiles:
         out = \
             stylize.stylizeObject(\
             targetIntv = targetIntv, supportIntvs = supportIntvs,\
-            inputPitch = inputPitch,\
-            registers = registers, alpha=alpha)
+            inputPitch = inputPitch, alpha=alpha)
         if out == None: 
             continue
         else:
@@ -241,7 +243,7 @@ while tgFiles:
                 time_total = np.concatenate((time_total,targetTimes))
 
         #exp
-        EXP_TOPICAL_MARKER = False
+        EXP_TOPICAL_MARKER = True
         if EXP_TOPICAL_MARKER:
               if 'preN'.lower() in (targetIntv.mark()).lower():
                   stylesGlo += [style_glo]
