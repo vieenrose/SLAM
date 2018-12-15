@@ -74,11 +74,12 @@ exportFigures = True
 
 #imports
 from SLAM_utils import TextGrid, swipe, stylize, praatUtil
-import sys, glob, os, re,time
+import sys, glob, os, re, time
 import numpy as np
 import matplotlib.backends.backend_pdf as pdfLib
 import matplotlib.pylab as pl
 import SLAM_utils.TextGrid as tgLib
+import SLAM_utils.progress as progLib
 
 change = stylize.input_SLAM("""
 Current parameters are:
@@ -118,7 +119,6 @@ while tmpFiles:
         tgFiles.append(filename)
     else:
         srcFiles.append(filename)
-
 
 t1 = time.time()
 while tgFiles:
@@ -202,9 +202,10 @@ while tgFiles:
     if exportFigures:
         pdf = pdfLib.PdfPages(outputFigureFile)
 
+    prog = progLib.Progress(len(tg[targetTier]))
     for pos,targetIntv in enumerate(tg[targetTier]):
         if pos in POSdisplay:
-            print('stylizing: %d %%'%(pos/LEN*100.0))
+            print('Stylizing: {} conoutrs'.format(prog.progressstring(pos)))
 
         supportIntvs = stylize.getSupportIntvs(targetIntv,supportTier=tg[speakerTier])
         tag = stylize.getTags(targetIntv,tg[tagTier])
@@ -240,7 +241,7 @@ while tgFiles:
                 time_total = np.concatenate((time_total,targetTimes))
 
         #exp
-        EXP_TOPICAL_MARKER = True
+        EXP_TOPICAL_MARKER = False
         if EXP_TOPICAL_MARKER:
               if 'preN'.lower() in (targetIntv.mark()).lower():
                   stylesGlo += [style_glo]
@@ -315,13 +316,14 @@ while tgFiles:
     print('Exporting figures in PDF file %s'%outputFigureFile)
     if exportFigures: pdf.close()
     pl.close()
+    print('SLAM: it remains {} files to process'.format(len(tgFiles)))
 
 #Now output statistics
 #---------------------
 labs = ['Stylization over Global Register',\
         'Stylization over Local Register']
 for i,styles in enumerate([stylesGlo,stylesDynLoc]):
-      print(('style name:{}'.format(labs[i])))
+      print(('Type of Stylization: {}'.format(labs[i])))
       count = {}
       for unique_style in set(styles):
           if not len(unique_style):continue
@@ -376,4 +378,4 @@ x------------------------------------------x---------------------x''')
           print('|                %2.0f                        |         %2.0f          |'%(P,N))
       print('x------------------------------------------x---------------------x')
 
-print "... done in", stylize.get_duration(t1_secs = t1, t2_secs = time.time())
+print('SLAM: done in {}'.format(stylize.get_duration(t1,time.time())))
