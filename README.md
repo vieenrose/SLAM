@@ -16,7 +16,7 @@ How to install
 
 0) Download or clone SLAM and swipe-installer and put them in the same repository.
 
-1) Install SWIPE module
+1) Install SWIPE module (only necessary if you want also to read wav files instead of PitchTier files)
 
 Swipe, by Kyle Gorman (http://ling.upenn.edu/~kgorman/c/swipe/),  is a pitch estimation algorithm which is required for SLAM to work. 
 Sources of swipe are provided in the swipe-installer directory. These are slightly modified versions different from the official github release. Modifications are only for the purpose of swipe compiling under C89 instead of C99 standards.
@@ -29,9 +29,9 @@ Sources of swipe are provided in the swipe-installer directory. These are slight
 How to use
 ------------
 
-1) Drop your wav files and textgrid files in the corresponding directories. wav and textgrid files must come in pair of the same name 
+1) Drop your wav files (or PitchTier files) and textgrid files in the corresponding directories. wav and textgrid files must come in pair of the same name 
      example:
-     "myfile1.wav" "myfile1.TextGrid" "myfile2.wav" "myfile2.TextGrid"
+     "myfile1.wav" "myfile1.TextGrid" "myfile2.PitchTier" "myfile2.TextGrid"
 
 2) Open a terminal and go to the SLAM directory
 3) Execute
