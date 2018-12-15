@@ -14,9 +14,9 @@ Example of visualization of pitch contours analysis on *'euh on est partis au Po
 
 ## How to cite **SLAM+**
 
-[1] L. Liu, A. Lacheret, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (Manuscript submitted for publication).
+L. Liu, A. Lacheret, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (Manuscript submitted for publication).
 
-[2] N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). [*SLAM: Automatic Stylization and Labelling of Speech Melody*](https://halshs.archives-ouvertes.fr/hal-00968950). Speech Prosody, 246-250.
+N. Obin,  J. Beliao, C., Veaux, A. Lacheret (2014). [*SLAM: Automatic Stylization and Labelling of Speech Melody*](https://halshs.archives-ouvertes.fr/hal-00968950). Speech Prosody, 246-250.
 
 ## How to install **SLAM+**
 0) Download or clone [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev) and [**swipe-installer**](https://github.com/vieenrose/swipe-installer) and put them in the same repository.
@@ -43,3 +43,9 @@ Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is 
 
 ## How to Configure **SLAM+**
 You can open SLAM.py and modify the parameters to suit your needs. 
+
+## Bibliography ##
+
+[1] Camacho, A. (2007). SWIPE: A sawtooth waveform inspired pitch estimator for speech and music. Gainesville: University of Florida.
+
+[2] Lacheret, A., Kahane, S., Beliao, J., Dister, A., Gerdes, K., Goldman, J. P., ... & Tchobanov, A. (2014, May). Rhapsodie: a prosodic-syntactic treebank for spoken french. In Language Resources and Evaluation Conference.
