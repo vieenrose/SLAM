@@ -205,7 +205,7 @@ while tgFiles:
     prog = progLib.Progress(len(tg[targetTier]))
     for pos,targetIntv in enumerate(tg[targetTier]):
         if pos in POSdisplay:
-            print('Stylizing: {} conoutrs'.format(prog.progressstring(pos)))
+            print('Stylizing: {} contours'.format(prog.progressstring(pos)))
 
         supportIntvs = stylize.getSupportIntvs(targetIntv,supportTier=tg[speakerTier])
         tag = stylize.getTags(targetIntv,tg[tagTier])
@@ -316,7 +316,8 @@ while tgFiles:
     print('Exporting figures in PDF file %s'%outputFigureFile)
     if exportFigures: pdf.close()
     pl.close()
-    print('SLAM: it remains {} files to process'.format(len(tgFiles)))
+    print('List of files remained to be analyzed: '.format(len(tgFiles)))
+    for i,name in enumerate(tgFiles): print('{}: {}'.format(i,name))
 
 #Now output statistics
 #---------------------
