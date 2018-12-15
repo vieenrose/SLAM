@@ -1,7 +1,7 @@
 SLAM+
 ====
 
-**SLAM*=* : **SLAM+** or **SLAMplus** is derived from **SLAM**, a language independent software dedicated to the data-driven melodic annotation of speech corpora. We discuss two main innovations introduced by **SLAM+**: 
+**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM**, a language independent software dedicated to the data-driven melodic annotation of speech corpora. We discuss two main innovations introduced by **SLAM+**: 
 1) the software input has been improved by introducing a step of pitch cleaning.
 2) acoustic processing and annotation have been enriched by taking into account two intonational registers: global and local registers. 
 
