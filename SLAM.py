@@ -270,8 +270,8 @@ while tgFiles:
                         haveImgInbuf = False
                   except:
                         # debug
-                        print('Fail to save figures in PDF !')
-                        pl.show();
+                        print('Error: fail to save figures in PDF !')
+                        #pl.show();
                         fig.clf()
                         haveImgInbuf = False
         else :
