@@ -14,11 +14,10 @@ locality = 100
 
 def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
 
-    DOWNSAMPLE_ON = False
-
     #this takes a sequence of semitones and applies the SLAM1 stylization
 
     #first, smooth the semitones curves using LOWESS
+    # DOWNSAMPLE_ON = False
     """
     if 100<len(semitones) and DOWNSAMPLE_ON: 
         # ? why do a downsampling ?
@@ -41,13 +40,8 @@ def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
     delta = DELTA / 2
 
     # identify the three essential points
-    if len(smooth) >= 3:
-      ti,fr=identifyThreeEssentialPoints(smooth, time = time, thld=delta)
-    else: 
-      if DELTA == 0: # len(smooth) < 2 and DELTA = 0, no stylizaiton possible
-            return None
-      else:
-            ti,fr = time, smooth
+    if len(smooth) >= 3: ti,fr=identifyThreeEssentialPoints(smooth, time = time, thld=delta)
+    else: ti,fr = time, smooth
     
     # transcript the model in SLAM annotation
     style = relst2register(fr[0], DELTA=DELTA)
@@ -62,18 +56,6 @@ def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
 
     style = ''.join(style)
     
-    # debug
-    """
-    if len(style) != 2 and len(style) != 4 : 
-          print('SLAM1: semitones', semitones)
-          print('len(style) = {}, style = {}'.format(len(style),style))
-          print('ti,fr',ti,fr)
-          print('time',time)
-          print('smooth',smooth)
-          print('relst2register(fr[0], DELTA=DELTA)',relst2register(float(fr[0]), DELTA=DELTA))
-          exit() #debug
-    """
-          
     return (style,smooth)
 
 def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register, register_loc,figIn,support,rangeRegisterInSemitones,alpha, tag,is_new_support=True ):
@@ -402,7 +384,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     # let us make the figure!
     return fig
 
-def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunction1=SLAM1, stylizeFunction2=SLAM1):
+def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunction1=SLAM1):
 
     # skip unlabeled
     if targetIntv.mark()=='_': #or (all ([i for i in supportIntvs]) == '_'):
@@ -472,22 +454,10 @@ def stylizeObject(targetIntv,supportIntvs,inputPitch,registers,alpha,stylizeFunc
     out = stylizeFunction1(deltaTargetPitch,targetTimes,rangeRegisterInSemitones)
     if out == None:return None
     else:(style_glo,smoothed_glo) = out
-    """
-    try:
-        (style_glo,smoothed_glo) = stylizeFunction1(deltaTargetPitch,targetTimes,rangeRegisterInSemitones)
-    except TypeError: 
-          return None
-    """
     deltaTargetPitch2 = [(hz2semitone(pitch) - hz2semitone(loccalDynamicRegister)) for pitch in targetPitch]
     out = stylizeFunction1(deltaTargetPitch2,targetTimes,rangeRegisterInSemitones)
     if out == None:return None
     else:(style_loc,smoothed_loc) = out
-    """
-    try:
-        (style_loc,smoothed_loc) = 
-    except TypeError:
-          return None
-    """
     
     return (style_glo,style_loc,targetTimes,deltaTargetPitch,smoothed_glo,register_glo,register_loc, rangeRegisterInSemitones, loccalDynamicRegister)
 
@@ -625,13 +595,21 @@ def relst2register(semitones, DELTA = 4):
         elif st >  0.5 * DELTA  : result.append('h')
         elif st > -0.5 * DELTA  : result.append('m')
         elif st > -1.5 * DELTA  : result.append('l')
-        elif st < -1.5 * DELTA  : result.append('L')
+        else : #st <= -1.5 * DELTA
+              result.append('L')
+
+    #debug
+    """
+    if not result:
+      print('Error of Null Output (relst2register): (semitones, DELTA)=({},{})'.format(semitones, DELTA))
+      exit()
+    """
+      
     return result
     
 
 def register2relst(style, DELTA = 4):
       st = []
-      #print ('register2relst:',DELTA,style) #debug
       for c in style:
             if   c == 'H'  : st.append( 2.5 * DELTA - 0.5 * DELTA)
             elif c == 'h'  : st.append( 1.5 * DELTA - 0.5 * DELTA)
@@ -650,19 +628,6 @@ def rangeRegisterFunc(pitchOverSupportInHz, keyRegiserInHz, alpha = 2.0):
       #print('minFreqInSemitones,maxFreqInSemitones',minFreqInSemitones,maxFreqInSemitones)#debug
       return 2*max(abs(minFreqInSemitones),abs(maxFreqInSemitones))
     
-def relst2register2(semitones):
-    #from relative semitones to register
-    if isinstance(semitones,(int,float)):
-        semitones = [semitones]
-    result = []
-    for st in semitones:
-        if   st > 3  : result.append('H')
-        elif st > 1  : result.append('h')
-        elif st > -1  : result.append('m')
-        elif st > -3  : result.append('l')
-        elif st < -3  : result.append('L')
-    return result
-
 def averageRegisters(swipeFile,speakerTier=None):
     #if no speaker tier is provided, just take the average of the f0s
     if speakerTier is None:
@@ -698,7 +663,6 @@ def identifyThreeEssentialPoints(freq,time=None, thld=2):
     except TypeError:
         time = np.linspace(0, 1, len(freq))
         t = [time[0],time[-1]]
-    #t = [time[0],time[-1]]
     f = [freq[0],freq[-1]]
     k = (np.array(freq)).argmax()
     maximum = freq[k]

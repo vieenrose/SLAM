@@ -66,7 +66,6 @@ tagTier= 'pivot'
 
 #display and exportation
 examplesDisplayCount = 1 #number of example plots to do. Possibly 0
-#minLengthDisplay = 0 #min number of f0 points for an interval to be displayed
 exportFigures = True
 
 
@@ -203,16 +202,13 @@ while tgFiles:
     if exportFigures:
         pdf = pdfLib.PdfPages(outputFigureFile)
 
-    #posLimit = len(tg[targetTier])-1
     for pos,targetIntv in enumerate(tg[targetTier]):
         if pos in POSdisplay:
             print('stylizing: %d %%'%(pos/LEN*100.0))
 
         supportIntvs = stylize.getSupportIntvs(targetIntv,supportTier=tg[speakerTier])
         tag = stylize.getTags(targetIntv,tg[tagTier])
-        #print(tag) #debug
         #compute style of current interval
-        #try:
         out = \
             stylize.stylizeObject(\
             targetIntv = targetIntv, supportIntvs = supportIntvs,\
@@ -224,15 +220,16 @@ while tgFiles:
             (style_glo,style_loc,\
             targetTimes,deltaTargetPitch, deltaTargetPitchSmooth, \
             reference, reference_loc, rangeRegisterInSemitones, loccalDynamicRegister) = out
-        #except TypeError:
-        #    continue
-
+        
+        # debug
         if len(style_glo) !=2 and len(style_glo) !=4 :
-              print(('Error: global style invalide {}'.format(style_glo)))
-              continue
+              print(('Error: a global style code {} incorrect !'.format(style_glo)))
+              exit()
+              #continue
         if len(style_loc) !=2 and len(style_loc) !=4 :
-              print(('Error: local style invalide {}'.format(style_loc)))
-              continue
+              print(('Error: a local style code{} incorrect !'.format(style_loc)))
+              exit()
+              #continue
 
         #prepare exportation of smoothed
         if isinstance(deltaTargetPitchSmooth, (np.ndarray,list)):
@@ -248,7 +245,7 @@ while tgFiles:
               if 'preN'.lower() in (targetIntv.mark()).lower():
                   stylesGlo += [style_glo]
                   stylesDynLoc += [style_loc]
-                  print(u'{}: {},{}'.format(targetIntv.mark(),style_glo,style_loc))#debug
+                  #print(u'{}: {},{}'.format(targetIntv.mark(),style_glo,style_loc))#debug
         else:
               stylesGlo += [style_glo]
               stylesDynLoc += [style_loc]
@@ -274,7 +271,6 @@ while tgFiles:
                   except:
                         # debug
                         print('Fail to save figures in PDF !')
-                        print(fig)
                         pl.show();
                         fig.clf()
                         haveImgInbuf = False
@@ -322,7 +318,8 @@ while tgFiles:
 
 #Now output statistics
 #---------------------
-labs = ['stylesGlo','stylesDynLoc']
+labs = ['Stylization over Global Register',\
+        'Stylization over Local Register']
 for i,styles in enumerate([stylesGlo,stylesDynLoc]):
       print(('style name:{}'.format(labs[i])))
       count = {}
