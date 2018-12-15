@@ -6,7 +6,7 @@ SLAM+
 2) Two (instead of one in **SLAM**) stylization based on two intonational registers: *global* and *local registers*.
 
 Note: 
-1. **SLAM+** is compatible with **Python 2 and 3*** but optimized only for Linux distributions.
+1. **SLAM+** is compatible with **Python 2 and 3** but optimized only for Linux distributions.
 2. **SLAM+** support **mono-channel WAVE** files and binary and short text **PitchTier** as input source.
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
