@@ -8,7 +8,7 @@ SLAM+
 Note: 
 1. **SLAM+** is compatible with **Python 2 and 3** but optimized only for Linux distributions.
 2. **SLAM+** support **mono-channel WAVE** files and binary and short text **PitchTier** as input source.
-3. **SLAM+** integrates an [Python implementaiton](https://gist.github.com/agramfort/850437) of *LOWESS* algorithm [4] for pitch smoothing.  
+3. **SLAM+** integrates a [Python implementaiton](https://gist.github.com/agramfort/850437) of *LOWESS* algorithm [4] for pitch smoothing.  
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
 Example of visualization of pitch contours analysis on *'euh on est partis au Portugal complètement'* (Uh, we went to Portugal entirely.) (Rhap-D1003) from [Rhapsodie Treebank](https://www.projet-rhapsodie.fr/) [3]
