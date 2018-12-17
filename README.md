@@ -1,9 +1,9 @@
 SLAM+
 ====
 
-**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a language independent software dedicated to the data-driven melodic annotation of speech corpora. In comparaison to **SLAM**, there are 2 extensions we introduce in **SLAM+**:
+**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a language independent software dedicated to the data-driven melodic annotation of speech corpora. New features we introduce in **SLAM+** are twofold :
 1) Support for **Praat PitchTier** file (in addition to **WAVE** file) as audio input.
-2) Two (instead of one in **SLAM**) stylization based on two intonational registers: *global* and *local registers*.
+2) Two (instead of one in **SLAM**) stylizations based on two intonational registers: *global* and *local registers*.
 
 Note: 
 1. **SLAM+** is compatible with **Python 2 and 3** but optimized only for Linux distributions.
