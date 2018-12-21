@@ -7,7 +7,7 @@ SLAM+
 
 Note: 
 1. **SLAM+** is compatible with **Python 2 and 3** but optimized only for Linux distributions.
-2. **SLAM+** support **mono-channel WAVE** and **PitchTier** files in binary or short text format as audio input.
+2. **SLAM+** supports **mono-channel WAVE** and **PitchTier** files in binary or short text format as audio input.
 3. **SLAM+** integrates a [Python implementaiton](https://gist.github.com/agramfort/850437) of *LOWESS* algorithm [4] for pitch smoothing.  
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
