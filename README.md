@@ -15,7 +15,7 @@ Example of visualization of pitch contours analysis on *'euh on est partis au Po
 
 ## How to cite **SLAM+**
 
-L. Liu, A. Lacheret, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (Manuscript submitted for publication).
+L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (Manuscript submitted for publication to ICPHS 2019).
 
 
 
