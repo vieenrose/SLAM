@@ -89,4 +89,4 @@ class UnitTests(unittest.TestCase):
 if __name__ == "__main__":
     prog = Progress(100)
     for i in range(100):
-	print(prog.progressstring(i))
+        print(prog.progressstring(i))
