@@ -62,7 +62,7 @@ alpha = 1 # for register ranger estimation
 #targetTier = 'pivot'
 
 speakerTier= 'periode'
-targetTier = 'syllabe'
+targetTier = 'pivot'
 tagTier= ''
 
 #display and exportation
@@ -180,7 +180,7 @@ while tgFiles:
     if not inputPitch:
         for file in srcFile:
             if not praatUtil.isGoodMonoWav(file): continue
-            try: inputPitch = swipe.Swipe(file, pMin=75, pMax=500, s=timeStep, t=voicedThreshold, mel=False)
+            try: inputPitch = swipe.Swipe(file, pMin=75, pMax=500, s=timeStep, t=voicedThreshold, mel=False);
             except:
                   inputPitch = None;
                   continue
@@ -254,16 +254,8 @@ while tgFiles:
                 smooth_total = np.concatenate((smooth_total,smooth_hz))
                 time_total = np.concatenate((time_total,targetTimes))
 
-        #exp
-        EXP_TOPICAL_MARKER = True
-        if EXP_TOPICAL_MARKER:
-              if 'preN'.lower() in (targetIntv.mark()).lower():
-                  stylesGlo += [style_glo]
-                  stylesDynLoc += [style_loc]
-                  #print(u'{}: {},{}'.format(targetIntv.mark(),style_glo,style_loc))#debug
-        else:
-              stylesGlo += [style_glo]
-              stylesDynLoc += [style_loc]
+        stylesGlo += [style_glo]
+        stylesDynLoc += [style_loc]
 
         #then add an interval with that style to the (new) style tier
         newInterval = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(), style_glo)
@@ -337,6 +329,7 @@ while tgFiles:
 #---------------------
 labs = ['Stylization over Global Register',\
         'Stylization over Local Register']
+
 for i,styles in enumerate([stylesGlo,stylesDynLoc]):
       print(('Type of Stylization: {}'.format(labs[i])))
       count = {}
