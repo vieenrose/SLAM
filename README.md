@@ -32,7 +32,11 @@ L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING O
 
 0) Download or clone [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev).
 
-1) Install [WinPython](https://winpython.github.io/).
+1) Install [Python interpreter](https://www.python.org/downloads/).
+
+2) Install [WinPython](https://winpython.github.io/) which contains Python libarires that SLAMplus requires.
+
+Note: Pay attention to version consistence, ie. make sure that Python interpreter and WinPython you will install are of the same major version (of version 2 or version 3).
 
 ## How to Use **SLAM+**
 1) Drop your **PitchTier** files and **TextGrid** files in the sub-directory *data* of the corresponding **SLAM+** directory. **PitchTier** files must come in pair of *the same name* with **TextGrid** files. As an example: 
