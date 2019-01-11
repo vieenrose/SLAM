@@ -2,12 +2,12 @@ SLAM+
 ====
 
 **SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a language independent software dedicated to the data-driven melodic annotation of speech corpora. New features we introduce in **SLAM+** are twofold:
-1) New support for **Praat PitchTier** file (in addition to **WAVE** file) as audio input.
+1) Use **Praat PitchTier** file as data input.
 2) Two (instead of one in **SLAM**) stylizations based on respectively a long and a short-term account of intonational register: *global* and *parametrizable local registers*.
 
 Note: 
 1. **SLAM+** is compatible with **Python 2 and 3** but optimized only for Linux distributions.
-2. **SLAM+** supports **mono-channel WAVE** and **PitchTier** files in binary or short text format as audio input.
+2. **SLAM+** supports **PitchTier** files in binary or short text format as audio input.
 3. **SLAM+** integrates a [Python implementaiton](https://gist.github.com/agramfort/850437) of *LOWESS* algorithm [4] for pitch smoothing.  
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
@@ -20,22 +20,18 @@ L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING O
 
 
 ## How to install **SLAM+**
-0) Download or clone [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev) and [**swipe-installer**](https://github.com/vieenrose/swipe-installer) and put them in the same repository.
-
-1) Install *Swipe* module (only necessary if you want also to read **WAVE** files in addition to **PitchTier** files)
-
-Implemented by Kyle Gorman, [Swipe](http://ling.upenn.edu/~kgorman/c/swipe/) is a pitch estimation algorithm [1], which is required for **SLAM+** to work with **WAVE** files. Sources of swipe are provided in the swipe-installer directory. These are **slightly modified versions** different from the official *GitHub* release. Modifications are only for the purpose of *Swipe* compiling under *C89* instead of *C99* standards.
+0) Download or clone [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev).
   
-2) Install the following libraries required by **SLAM+**:
+1) Install the following libraries required by **SLAM+**:
 
             sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
   
 ## How to Use **SLAM+**
-1) Drop your **mono-channel WAVE** (or **PitchTier**) files and **TextGrid** files in the sub-directory *data* of the corresponding **SLAM** directory. **WAVE** (or **PitchTier**) files must come in pair of *the same name* with **TextGrid** files. As an example: 
+1) Drop your **PitchTier** files and **TextGrid** files in the sub-directory *data* of the corresponding **SLAM+** directory. **PitchTier** files must come in pair of *the same name* with **TextGrid** files. As an example: 
 
      "myfile1.PitchTier" "myfile1.TextGrid" "myfile2.wav" "myfile2.TextGrid"
 
-2) Open a terminal and go to the **SLAM** directory
+2) Open a terminal and go to the **SLAM+** directory
 3) Execute
 
         python SLAM.py
