@@ -33,7 +33,7 @@ L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING O
 2) Open a terminal and go to the **SLAM+** directory
 3) Execute
 
-        python SLAM.py
+        python SLAMplus.py
 
 4) Follow the instructions.
 
