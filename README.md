@@ -19,11 +19,16 @@ L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING O
 
 
 ## How to install **SLAM+**
+
+# Under Debian / Ubuntu Linux
+
 0) Download or clone [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev).
 
 1) Install the following libraries required by **SLAM+**:
 
             sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
+
+# Under Microsoft Windows
 
 ## How to Use **SLAM+**
 1) Drop your **PitchTier** files and **TextGrid** files in the sub-directory *data* of the corresponding **SLAM+** directory. **PitchTier** files must come in pair of *the same name* with **TextGrid** files. As an example: 
