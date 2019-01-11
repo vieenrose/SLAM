@@ -38,7 +38,7 @@ L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING O
 4) Follow the instructions.
 
 ## How to Configure **SLAM+**
-You can open SLAM.py and modify the parameters to suit your needs. 
+You can open SLAMplus.py and modify the parameters to suit your needs. 
 
 ## Bibliography ##
 
