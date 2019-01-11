@@ -32,7 +32,7 @@ L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING O
 
 0) Download or clone [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev).
 
-1) Install [WinPython](https://winpython.github.io/).
+1) Choose a full version of [WinPython](https://winpython.github.io/) and install it.
 
 Note: Pay attention to version consistence, ie. make sure that Python interpreter and WinPython you will install are of the same major version (of version 2 or version 3).
 
