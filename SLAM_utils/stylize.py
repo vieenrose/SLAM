@@ -70,8 +70,8 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     linestyle_AbsGrid = ''
     color_LocReg = 'red'
     linestyle_LocReg = ':'
-    color_GloReg = 'b'
-    linestyle_GloReg =':'
+    color_GloReg = 'black'
+    linestyle_GloReg ='-'
     linestyle_pitch = ''
     linestyle_style2 = '-'
     markerstyle_pitch = '.'
@@ -88,7 +88,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     markersize_pitch = 2*2
     markersize_essentials = 5*1.5
     linewidth_LocReg = .5*2*2
-    linewidth_GloReg = .5*2*2
+    linewidth_GloReg = .5*2
     
     linewidth_smooth=1
     linewidth_Style1 = 1*2
