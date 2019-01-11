@@ -11,7 +11,7 @@ Note:
 3. **SLAM+** integrates a [Python implementaiton](https://gist.github.com/agramfort/850437) of *LOWESS* algorithm [4] for pitch smoothing.  
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
-Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodie Spoken French corpus](https://www.projet-rhapsodie.fr/) [3]. In this example, we show a visualization of the pitch contours of an utterance and its analysis by **SLAM+**. In this case, the *support* is set to give segmentation on maximal prosodic unit while by *target*, we prodive a further segmentaiton in marcosyntax [5] of this unit. As signaled by the attributes of *target*, 'Uh' and 'on est partis au Portugal complètement' play the role of *discourse marker* and *the nucluer* of a speech act, respectively.
+Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodie Spoken French corpus](https://www.projet-rhapsodie.fr/) [3]. In this example, we show a visualization of the pitch contours of an utterance and its analysis by **SLAM+**. With respect to the configuration of *support* and *target*, we choose *support* to give segmentation on maximal prosodic unit; while by *target*, we prodive a further segmentaiton in marcosyntax [5] of each maximal prosodic unit. As indicated by *target*'s labels, 'Uh' and 'on est partis au Portugal complètement' are signaled as *discourse marker* and *the nucluer* of a speech act, respectively.
 
 ## How to cite **SLAM+**
 
