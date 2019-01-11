@@ -41,6 +41,7 @@ tiers of interest:
 * targetTier  : The tier whose intervals will be stylized using
                 SLAM
 
+
 display & export:
 -------
 * displayExamples : True or False: whether or not to display examples
@@ -61,8 +62,8 @@ alpha = 1 # for register ranger estimation
 #targetTier = 'pivot'
 
 speakerTier= 'periode'
-targetTier = 'Macro'
-tagTier= 'pivot'
+targetTier = 'syllabe'
+tagTier= ''
 
 #display and exportation
 examplesDisplayCount = 1 #number of example plots to do. Possibly 0
@@ -83,14 +84,15 @@ import SLAM_utils.progress as progLib
 
 change = stylize.input_SLAM("""
 Current parameters are:
-  tier to use for categorizing registers : %s
-  tier to stylize                        : %s
-  Number of examples to display          : %d
-  Export result in PDF                   : %d
+  tier providing units of register estimation (support) : %s
+  tier providing units to stylize (target)              : %s
+  tier providing additional descriptive contents (tag)  : %s
+  Number of examples to display                         : %d
+  Export result in PDF                                  : %d
   ENTER = ok
   anything+ENTER = change
 
-  """%(speakerTier, targetTier,examplesDisplayCount, exportFigures))
+  """%(speakerTier, targetTier, tagTier,examplesDisplayCount, exportFigures))
 
 print(change)
 
@@ -99,6 +101,9 @@ if len(change):
     if len(new):speakerTier=new
     new = stylize.input_SLAM('target tier (empty = keep %s) : '%targetTier)
     if len(new):targetTier=new
+    new = stylize.input_SLAM('tag tier (empty = keep %s) : '%tagTier)
+    if len(new):tagTier=new
+
     new = stylize.input_SLAM('number of displays (empty = keep %d) : '%examplesDisplayCount)
     if len(new):examplesDisplayCount=int(new)
     new = input('export figures in PDF file (empty = keep %d) : '%exportFigures)
@@ -147,9 +152,13 @@ while tgFiles:
         for t in tierNames: print('        %s'%t)
         targetTier=stylize.input_SLAM('Type the tier name to use as target (+ENTER):')
     while speakerTier not in tierNames and speakerTier:
-        print('    TextGrid does not have a tier named %s for speaker/support Tier. Available tiers are:'%speakerTier)
+        print('    TextGrid does not have a tier named %s for support. Available tiers are:'%speakerTier)
         for t in tierNames: print('        %s'%t)
-        speakerTier=stylize.input_SLAM('Type the tier name indicating speaker/support Tier (or any categorizing variable):')
+        speakerTier=stylize.input_SLAM('Type the tier name for support (or any categorizing variable):')
+    while tagTier not in tierNames and tagTier:
+        print('    TextGrid does not have a tier named %s for tag. Available tiers are:'%speakerTier)
+        for t in tierNames: print('        %s'%t)
+        tagTier=stylize.input_SLAM('Type the tier name indicating tag Tier (or any categorizing variable):')
 
     #create interval tier for output
     newTier = TextGrid.IntervalTier(name = '%sStyleGlo'%targetTier, 
@@ -211,7 +220,10 @@ while tgFiles:
             print('Stylizing: {} contours'.format(prog.progressstring(pos)))
 
         supportIntvs = stylize.getSupportIntvs(targetIntv,supportTier=tg[speakerTier])
-        tag = stylize.getTags(targetIntv,tg[tagTier])
+        try:
+            tag = stylize.getTags(targetIntv,tg[tagTier])
+        except:
+            tag = None
         #compute style of current interval
         out = \
             stylize.stylizeObject(\
