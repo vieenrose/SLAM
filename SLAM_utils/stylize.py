@@ -431,11 +431,14 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
       ax.annotate(text_key_range,xy=(0.5,1.025),xycoords='axes fraction',fontsize=11,fontweight='medium',  horizontalalignment='center',fontstyle='italic')
       
       #lines = lns3+lns3p+lns2+lns0+lnst6+lnst5
+      lengLOWESS='Smoothed Cleaned Pitch (LOWESS)'
+      if not smoothingEnable: 
+            lengLOWESS = 'Connected Cleaned Pitch'
       lines = lns3+lns3p+lns2+lns0+lnst6+lnst5
       ax2.legend(lines,\
       ['Stylized @ GloReg',\
       'Stylized @ LocReg',\
-       'Smoothed Cleaned Pitch (LOWESS)',\
+       lengLOWESS,\
        'Cleaned Pitch',\
        'Global Register (Key)',\
        'Dynamic Local Register (Key)'
