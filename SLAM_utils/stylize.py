@@ -11,6 +11,7 @@ import os, math, sys
 
 minDELTA=4
 locality = 100
+smoothingEnable=False
 
 def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
 
@@ -29,9 +30,9 @@ def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
     """
 
     t = np.array(range(len(semitones)))/float(len(semitones))
-    if 10<len(semitones):
+    if 10<len(semitones) and smoothingEnable:
         import SLAM_utils.lowess as lowess
-        smooth = lowess.lowess(t,semitones)
+        smooth = lowess.lowess(t,semitones,f=1.0/5.0, iter=9)
     else:
         smooth = semitones
 
@@ -365,14 +366,14 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     ax.annotate('{:.0f} ms'.format(xticks_major[-1]-xticks_major[0]),xy=(x2/2+x1/2,-0.035),xycoords='axes fraction',fontsize=6,horizontalalignment='center')
     if is_new_support:
        # support label
-       ax.annotate(supp_mark,xy=(0.5,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='medium',horizontalalignment='center',fontstyle='italic')
+       ax.annotate(supp_mark,xy=(0.5,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='medium',horizontalalignment='center',fontstyle='italic', wrap=True)
        SupportLabel = 'Support'
        if supportName: SupportLabel+=' [{}]'.format(supportName)
        SupportLabel += ':'
        ax.annotate(SupportLabel,xy=(labelsLeftPos,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal',horizontalalignment='right',fontstyle='normal')
     
     # target label
-    ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04-0.08-0.01),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic')
+    ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04-0.08-0.01),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic', wrap=True)
     if is_new_support:
           TargetLabel = 'Target'
           if targetName: TargetLabel+=' [{}]'.format(targetName)
@@ -381,11 +382,11 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     
     # its stlization in symbolic form
     ax.annotate('Global Labels:',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl)
-    ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl)
+    ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl, wrap=True)
     txt_style2= style2
     ax.annotate('Local Labels:',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_sty2)
     
-    ax.annotate(style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
+    ax.annotate(style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2, wrap=True)
     #ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
     
     #ax.annotate(txt_style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
