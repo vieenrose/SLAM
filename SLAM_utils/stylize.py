@@ -9,7 +9,7 @@ from SLAM_utils import swipe
 import os, math, sys
 
 
-minDELTA=0
+minDELTA=4
 locality = 100
 
 def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
