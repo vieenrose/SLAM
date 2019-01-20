@@ -300,7 +300,8 @@ while tgFiles:
                   support=support,\
                   time_org=targetTimes,\
                   figIn=fig, is_new_support=is_new_support,
-                  rangeRegisterInSemitones = rangeRegisterInSemitones, alpha=alpha, tag =tag)
+                  rangeRegisterInSemitones = rangeRegisterInSemitones, alpha=alpha,tag = tag,\
+                  supportName=speakerTier,targetName=targetTier,tagName=tagTier )
               haveImgInbuf = True
 
         except:
