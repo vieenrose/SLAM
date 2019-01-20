@@ -237,11 +237,11 @@ while tgFiles:
             reference, reference_loc, rangeRegisterInSemitones, loccalDynamicRegister) = out
         
         # debug
-        if len(style_glo) !=2 and len(style_glo) !=4 :
+        if len(style_glo) !=2 and len(style_glo) !=4 and len(style_glo) !=6 :
               print(('Error: a global style code {} incorrect !'.format(style_glo)))
               exit()
               #continue
-        if len(style_loc) !=2 and len(style_loc) !=4 :
+        if len(style_loc) !=2 and len(style_loc) !=4 and len(style_loc) !=6:
               print(('Error: a local style code{} incorrect !'.format(style_loc)))
               exit()
               #continue

@@ -40,21 +40,37 @@ def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
     delta = DELTA / 2
 
     # identify the three essential points
-    if len(smooth) >= 3: ti,fr=identifyThreeEssentialPoints(smooth, time = time, thld=delta)
+    if len(smooth) >= 3: ti,fr=identifyEssentialPoints(smooth, time = time, thld=delta)
     else: ti,fr = time, smooth
     
     # transcript the model in SLAM annotation
     style = relst2register(fr[0], DELTA=DELTA)
     style+= relst2register(fr[-1], DELTA=DELTA)
-    if len(fr)>=3:
+    minLenSty = 2
+    if len(fr)>minLenSty:
+        #debug:identifyEssentialPoints
+        #print(ti,fr)
         denum = ti[-1] - ti[0]
-        if abs(denum) > 0:
-            tNotmalized = (ti[1] - ti[0]) / denum
-            style += relst2register(fr[1], DELTA=DELTA)
-            positionId = int(math.ceil(3*tNotmalized))
-            style+= str(positionId)
+        cnt = len(fr) - minLenSty
+        #debug
+        #print(fr)
+        while cnt:
+              if abs(denum) > 0:
+                  tNotmalized = (ti[cnt] - ti[0]) / denum
+                  #style += relst2register(fr[1+cnt], DELTA=DELTA)#
+                  tmp = relst2register(fr[cnt], DELTA=DELTA)#
+                  #debug
+                  #print(fr[1+cnt], tmp)
+                  style += tmp
+                  positionId = int(math.ceil(3*tNotmalized))
+                  style+= str(positionId)
+              cnt-=1
 
     style = ''.join(style)
+    #debug
+    #if len(fr)>minLenSty:
+    #  print(style)
+    #  print('')
     
     return (style,smooth)
 
@@ -222,13 +238,36 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
               
         style_intv = [xmin,xmax]
         style_pitch = [f_i,f_f]
-        if len(style) >=4:
-            f_p = register2relst(style[2],DELTA=DELTA)[0] + yoffset #alphabet2semitones[style[2]]+yoffset
-            t_p = relativePos2time(style[3],[xmin,xmax])
-            #print(style_intv)
-            style_intv.insert(1,t_p)
-            #print(style_intv)
-            style_pitch.insert(1,max([f_p,f_i+DELTA/2.0,f_f+DELTA/2.0]))
+        minLenStyl = 2
+        if len(style) >minLenStyl: # mmh2
+            #debug
+            #print(style)
+            cnt = (len(style) - minLenStyl)
+            while cnt > 0:
+                  f_p = register2relst(style[cnt],DELTA=DELTA)[0] + yoffset #alphabet2semitones[style[2]]+yoffset
+                  t_p = relativePos2time(style[cnt+1],[xmin,xmax])
+                  #print(style_intv)
+                  style_intv.insert(1,t_p)
+                  #print(style_intv)
+                  if f_p > f_i or f_p > f_f : #peak
+                        style_pitch.insert(1,max([f_p,f_i+DELTA/2.0,f_f+DELTA/2.0]))
+                  elif f_p < f_i or f_p < f_f : # valley
+                        style_pitch.insert(1,min([f_p,f_i-DELTA/2.0,f_f-DELTA/2.0]))
+                  #else:
+                        #debug
+                  #      print('Err:')
+                  #      print('peak {} ini {} final{}'.format(f_p,f_i,f_f))
+                  cnt -= 2
+                  #debug
+                  #for x,y in zip(style_intv,style_pitch):
+                  #      print(x,y)
+            # sort the lists by time
+            if sorted(style_intv) != style_intv:
+                  print("sort the lists by time")
+                  print(style_intv,style_pitch)
+                  style_intv,style_pitch=list(zip(*sorted(zip(style_intv,style_pitch))))
+                  print(style_intv,style_pitch)
+            
         return style_intv,style_pitch
     
         
@@ -244,9 +283,11 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     yoffset=hz2semitone(register_loc)-hz2semitone(register)
     #print(style1,style2)
     style2_intv,style2_pitch = style2pitch(style2,xticks_major[0],xticks_major[-1],DELTA=DELTA, yoffset=yoffset)
+    #debug
+    #if len(style2_pitch)>3: print(style2,style2_pitch)
           
-    # 2(+1) essential points
-    ti,fr=identifyThreeEssentialPoints(smooth,time=time_org, thld=DELTA / 2)
+    # essential points
+    ti,fr=identifyEssentialPoints(smooth,time=time_org, thld=DELTA / 2)
     essential_intv = sec2msec(np.array(ti))
     essential_pitch = fr
     
@@ -272,9 +313,14 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     #lns1=ax.plot(target_intv,original,'b',linewidth=2)
     
     lns2=ax.plot(target_intv,smooth,color=color_smooth,linewidth=linewidth_smooth)
-    if len(essential_intv)>2:
+    minLenSty=2
+    if len(essential_intv)>minLenSty:
       # only show the significative main saliancy 
-      lns4=ax.plot(essential_intv[1],essential_pitch[1],'ro',markersize=markersize_essentials,color=color_essentials)
+      
+      cnt = len(essential_intv) - minLenSty
+      while cnt > 0:
+            lns4=ax.plot(essential_intv[cnt],essential_pitch[cnt],'ro',markersize=markersize_essentials,color=color_essentials)
+            cnt-=1
     lns3=ax.plot(style1_intv,style1_pitch,color=color_style_styl,linewidth=linewidth_Style1)
     lns3p=ax.plot(style2_intv,style2_pitch,color=color_style_sty2,linewidth=linewidth_Style2,linestyle=linestyle_style2)
 
@@ -673,7 +719,7 @@ def averageRegisters(swipeFile,speakerTier=None):
     return registers
     
 
-def identifyThreeEssentialPoints(freq,time=None, thld=2):
+def identifyEssentialPoints(freq,time=None, thld=2):
     #assume data is of increasing order of time
     try:
         t = [time[0],time[-1]]
@@ -681,12 +727,20 @@ def identifyThreeEssentialPoints(freq,time=None, thld=2):
         time = np.linspace(0, 1, len(freq))
         t = [time[0],time[-1]]
     f = [freq[0],freq[-1]]
+    
+    # find significant peak 
     k = (np.array(freq)).argmax()
     maximum = freq[k]
- 
     if (maximum >= f[0] + thld) and (maximum >= f[-1] + thld):
           t.insert(1,time[k])
           f.insert(1,maximum)
+    # find significant valley
+    l = (np.array(freq)).argmin()
+    minimum = freq[l]
+    if (minimum <= f[0] - thld) and (minimum <= f[-1] - thld):
+          t.insert(1,time[l])
+          f.insert(1,minimum)
+    
     return t,f
 
 def intv2pitch(intv,swipeFile):
