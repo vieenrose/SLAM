@@ -118,6 +118,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     # define the softness of boundelines of ranger of register 
     alphaGlo = alpha
     alphaLoc = alpha
+    bbox_props = dict(boxstyle="round", fc="w")
     
     fig = figIn
     ax = fig.gca()
@@ -353,14 +354,14 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     if is_new_support:
           ax.set_ylabel('Frequencey (Hz)')
     
-    fig.subplots_adjust(top=0.95,bottom=0.27,left=0.25, right=0.925)
+    fig.subplots_adjust(top=0.95,bottom=0.27,left=0.15, right=0.925)
     xlim=ax.get_xlim()
     diff_xlim = max(xlim)-min(xlim)
     diff_ylim = max(ylim)-min(ylim)
     x1 = (xticks_major[0]-xlim[0])/diff_xlim
     x2 = (xticks_major[1]-xlim[0])/diff_xlim
     
-    labelsLeftPos = -0.1
+    labelsLeftPos = -0.03
     
     # duration label
     ax.annotate('{:.0f} ms'.format(xticks_major[-1]-xticks_major[0]),xy=(x2/2+x1/2,-0.035),xycoords='axes fraction',fontsize=6,horizontalalignment='center')
@@ -369,33 +370,36 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
        ax.annotate(supp_mark,xy=(0.5,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='medium',horizontalalignment='center',fontstyle='italic', wrap=True)
        SupportLabel = 'Support'
        if supportName: SupportLabel+=' [{}]'.format(supportName)
-       SupportLabel += ':'
-       ax.annotate(SupportLabel,xy=(labelsLeftPos,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal',horizontalalignment='right',fontstyle='normal')
+       SupportLabel += ': '
+       ax.annotate(SupportLabel,xy=(labelsLeftPos,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,\
+       fontweight='normal',horizontalalignment='right',fontstyle='normal', wrap=True)
     
     # target label
     ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04-0.08-0.01),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic', wrap=True)
     if is_new_support:
           TargetLabel = 'Target'
           if targetName: TargetLabel+=' [{}]'.format(targetName)
-          TargetLabel += ':'
-          ax.annotate(TargetLabel,xy=(-0.1,-0.13+.04-0.08-0.01),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal',horizontalalignment='right',fontstyle='normal')
+          TargetLabel += ': '
+          ax.annotate(TargetLabel,xy=(labelsLeftPos,-0.13+.04-0.08-0.01),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal',horizontalalignment='right',fontstyle='normal')
     
     # its stlization in symbolic form
-    ax.annotate('Global Labels:',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl)
-    ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl, wrap=True)
+    if is_new_support:
+      ax.annotate('Global Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl)
+    ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl, wrap=True,bbox=bbox_props)
     txt_style2= style2
-    ax.annotate('Local Labels:',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_sty2)
+    if is_new_support:
+      ax.annotate('Local Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_sty2)
     
-    ax.annotate(style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2, wrap=True)
-    #ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
-    
+    ann=ax.annotate(style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2, wrap=True,bbox=bbox_props)
+    print(ann.get_bbox_patch().get_extents().width)
     #ax.annotate(txt_style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
     if tag:
-        TagLabel = 'Tag'
-        if tagName: TagLabel+=' [{}]'.format(tagName)
-        TagLabel += ':'
-        ax.annotate(TagLabel,xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal',horizontalalignment='right',color='blue')
-        ax.annotate(tag,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color='blue')
+        if is_new_support:
+              TagLabel = 'Tag'
+              if tagName: TagLabel+=' [{}]'.format(tagName)
+              TagLabel += ': '
+              ax.annotate(TagLabel,xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal',horizontalalignment='right',color='black')
+        ax.annotate(tag,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='normal',horizontalalignment='center',color='black')
 
     """
     # grid relative to local regster in bleu lines

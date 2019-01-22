@@ -62,8 +62,8 @@ alpha = 1 # for register ranger estimation
 #targetTier = 'pivot'
 
 speakerTier= 'periode'
-targetTier = 'pivot'
-tagTier= ''
+targetTier = 'Macro'
+tagTier= 'pivot'
 
 #display and exportation
 examplesDisplayCount = 1 #number of example plots to do. Possibly 0
@@ -207,7 +207,7 @@ while tgFiles:
     POSdisplay = set([int(float(i)/100.0*LEN) for i in range(0,100,10)])
     smooth_total = []
     time_total = []
-    pl.rcParams["figure.figsize"] = [12,6]
+    pl.rcParams["figure.figsize"] = [14,9]
     fig = pl.figure()
     support = None
     haveImgInbuf = False
