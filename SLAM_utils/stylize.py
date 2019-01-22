@@ -444,14 +444,14 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
           ax.annotate('Global Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl,verticalalignment='top',ma='left')
     ann_Style1 = ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl, wrap=True,bbox=bbox_props,verticalalignment='top',ma='left')
     
-    wrap_text_to_contours_width(style1, ann_Style1, fig, lns2)
+    wrap_text_to_contours_width(style1, ann_Style1, fig, lns2,marginInNumCharacter=0)
     
     if is_new_support:
       ax.annotate('Local Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_sty2,verticalalignment='top',ma='left')
     
     ann_Style2=ax.annotate(style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',verticalalignment='top',color=color_style_sty2, wrap=True,bbox=bbox_props,ma='left')
     
-    wrap_text_to_contours_width(style2, ann_Style2, fig, lns2)
+    wrap_text_to_contours_width(style2, ann_Style2, fig, lns2,marginInNumCharacter=0)
     
     if tag:
         if is_new_support:
