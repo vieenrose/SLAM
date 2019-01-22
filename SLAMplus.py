@@ -66,7 +66,7 @@ targetTier = 'Macro'
 tagTier= 'pivot'
 
 #display and exportation
-examplesDisplayCount = 1 #number of example plots to do. Possibly 0
+examplesDisplayCount = 3 #number of example plots to do. Possibly 0
 exportFigures = True
 
 
@@ -128,7 +128,8 @@ while tmpFiles:
         srcFiles.append(filename)
 
 t1 = time.time()
-while tgFiles:
+tgFiles = sorted(tgFiles)
+while (tgFiles):
     #take a tg file from tgFiles and its related src file(s) from SrcFiles
     inputTextgridFile = tgFiles.pop(0)
     basename = stylize.get_basename(inputTextgridFile)
