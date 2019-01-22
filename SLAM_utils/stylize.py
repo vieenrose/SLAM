@@ -512,7 +512,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
        'Global Register (Key)',\
        'Dynamic Local Register (Key)'
        #'Significtive Main Saliency on Smoothed Pitch'\
-       ],fontsize=11)
+       ],fontsize=7)
        
     return fig
 
