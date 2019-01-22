@@ -104,7 +104,7 @@ def wrap_text_to_contours_width(txt, annotationObj, fig, contoursObj, impossible
           xy_pixels = ax.transData.transform(np.vstack([x,y]).T)
           xpix, ypix = xy_pixels.T
           width_targetContours = xpix[-1] - xpix[0]
-          if width_targetContours  < width_targetVal + margin * widthPerCha :
+          if width_targetContours  < width_targetVal + marginInNumCharacter * widthPerCha :
             ratio = width_targetVal / (width_targetContours - marginInNumCharacter * widthPerCha)
             limit_wrap = int(math.floor(len(txt) / ratio))
             
