@@ -93,39 +93,35 @@ def find_renderer(fig):
         renderer = fig._cachedRenderer
     return(renderer)
 
-def wrap_text_to_contours_width(txt, annotationObj, fig, contoursObj, impossibleMarker='.', margin = 2):
+def wrap_text_to_contours_width(txt, annotationObj, fig, contoursObj, impossibleMarker='.', marginInNumCharacter = 2):
           
           limit_wrap = len(txt)
           ax = fig.gca()
-          
-          while True:
-                renderer = find_renderer(fig)
-                width_targetVal = annotationObj.get_window_extent(renderer).width
-                widthPerCha=width_targetVal / len(txt)
-                x,y = contoursObj[0].get_data()
-                xy_pixels = ax.transData.transform(np.vstack([x,y]).T)
-                xpix, ypix = xy_pixels.T
-                width_targetContours = xpix[-1] - xpix[0]
-                
-                if width_targetContours  < width_targetVal + margin*widthPerCha :
-                          limit_wrap = limit_wrap - 1
-                          if limit_wrap > 0: 
-                                try:
-                                    txt_wrap = textwrap.fill(txt, limit_wrap)
-                                    annotationObj.set_text(txt_wrap)
-                                except:
-                                    print('err in wrap_text_to_contours_width: unable to wrap the text {} for width {}' .format(txt, limit_wrap))
-                                
-                          else: # limit_wrap==0 
-                                try:
-                                    annotationObj.set_text(impossibleMarker)
-                                except: 
-                                    print(txt, impossibleMarker)
-                                    print('err in wrap_text_to_contours_width: unable to set wrapped text to null')
-                                return False
-                else: # good
-                    return True
-
+          renderer = find_renderer(fig)
+          width_targetVal = annotationObj.get_window_extent(renderer).width
+          widthPerCha=width_targetVal / len(txt)
+          x,y = contoursObj[0].get_data()
+          xy_pixels = ax.transData.transform(np.vstack([x,y]).T)
+          xpix, ypix = xy_pixels.T
+          width_targetContours = xpix[-1] - xpix[0]
+          if width_targetContours  < width_targetVal + margin * widthPerCha :
+            ratio = width_targetVal / (width_targetContours - marginInNumCharacter * widthPerCha)
+            limit_wrap = int(math.floor(len(txt) / ratio))
+            
+            if limit_wrap > 0: 
+                          try:
+                              txt_wrap = textwrap.fill(txt, limit_wrap)
+                              annotationObj.set_text(txt_wrap)
+                          except:
+                              print('err in wrap_text_to_contours_width: unable to wrap the text {} for width {}' .format(txt, limit_wrap))
+                          
+            else: # limit_wrap==0 
+                          try:
+                              annotationObj.set_text(impossibleMarker)
+                          except: 
+                              print(txt, impossibleMarker)
+                              print('err in wrap_text_to_contours_width: unable to set wrapped text to null')
+                          return False
 
 def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register, register_loc,figIn,support,rangeRegisterInSemitones,alpha, tag,\
       supportName=None, \
