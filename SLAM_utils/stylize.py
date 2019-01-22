@@ -93,7 +93,7 @@ def find_renderer(fig):
         renderer = fig._cachedRenderer
     return(renderer)
 
-def wrap_text_to_contours_width(txt, annotationObj, fig, contoursObj, impossibleMarker='.', marginInNumCharacter = 2):
+def wrap_text_to_contours_width(txt, annotationObj, fig, contoursObj, impossibleMarker='.', marginInNumCharacter = 2, line_max = 3):
           
           limit_wrap = len(txt)
           ax = fig.gca()
@@ -110,7 +110,7 @@ def wrap_text_to_contours_width(txt, annotationObj, fig, contoursObj, impossible
             
             if limit_wrap > 0: 
                           try:
-                              txt_wrap = textwrap.fill(txt, limit_wrap)
+                              txt_wrap = textwrap.fill(txt[:(limit_wrap*line_max)], limit_wrap)
                               annotationObj.set_text(txt_wrap)
                           except:
                               print('err in wrap_text_to_contours_width: unable to wrap the text {} for width {}' .format(txt, limit_wrap))
