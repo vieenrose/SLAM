@@ -75,6 +75,58 @@ def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
     
     return (style,smooth)
 
+#source: https://stackoverflow.com/questions/22667224/matplotlib-get-text-bounding-box-independent-of-backend
+def find_renderer(fig):
+
+    if hasattr(fig.canvas, "get_renderer"):
+        #Some backends, such as TkAgg, have the get_renderer method, which 
+        #makes this easy.
+        renderer = fig.canvas.get_renderer()
+    else:
+        #Other backends do not have the get_renderer method, so we have a work 
+        #around to find the renderer.  Print the figure to a temporary file 
+        #object, and then grab the renderer that was used.
+        #(I stole this trick from the matplotlib backend_bases.py 
+        #print_figure() method.)
+        import io
+        fig.canvas.print_pdf(io.BytesIO())
+        renderer = fig._cachedRenderer
+    return(renderer)
+
+def wrap_text_to_contours_width(txt, annotationObj, fig, contoursObj, impossibleMarker='.', margin = 2):
+          
+          limit_wrap = len(txt)
+          ax = fig.gca()
+          
+          while True:
+                renderer = find_renderer(fig)
+                width_targetVal = annotationObj.get_window_extent(renderer).width
+                widthPerCha=width_targetVal / len(txt)
+                x,y = contoursObj[0].get_data()
+                xy_pixels = ax.transData.transform(np.vstack([x,y]).T)
+                xpix, ypix = xy_pixels.T
+                width_targetContours = xpix[-1] - xpix[0]
+                
+                if width_targetContours  < width_targetVal + margin*widthPerCha :
+                          limit_wrap = limit_wrap - 1
+                          if limit_wrap > 0: 
+                                try:
+                                    txt_wrap = textwrap.fill(txt, limit_wrap)
+                                    annotationObj.set_text(txt_wrap)
+                                except:
+                                    print('err in wrap_text_to_contours_width: unable to wrap the text {} for width {}' .format(txt, limit_wrap))
+                                
+                          else: # limit_wrap==0 
+                                try:
+                                    annotationObj.set_text(impossibleMarker)
+                                except: 
+                                    print(txt, impossibleMarker)
+                                    print('err in wrap_text_to_contours_width: unable to set wrapped text to null')
+                                return False
+                else: # good
+                    return True
+
+
 def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register, register_loc,figIn,support,rangeRegisterInSemitones,alpha, tag,\
       supportName=None, \
       targetName=None,\
@@ -266,10 +318,10 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
                   #      print(x,y)
             # sort the lists by time
             if sorted(style_intv) != style_intv:
-                  print("sort the lists by time")
-                  print(style_intv,style_pitch)
+                  #print("sort the lists by time")
+                  #print(style_intv,style_pitch)
                   style_intv,style_pitch=list(zip(*sorted(zip(style_intv,style_pitch))))
-                  print(style_intv,style_pitch)
+                  #print(style_intv,style_pitch)
             
         return style_intv,style_pitch
     
@@ -315,7 +367,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
       
     #lns1=ax.plot(target_intv,original,'b',linewidth=2)
     
-    lns2=ax.plot(target_intv,smooth,color=color_smooth,linewidth=linewidth_smooth)
+    lns2 = ax.plot(target_intv,smooth,color=color_smooth,linewidth=linewidth_smooth)
     minLenSty=2
     if len(essential_intv)>minLenSty:
       # only show the significative main saliancy 
@@ -367,7 +419,9 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     # duration label
     duration = (xticks_major[-1]-xticks_major[0])
     new_w = int(math.floor(duration / 10 / 2.5))
-    ax.annotate('{:.0f} ms'.format(duration),xy=(x2/2+x1/2,-0.035),xycoords='axes fraction',fontsize=6,horizontalalignment='center')
+    txt='{:.0f} ms'.format(duration)
+    ann_dur= ax.annotate(txt,xy=(x2/2+x1/2,-0.035),xycoords='axes fraction',fontsize=6,horizontalalignment='center',ma='left')
+    wrap_text_to_contours_width(txt, ann_dur, fig, lns2,'')
     if is_new_support:
        # support label
        ax.annotate(supp_mark,xy=(0.5,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic', wrap=True)
@@ -375,11 +429,13 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
        if supportName: SupportLabel+=' [{}]'.format(supportName)
        SupportLabel += ': '
        ax.annotate(SupportLabel,xy=(labelsLeftPos,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,\
-       fontweight='normal',horizontalalignment='right',fontstyle='normal', wrap=True)
+       fontweight='normal',horizontalalignment='right',fontstyle='normal', wrap=True,ma='left')
     
     # target label
-    txt = textwrap.fill(targetIntv.mark(),new_w)
-    ax.annotate(txt,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04-0.08-0.01),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic', wrap=True)
+    txt = targetIntv.mark()
+    ann_target = ax.annotate(txt, xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04-0.08-0.01),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic', bbox=bbox_props,ma='left')
+    wrap_text_to_contours_width(txt, ann_target, fig, lns2)
+    
     if is_new_support:
           TargetLabel = 'Target'
           if targetName: TargetLabel+=' [{}]'.format(targetName)
@@ -389,12 +445,17 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     
     # its stlization in symbolic form
     if is_new_support:
-          ax.annotate('Global Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl,verticalalignment='top')
-    ax.annotate(textwrap.fill(style1,new_w),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl, wrap=True,bbox=bbox_props,verticalalignment='top')
-    if is_new_support:
-      ax.annotate('Local Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_sty2,verticalalignment='top')
+          ax.annotate('Global Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl,verticalalignment='top',ma='left')
+    ann_Style1 = ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl, wrap=True,bbox=bbox_props,verticalalignment='top',ma='left')
     
-    ann=ax.annotate(textwrap.fill(style2,new_w),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',verticalalignment='top',color=color_style_sty2, wrap=True,bbox=bbox_props)
+    wrap_text_to_contours_width(style1, ann_Style1, fig, lns2)
+    
+    if is_new_support:
+      ax.annotate('Local Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_sty2,verticalalignment='top',ma='left')
+    
+    ann_Style2=ax.annotate(style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',verticalalignment='top',color=color_style_sty2, wrap=True,bbox=bbox_props,ma='left')
+    
+    wrap_text_to_contours_width(style2, ann_Style2, fig, lns2)
     
     if tag:
         if is_new_support:
@@ -402,9 +463,10 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
               if tagName: TagLabel+=' [{}]'.format(tagName)
               TagLabel += ': '
               ax.annotate(TagLabel,xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06-0.06-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal',horizontalalignment='right',color='black',verticalalignment='top')
-        ann=ax.annotate(textwrap.fill(tag,new_w),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06-0.06-0.06 ),xycoords=('data','axes fraction'),fontsize=9,fontweight='normal',horizontalalignment='center',verticalalignment='top',color='black')
+        ann_tag = ax.annotate(tag,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06-0.06-0.06 ),xycoords=('data','axes fraction'),fontsize=9,fontweight='normal',horizontalalignment='center',verticalalignment='top',color='black',bbox=bbox_props,ma='left')
         
         
+        wrap_text_to_contours_width(tag, ann_tag, fig, lns2)
        
         
 
@@ -456,13 +518,6 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
        #'Significtive Main Saliency on Smoothed Pitch'\
        ],fontsize=11)
        
-      
-    #new_text = textwrap.fill(ann.get_text(),new_w)
-    #print(new_w, new_text)
-    #ann.set_text(new_text)
-          
-    # let us make the figure!
-    #fig.canvas.mpl_connect('draw_event', on_draw)
     return fig
 
 def stylizeObject(targetIntv,supportIntvs,inputPitch,alpha,stylizeFunction1=SLAM1):

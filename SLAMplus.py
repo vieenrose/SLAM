@@ -74,13 +74,15 @@ exportFigures = True
 #------------------------------------------------------
 
 #imports
-from SLAM_utils import TextGrid, swipe, stylize, praatUtil
 import sys, glob, os, re, time
+os.chdir(sys.path[0])
+from SLAM_utils import TextGrid, swipe, stylize, praatUtil
 import numpy as np
 import matplotlib.backends.backend_pdf as pdfLib
 import matplotlib.pylab as pl
 import SLAM_utils.TextGrid as tgLib
 import SLAM_utils.progress as progLib
+
 
 change = stylize.input_SLAM("""
 Current parameters are:
