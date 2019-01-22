@@ -207,7 +207,7 @@ while tgFiles:
     POSdisplay = set([int(float(i)/100.0*LEN) for i in range(0,100,10)])
     smooth_total = []
     time_total = []
-    pl.rcParams["figure.figsize"] = [14,9]
+    pl.rcParams["figure.figsize"] = [13,7]
     fig = pl.figure()
     support = None
     haveImgInbuf = False
