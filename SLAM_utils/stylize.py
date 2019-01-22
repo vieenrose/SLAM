@@ -6,7 +6,7 @@ import numpy as np
 import SLAM_utils.TextGrid as tg
 from SLAM_utils import praatUtil
 from SLAM_utils import swipe
-import os, math, sys
+import os, math, sys, textwrap
 
 
 minDELTA=4
@@ -119,6 +119,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     alphaGlo = alpha
     alphaLoc = alpha
     bbox_props = dict(boxstyle="round", fc="w")
+    
     
     fig = figIn
     ax = fig.gca()
@@ -354,7 +355,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     if is_new_support:
           ax.set_ylabel('Frequencey (Hz)')
     
-    fig.subplots_adjust(top=0.95,bottom=0.27,left=0.15, right=0.925)
+    fig.subplots_adjust(top=0.95,bottom=0.4,left=0.15, right=0.925)
     xlim=ax.get_xlim()
     diff_xlim = max(xlim)-min(xlim)
     diff_ylim = max(ylim)-min(ylim)
@@ -364,10 +365,12 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     labelsLeftPos = -0.03
     
     # duration label
-    ax.annotate('{:.0f} ms'.format(xticks_major[-1]-xticks_major[0]),xy=(x2/2+x1/2,-0.035),xycoords='axes fraction',fontsize=6,horizontalalignment='center')
+    duration = (xticks_major[-1]-xticks_major[0])
+    new_w = int(math.floor(duration / 10 / 2.5))
+    ax.annotate('{:.0f} ms'.format(duration),xy=(x2/2+x1/2,-0.035),xycoords='axes fraction',fontsize=6,horizontalalignment='center')
     if is_new_support:
        # support label
-       ax.annotate(supp_mark,xy=(0.5,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='medium',horizontalalignment='center',fontstyle='italic', wrap=True)
+       ax.annotate(supp_mark,xy=(0.5,-0.13+.04-0.02),xycoords=('axes fraction','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic', wrap=True)
        SupportLabel = 'Support'
        if supportName: SupportLabel+=' [{}]'.format(supportName)
        SupportLabel += ': '
@@ -375,31 +378,35 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
        fontweight='normal',horizontalalignment='right',fontstyle='normal', wrap=True)
     
     # target label
-    ax.annotate(targetIntv.mark(),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04-0.08-0.01),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic', wrap=True)
+    txt = textwrap.fill(targetIntv.mark(),new_w)
+    ax.annotate(txt,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04-0.08-0.01),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic', wrap=True)
     if is_new_support:
           TargetLabel = 'Target'
           if targetName: TargetLabel+=' [{}]'.format(targetName)
           TargetLabel += ': '
-          ax.annotate(TargetLabel,xy=(labelsLeftPos,-0.13+.04-0.08-0.01),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal',horizontalalignment='right',fontstyle='normal')
+          ax.annotate(TargetLabel      ,xy=(labelsLeftPos,-0.13+.04-0.08-0.01)              ,xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal'  ,horizontalalignment='right')
+          #ax.annotate('Global Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06),              xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl)
     
     # its stlization in symbolic form
     if is_new_support:
-      ax.annotate('Global Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl)
-    ax.annotate(style1,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl, wrap=True,bbox=bbox_props)
-    txt_style2= style2
+          ax.annotate('Global Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl,verticalalignment='top')
+    ax.annotate(textwrap.fill(style1,new_w),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_styl, wrap=True,bbox=bbox_props,verticalalignment='top')
     if is_new_support:
-      ax.annotate('Local Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_sty2)
+      ax.annotate('Local Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_sty2,verticalalignment='top')
     
-    ann=ax.annotate(style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2, wrap=True,bbox=bbox_props)
-    print(ann.get_bbox_patch().get_extents().width)
-    #ax.annotate(txt_style2,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.17),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',color=color_style_sty2)
+    ann=ax.annotate(textwrap.fill(style2,new_w),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='semibold',horizontalalignment='center',verticalalignment='top',color=color_style_sty2, wrap=True,bbox=bbox_props)
+    
     if tag:
         if is_new_support:
               TagLabel = 'Tag'
               if tagName: TagLabel+=' [{}]'.format(tagName)
               TagLabel += ': '
-              ax.annotate(TagLabel,xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal',horizontalalignment='right',color='black')
-        ax.annotate(tag,xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06),xycoords=('data','axes fraction'),fontsize=9,fontweight='normal',horizontalalignment='center',color='black')
+              ax.annotate(TagLabel,xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06-0.06-0.06),xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal',horizontalalignment='right',color='black',verticalalignment='top')
+        ann=ax.annotate(textwrap.fill(tag,new_w),xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.19+.04+.02-0.08-0.01-0.02-0.06-0.06-0.06-0.06-0.06 ),xycoords=('data','axes fraction'),fontsize=9,fontweight='normal',horizontalalignment='center',verticalalignment='top',color='black')
+        
+        
+       
+        
 
     """
     # grid relative to local regster in bleu lines
@@ -449,7 +456,13 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
        #'Significtive Main Saliency on Smoothed Pitch'\
        ],fontsize=11)
        
+      
+    #new_text = textwrap.fill(ann.get_text(),new_w)
+    #print(new_w, new_text)
+    #ann.set_text(new_text)
+          
     # let us make the figure!
+    #fig.canvas.mpl_connect('draw_event', on_draw)
     return fig
 
 def stylizeObject(targetIntv,supportIntvs,inputPitch,alpha,stylizeFunction1=SLAM1):
