@@ -54,6 +54,7 @@ for Windows
 
 ## How to Configure **SLAM+**
 Configuration of SLAM+ to suit your work:
+
 1) Open the SLAMplus.py in the SLAM+ working folder with text editor (recommaded 'notepad++')
 
 2) Edit the values of SpeakerTier, TargetTier and TagTier. 
