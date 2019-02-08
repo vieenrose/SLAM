@@ -55,8 +55,10 @@ for Windows
 ## How to Configure **SLAM+**
 Configuration of SLAM+ to suit your work:
 1) Open the SLAMplus.py in the SLAM+ working folder with text editor (recommaded 'notepad++')
+
 2) Edit the values of SpeakerTier, TargetTier and TagTier. 
-Note: these values as stated here are different tiers specified in the concerned TextGrid files. SpeakerTier (as valued in this work) is defined as the tier name where the largest units of register estimation are delimited. TargetTier is defined as the tier name where units of stylization are bounded. TagTier provides additional descriptive information of the contents. It is used to compare and ascertain the details of SpeakerTier and TargetTier.
+
+Note: These values as stated here are different tiers specified in the concerned TextGrid files. SpeakerTier (as valued in this work) is defined as the tier name where the largest units of register estimation are delimited. TargetTier is defined as the tier name where units of stylization are bounded. TagTier provides additional descriptive information of the contents. It is used to compare and ascertain the details of SpeakerTier and TargetTier.
 
 
 ## Bibliography ##
