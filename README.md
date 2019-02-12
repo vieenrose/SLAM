@@ -15,7 +15,7 @@ Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodie Spoke
 
 ## How to cite **SLAM+**
 
-L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (Manuscript submitted for publication to ICPHS 2019).
+L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (Manuscript accepted for publication to ICPHS 2019).
 
 
 ## How to install **SLAM+**
