@@ -26,11 +26,6 @@ We show, in the figure below, a visualization of a pitch contours and its analys
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
 Fig 1. Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodie Spoken French corpus](https://www.projet-rhapsodie.fr/) [3]. 
 
-## How to cite **SLAM+**
-
-L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?*.
-
-
 ## How to install **SLAM+**
 
 ### Under Debian / Ubuntu Linux
@@ -104,6 +99,10 @@ Fig 5. Configuration for Prosodic Phrase (PP) as target
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Output_II.png)
 Fig 6. Analysis Result
+
+## How to cite **SLAM+**
+
+L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?*.
 
 ## Bibliography ##
 
