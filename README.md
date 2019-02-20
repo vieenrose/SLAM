@@ -1,6 +1,8 @@
 SLAM+
 ====
 
+## Introduction
+
 **SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a data-driven language independent software for pitch (contour) annotation of speech corpora. It integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. This algorithm is characterized with three (3) basic peculiarities: 
 
 1) Alphabets of melodic contours are directly derived from the speech signal.
