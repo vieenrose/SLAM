@@ -1,11 +1,16 @@
 SLAM+
 ====
 
-**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a data-driven language independent software for pitch (contour) annotation of speech corpora. **SLAM** integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. This algorithm is characterized with three (3) basic peculiarities: First, the alphabets of melodic contours are directly derived from the speech signal. Second, complex melodic contours are described through a simple time-frequency representation. Third, melodic contours can be described on the basis of various linguistic segments as specified by users. 
+**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a data-driven language independent software for pitch (contour) annotation of speech corpora. **SLAM** integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. **SLAM** algorithm is characterized with three (3) basic peculiarities: 
 
-New features we introduce in **SLAM+** are twofold:
-1) Use **Praat PitchTier** file as data input.
-2) Two (instead of one in **SLAM**) stylizations based on respectively a long and a short-term account of intonational register: *global* and *parametrizable local registers*.
+1) the alphabets of melodic contours are directly derived from the speech signal. 
+2) complex melodic contours are described through a simple time-frequency representation. 
+3) melodic contours can be described on the basis of various linguistic segments as specified by users. 
+
+with 2 new features added in **SLAM+** 
+
+4) Use **Praat PitchTier** file as data input.
+5) Two (instead of one in **SLAM**) stylizations based on respectively a long and a short-term account of intonational register: *global* and *parametrizable local registers*.
 
 Note: 
 1. **SLAM+** is compatible with **Python 2 and 3** but optimized only for Linux distributions.
