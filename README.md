@@ -13,13 +13,12 @@ with 2 new features added in **SLAM+**
 5) Two (instead of one in **SLAM**) stylizations based on respectively a long and a short-term account of intonational register: *global* and *parametrizable local registers*.
 
 Note: 
-
-a. **SLAM+** is compatible with **Python 2 and 3** but optimized only for Linux distributions.
-b. **SLAM+** supports **PitchTier** files in binary or short text format as audio input.
-c. **SLAM+** integrates a [Python implementaiton](https://gist.github.com/agramfort/850437) of *LOWESS* algorithm [4] for pitch smoothing.  
+- **SLAM+** is compatible with **Python 2 and 3** but optimized only for Linux distributions.
+- **SLAM+** supports **PitchTier** files in binary or short text format as audio input.
+- **SLAM+** integrates a [Python implementaiton](https://gist.github.com/agramfort/850437) of *LOWESS* algorithm [4] for pitch smoothing.  
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
-Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodie Spoken French corpus](https://www.projet-rhapsodie.fr/) [3]. In this example, we show a visualization of a pitch contours and its analysis by **SLAM+**. This contours realize the following utterance *'euh on est partis au Portugal complètement'* (Uh, we went to Portugal entirely.) (Rhap-D1003). Analysis is conducted with configuration of *support* and *target* detailed in the following: *support* is chosen to give segmentation on maximal prosodic unit; and *target* is set such that is provided a further segmentaiton of each maximal prosodic unit [6] in marcosyntax [5]. As indicated by *target*'s labels, 'Uh' and 'on est partis au Portugal complètement' are signaled as *N[Assos_N_U]* (discourse marker) and *N* (the nucluer) of an individual speech act, respectively. This example gives a rough idea about how this tool can help to speed up analysis on the prosodic structure of a utterance due to SLAM's automatic categorization of intonaltional contours on its elements, here, macrosyntactic units.
+Fig 1. Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodie Spoken French corpus](https://www.projet-rhapsodie.fr/) [3]. In this example, we show a visualization of a pitch contours and its analysis by **SLAM+**. This contours realize the following utterance *'euh on est partis au Portugal complètement'* (Uh, we went to Portugal entirely.) (Rhap-D1003). Analysis is conducted with configuration of *support* and *target* detailed in the following: *support* is chosen to give segmentation on maximal prosodic unit; and *target* is set such that is provided a further segmentaiton of each maximal prosodic unit [6] in marcosyntax [5]. As indicated by *target*'s labels, 'Uh' and 'on est partis au Portugal complètement' are signaled as *N[Assos_N_U]* (discourse marker) and *N* (the nucluer) of an individual speech act, respectively. This example gives a rough idea about how this tool can help to speed up analysis on the prosodic structure of a utterance due to SLAM's automatic categorization of intonaltional contours on its elements, here, macrosyntactic units.
 
 ## How to cite **SLAM+**
 
@@ -72,20 +71,23 @@ Note: These values as stated here are different tiers specified in the concerned
 ## Examples
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Example_TextGrid.png)
-In these example, we use an input TextGrid file which prodovies these tiers : Syllabes (Syl), Prosodic Word (PrWd), Prosodic Phrase (PP) and Large Prosodic Unit (LPU). LPU and PrWD are used as SupportTier and TagTier for all examples in the follwing  
+Fig 2. Input TextGrid file used for the following examples, shown by Pratt, which provides 4 annotaiton tiers : Syllabes (Syl), Prosodic Word (PrWd), Prosodic Phrase (PP) and Large Prosodic Unit (LPU). LPU and PrWD are used as SupportTier and TagTier for all examples in the follwing  
+
 I) Example : Syllabes (Syl) as Target 
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Config_I.png)
-Configuration for Syl as target 
+Fig 3. Configuration for Syl as target 
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Output_I.png)
+Fig 4. Result
 
 II) Example : Prosodic Phrase (PP) as Target
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Config_II.png)
-Configuration for PP as target
+Fig 5. Configuration for PP as target
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Output_II.png)
+Fig 6. Result
 
 ## Bibliography ##
 
