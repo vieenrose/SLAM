@@ -71,6 +71,15 @@ Configuration of SLAM+ to suit your work:
 
 Note: These values as stated here are different tiers specified in the concerned TextGrid files. SpeakerTier (as valued in this work) is defined as the tier name where the largest units of register estimation are delimited. TargetTier is defined as the tier name where units of stylization are bounded. TagTier provides additional descriptive information of the contents. It is used to compare and ascertain the details of SpeakerTier and TargetTier.
 
+## Examples
+
+
+
+I)
+
+
+
+II)
 
 ## Bibliography ##
 
