@@ -3,7 +3,7 @@ SLAM+
 
 ## What's **SLAM+** ?
 
-### Introduction ###
+### Overview ###
 
 **SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a data-driven language independent software for pitch (contour) annotation of speech corpora. It integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. This algorithm is characterized with three (3) basic peculiarities: 
 
@@ -28,7 +28,7 @@ We show, in the figure below, a visualization of a pitch contours and its analys
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
 Fig 1. Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodie Spoken French corpus](https://www.projet-rhapsodie.fr/) [3]. 
 
-## How to install ##
+## Installation ##
 
 ### Under Debian / Ubuntu Linux ###
 
@@ -46,7 +46,7 @@ Fig 1. Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodi
 
 2) Then put the decompressed content of **SLAMplus** in the sub-directory of WinPython where *python.exe* is 
 
-## How to Use **SLAM+** ##
+## How to Launch it ##
 1) Drop your **PitchTier** files and **TextGrid** files in the sub-directory *data* of the corresponding **SLAM+** directory. **PitchTier** files must come in pair of *the same name* with **TextGrid** files. As an example: 
 
      "myfile1.PitchTier" "myfile1.TextGrid" "myfile2.wav" "myfile2.TextGrid"
@@ -62,7 +62,7 @@ for Windows
         python.exe SLAMplus.py
 4) Follow the instructions.
 
-## How to Configure ##
+## How to Configure it ##
 Configuration of SLAM+ to suit your work:
 
 1) Open the SLAMplus.py in the SLAM+ working folder with text editor (recommaded 'notepad++')
