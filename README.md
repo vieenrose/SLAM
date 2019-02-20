@@ -1,7 +1,9 @@
 SLAM+
 ====
 
-**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a data-driven language independent software for pitch (contour) annotation of speech corpora. It identifies pitch interpolation of linguistic units (mora, syllables, words...) within 3 temporal positions to highlight initial, final, peak and the salience [4] f0 and its position. New features we introduce in **SLAM+** are twofold:
+**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a data-driven language independent software for pitch (contour) annotation of speech corpora. **SLAM** integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. This algorithm is characterized with three (3) basic peculiarities: First, the alphabets of melodic contours are directly derived from the speech signal. Second, complex melodic contours are described through a simple time-frequency representation. Third, melodic contours can be described on the basis of various linguistic segments as specified by users. 
+
+New features we introduce in **SLAM+** are twofold:
 1) Use **Praat PitchTier** file as data input.
 2) Two (instead of one in **SLAM**) stylizations based on respectively a long and a short-term account of intonational register: *global* and *parametrizable local registers*.
 
@@ -15,7 +17,7 @@ Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodie Spoke
 
 ## How to cite **SLAM+**
 
-L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?* (Manuscript accepted for publication to ICPHS 2019).
+L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?*.
 
 
 ## How to install **SLAM+**
