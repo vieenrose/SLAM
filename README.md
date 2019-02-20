@@ -7,7 +7,7 @@ SLAM+
 2) Complex melodic contours are described through a simple time-frequency representation. 
 3) Melodic contours can be described on the basis of various linguistic segments as specified by users. 
 
-with 2 new features added in **SLAM+** 
+with 2 features newly added in **SLAM+** 
 
 4) Use **Praat PitchTier** file as data input.
 5) Two (instead of one in **SLAM**) stylizations based on respectively a long and a short-term account of intonational register: *global* and *parametrizable local registers*.
