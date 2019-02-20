@@ -16,8 +16,11 @@ with 2 new features added in **SLAM+**
 5) Two (instead of one in **SLAM**) stylizations based on respectively a long and a short-term account of intonational register: *global* and *parametrizable local registers*.
 
 Note: 
+
 a. **SLAM+** is compatible with **Python 2 and 3** but optimized only for Linux distributions.
+
 b. **SLAM+** supports **PitchTier** files in binary or short text format as audio input.
+
 c. **SLAM+** integrates a [Python implementaiton](https://gist.github.com/agramfort/850437) of *LOWESS* algorithm [4] for pitch smoothing.  
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
