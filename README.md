@@ -70,10 +70,16 @@ Note: These values as stated here are different tiers specified in the concerned
 
 ## Examples of Configuration
 
-For examples in the follwing, is used a TextGrid providing the 4 annotaiton tiers : Syllabes (Syl), Prosodic Word (PrWd), Prosodic Phrase (PP) and Large Prosodic Unit (LPU). LPU and PrWD are fixed as SupportTier and TagTier, respectively.
+For the examples in the following, we use the same TextGrid file which provides 4 annotation tiers. These tiers are 
+- Syllabes (Syl)
+- Prosodic Word (PrWd) 
+- Prosodic Phrase (PP) 
+- Large Prosodic Unit (LPU). 
+
+Note that only the targetTier varies in these exemples while SupportTier and TagTier are fixed as LPU and PrWd, respectively. 
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Example_TextGrid.png)
-Fig 2. Input TextGrid file used for the following examples, viewed under by Praat.
+Fig 2. Input TextGrid file used in examples
 
 I) Example : Syllabes (Syl) as Target 
 
