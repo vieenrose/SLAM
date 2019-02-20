@@ -68,7 +68,7 @@ Configuration of SLAM+ to suit your work:
 
 Note: These values as stated here are different tiers specified in the concerned TextGrid files. SpeakerTier (as valued in this work) is defined as the tier name where the largest units of register estimation are delimited. TargetTier is defined as the tier name where units of stylization are bounded. TagTier provides additional descriptive information of the contents. It is used to compare and ascertain the details of SpeakerTier and TargetTier.
 
-## Examples
+## Configuration Examples
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Example_TextGrid.png)
 Fig 2. Input TextGrid file used for the following examples, shown by Pratt, which provides 4 annotaiton tiers : Syllabes (Syl), Prosodic Word (PrWd), Prosodic Phrase (PP) and Large Prosodic Unit (LPU). LPU and PrWD are used as SupportTier and TagTier for all examples in the follwing  
