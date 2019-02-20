@@ -81,15 +81,15 @@ Note that only the targetTier varies in these exemples while SupportTier and Tag
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Example_TextGrid.png)
 Fig 2. Input TextGrid file used in examples
 
-I) Example : Syllabes (Syl) as Target 
+I) Syllabes as target 
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Config_I.png)
-Fig 3. Configuration for Syl as target 
+Fig 3. Configuration for Syllabes as target 
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Output_I.png)
 Fig 4. Analysis Result
 
-II) Example : Prosodic Phrase (PP) as Target
+II) Prosodic Phrase as target
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Config_II.png)
 Fig 5. Configuration for PP as target
