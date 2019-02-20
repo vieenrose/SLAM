@@ -86,6 +86,7 @@ I) Syllabes as target
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Config_I.png)
 Fig 3. Configuration for Syllabes as target 
 
+
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Output_I.png)
 Fig 4. Analysis Result
 
@@ -93,6 +94,7 @@ II) Prosodic Phrase as target
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Config_II.png)
 Fig 5. Configuration for PP as target
+
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Output_II.png)
 Fig 6. Analysis Result
