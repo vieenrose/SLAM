@@ -1,7 +1,9 @@
 SLAM+
 ====
 
-## Introduction
+## What's **SLAM+** ?
+
+### Introduction ###
 
 **SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a data-driven language independent software for pitch (contour) annotation of speech corpora. It integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. This algorithm is characterized with three (3) basic peculiarities: 
 
@@ -19,16 +21,16 @@ Note:
 - **SLAM+** supports **PitchTier** files in binary or short text format as audio input.
 - **SLAM+** integrates a [Python implementaiton](https://gist.github.com/agramfort/850437) of *LOWESS* algorithm [4] for pitch smoothing.  
 
-## Illustration 
+### Illustration ###
 
 We show, in the figure below, a visualization of a pitch contours and its analysis by **SLAM+**. This contours realize the following utterance *'euh on est partis au Portugal complètement'* (Uh, we went to Portugal entirely.) (Rhap-D1003). Analysis is conducted with configuration of *support* and *target* detailed in the following: *support* is chosen to give segmentation on maximal prosodic unit; and *target* is set such that is provided a further segmentaiton of each maximal prosodic unit [6] in marcosyntax [5]. As indicated by *target*'s labels, 'Uh' and 'on est partis au Portugal complètement' are signaled as *N[Assos_N_U]* (discourse marker) and *N* (the nucluer) of an individual speech act, respectively. This example gives a rough idea about how this tool can help to speed up analysis on the prosodic structure of a utterance due to SLAM's automatic categorization of intonaltional contours on its elements, here, macrosyntactic units.
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
 Fig 1. Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodie Spoken French corpus](https://www.projet-rhapsodie.fr/) [3]. 
 
-## How to install **SLAM+**
+## How to install ##
 
-### Under Debian / Ubuntu Linux
+### Under Debian / Ubuntu Linux ###
 
 0) Download or clone [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev).
 
@@ -36,7 +38,7 @@ Fig 1. Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodi
 
             sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
 
-### Under Microsoft Windows
+### Under Microsoft Windows ###
 
 0) Download [**SLAMplus**](https://github.com/vieenrose/SLAMplus/tree/dev).
 
@@ -44,7 +46,7 @@ Fig 1. Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodi
 
 2) Then put the decompressed content of **SLAMplus** in the sub-directory of WinPython where *python.exe* is 
 
-## How to Use **SLAM+**
+## How to Use **SLAM+** ##
 1) Drop your **PitchTier** files and **TextGrid** files in the sub-directory *data* of the corresponding **SLAM+** directory. **PitchTier** files must come in pair of *the same name* with **TextGrid** files. As an example: 
 
      "myfile1.PitchTier" "myfile1.TextGrid" "myfile2.wav" "myfile2.TextGrid"
@@ -60,7 +62,7 @@ for Windows
         python.exe SLAMplus.py
 4) Follow the instructions.
 
-## How to Configure **SLAM+**
+## How to Configure ##
 Configuration of SLAM+ to suit your work:
 
 1) Open the SLAMplus.py in the SLAM+ working folder with text editor (recommaded 'notepad++')
@@ -69,7 +71,7 @@ Configuration of SLAM+ to suit your work:
 
 Note: These values as stated here are different tiers specified in the concerned TextGrid files. SpeakerTier (as valued in this work) is defined as the tier name where the largest units of register estimation are delimited. TargetTier is defined as the tier name where units of stylization are bounded. TagTier provides additional descriptive information of the contents. It is used to compare and ascertain the details of SpeakerTier and TargetTier.
 
-## Examples of Configuration
+### Examples of Configuration ###
 
 For the examples in the following, we use the same TextGrid file which provides 4 annotation tiers. These tiers are 
 - Syllabes (Syl)
@@ -100,7 +102,7 @@ Fig 5. Configuration for Prosodic Phrase (PP) as target
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Output_II.png)
 Fig 6. Analysis Result
 
-## How to cite **SLAM+**
+## How to cite us ##
 
 L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?*.
 
