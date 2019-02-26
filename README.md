@@ -13,8 +13,8 @@ the method is based on the bottom-up genneration of the contours :
 2) Melodic contours, simple or complex, are described through a simple time-frequency representation. 
 3) Melodic contours are used to describe various linguistic units as specified by users. 
 4) the variation concerns 
-            i)  the nature (pragmatics, syntactic, phonologic) of the unit and 
-            ii) the size of the unit (from the syllable to larger prosodic and syntactic units)
+	i) the nature (pragmatics, syntactic, phonologic) of the unit and
+	ii) the size of the unit (from the syllable to larger prosodic and syntactic units)
 5) the melodic contours are automatically represented with a vocabulary of tonal labels (L,l,m,h,H)  
 
 with 2 features newly added in **SLAM+** 
