@@ -29,7 +29,7 @@ Note:
 
 ### Illustration ###
 
-We show, in the figure below, a visualization of a pitch contours and its analysis by **SLAM+**. This contours realize the following utterance *'euh on est partis au Portugal complètement'* (Uh, we went to Portugal entirely.) (Rhap-D1003). Analysis is conducted with configuration of *support* and *target* detailed in the following: *support* is chosen to give segmentation on maximal prosodic unit; and *target* is set such that is provided a further segmentaiton of each maximal prosodic unit [6] in marcosyntax [5]. As indicated by *target*'s labels, 'Uh' and 'on est partis au Portugal complètement' are signaled as *N[Assos_N_U]* (discourse marker) and *N* (the nucluer) of an individual speech act, respectively. This example gives a rough idea about how this tool can help to speed up analysis on the prosodic structure of a utterance due to SLAM's automatic categorization of intonaltional contours on its elements, here, macrosyntactic units.
+We show, in the figure below, a visualization of pitch contours and their analysis by **SLAM+**. These contours realize the following utterance *'euh on est partis au Portugal complètement'* (Uh, we went to Portugal entirely.) (Rhap-D1003). Analysis is conducted with configuration of *support* and *target* detailed in the following: *support* is the temporal interval uxed to compute the global register of the targets. *target* is the temporal interval to which a melodic contour is computed. As indicated by *target*'s labels, 'Uh' and 'on est partis au Portugal complètement' are signaled as *N[Assos_N_U]* (discourse marker) and *N* (the nucluer) of an individual speech act, respectively. This example gives a rough idea about how this tool can help to speed up analysis on the prosodic structure of a utterance due to SLAM's automatic categorization of intonaltional contours on its elements, here, macrosyntactic units.
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
 Fig 1. Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodie Spoken French corpus](https://www.projet-rhapsodie.fr/) [3]. 
@@ -75,7 +75,7 @@ Configuration of SLAM+ to suit your work:
 
 2) Edit the values of SpeakerTier, TargetTier and TagTier. 
 
-Note: These values as stated here are different tiers specified in the concerned TextGrid files. SpeakerTier (as valued in this work) is defined as the tier name where the largest units of register estimation are delimited. TargetTier is defined as the tier name where units of stylization are bounded. TagTier provides additional descriptive information of the contents. It is used to compare and ascertain the details of SpeakerTier and TargetTier.
+Note: These values as stated here are different tiers specified in the concerned TextGrid files. SupportTier (as valued in this work) is defined as the tier name where the largest units of register estimation are delimited. TargetTier is defined as the tier name where units of stylization are bounded. TagTier provides additional descriptive information of the contents. It is used to compare and ascertain the details of SpeakerTier and TargetTier.
 
 ### Examples of Configuration ###
 
