@@ -8,17 +8,19 @@ SLAM+
 
 **SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a data-driven language independent software for pitch (contour) annotation of speech corpora. It integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. This algorithm is characterized with three basic peculiarities: 
 
-the method is based on bottom-up genneration of the contours : 
-1) Stylized melodic contours are directly derived from the manually (denoised) cleaned speech signal.
+the method is based on the bottom-up genneration of the contours : 
+1) Stylized melodic contours are directly derived from a manually (denoised) cleaned speech signal.
 2) Melodic contours, simple or complex, are described through a simple time-frequency representation. 
-3) Melodic contours can be described on the basis of various linguistic units () as specified by users. 
-4) the variation concerns (i)  the nature (pragmatics, syntactic, phonologic) of the unit znd (ii) the size of the unit (from the syllable to the larger prosodic and syntactic units)
-5) the melodic contours are automatically represented with a vocabulary of tonal alphabets (L,l,m,h,H)  
+3) Melodic contours are used to describe various linguistic units as specified by users. 
+4) the variation concerns 
+            i)  the nature (pragmatics, syntactic, phonologic) of the unit and 
+            ii) the size of the unit (from the syllable to larger prosodic and syntactic units)
+5) the melodic contours are automatically represented with a vocabulary of tonal labels (L,l,m,h,H)  
 
 with 2 features newly added in **SLAM+** 
 
-6) Use **Praat PitchTier** file as data input.
-7) Two (instead of one in **SLAM**) stylizations based on respectively a long and a short-term account of intonational register: *global* and *parametrizable local registers*.
+6) Use **Praat PitchTier** file along with **TextGrid** file as data input.
+7) Two (instead of one in **SLAM**) stylizations are produced: there are respectively based on a long and a short-term account of intonational register: *global* and *parametrizable local registers*.
 
 Note: 
 - **SLAM+** is compatible with **Python 2 and 3** but optimized only for Linux distributions.
