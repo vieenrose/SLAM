@@ -79,7 +79,7 @@ Note: These values as stated here are different tiers specified in the concerned
 
 ### Examples of Configuration ###
 
-For the examples (NaijaSynCor project: ???_??_???) in the following, we use the same TextGrid file which provides 4 annotation tiers. These tiers are 
+For the examples (NaijaSynCor project: JOS_01_V___MDT) in the following, we use the same TextGrid file which provides 4 annotation tiers. These tiers are 
 - Syllabes (Syl)
 - Prosodic Word (PrWd) 
 - Prosodic Phrase (PP) 
