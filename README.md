@@ -110,7 +110,7 @@ Fig 6. Analysis Result
 
 ## How to cite us ##
 
-L. Liu, A. Lacheret-Dujour, N. Obin (2018), AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?. In *ICPhS*.
+L. Liu, A. Lacheret-Dujour, N. Obin (2019), AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?. In *ICPhS* (to appear).
 
 ## Bibliography ##
 
