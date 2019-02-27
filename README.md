@@ -29,7 +29,7 @@ Note:
 
 ### Illustration ###
 
-We show, in the figure below, a visualization of pitch contours and their analysis by **SLAM+**. These contours realize the following utterance *'euh on est partis au Portugal complètement'* (Uh, we went to Portugal entirely.) (Rhap-D1003). Analysis is conducted with configuration of *support* and *target* detailed in the following: *support* is the temporal interval uxed to compute the global register of the targets. *target* is the temporal interval to which a melodic contour is computed. As indicated by *target*'s labels, 'Uh' and 'on est partis au Portugal complètement' are signaled respectively as *N[Assos_N_U]* (discourse marker) and *N* (the nucluer) of a speech act. 
+We show, in the figure below, a visualization of pitch contours and their analysis by **SLAM+**. These contours realize the following utterance *'euh on est partis au Portugal complètement'* (Uh, we went to Portugal entirely.) (Rhap-D1003). Analysis is conducted with configuration of *support* and *target* detailed in the following: *support* is the temporal interval uxed to compute the global register of the targets. *target* is the temporal interval to which a melodic contour is computed. As indicated by *target*'s labels, *'euh'* and *'on est partis au Portugal complètement'* are signaled respectively as *N[Assos_N_U]* (discourse marker) and *N* (the nucluer) of a speech act. 
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Rhap-D2001.png)
 Fig 1. Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodie Spoken French corpus](https://www.projet-rhapsodie.fr/) [3]. 
@@ -110,7 +110,7 @@ Fig 6. Analysis Result
 
 ## How to cite us ##
 
-L. Liu, A. Lacheret-Dujour, N. Obin (2018), *AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?*.
+L. Liu, A. Lacheret-Dujour, N. Obin (2018), AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?. In *ICPhS*.
 
 ## Bibliography ##
 
