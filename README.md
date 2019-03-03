@@ -2,9 +2,9 @@ SLAM+
 ====
 
 ## Authors ##
-- [*Luigi (Yu-Cheng) Liu*](mailto:luigi.plurital@gmail.com), Modyco, Université Paris Ouest Nanterre & CNRS
-- [*Anne Lacheret-Dujour*](mailto:anne@lacheret.com), Modyco, Université Paris Ouest Nanterre & CNRS
-- [*Nicolas Obin*](mailto:nicolas.obin@ircam.fr), IRCAM, UMR STMS IRCAM-CNRS-UPMC, Paris
+- [*Luigi (Yu-Cheng) Liu*](mailto:luigi.plurital@gmail.com)
+- [*Anne Lacheret-Dujour*](mailto:anne@lacheret.com)
+- [*Nicolas Obin*](mailto:nicolas.obin@ircam.fr)
 
 ## What's **SLAM+** ?
 
