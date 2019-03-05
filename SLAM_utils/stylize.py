@@ -803,13 +803,15 @@ def identifyEssentialPoints(freq,time=None, thld=2):
     # find significant peak 
     k = (np.array(freq)).argmax()
     maximum = freq[k]
-    if (maximum >= f[0] + thld) and (maximum >= f[-1] + thld):
+    #if (maximum >= f[0] + thld) and (maximum >= f[-1] + thld):
+    if (maximum >= f[0] + thld) :
           t.insert(1,time[k])
           f.insert(1,maximum)
     # find significant valley
     l = (np.array(freq)).argmin()
     minimum = freq[l]
-    if (minimum <= f[0] - thld) and (minimum <= f[-1] - thld):
+    #if (minimum <= f[0] - thld) and (minimum <= f[-1] - thld):
+    if (minimum <= f[0] - thld) :
           t.insert(1,time[l])
           f.insert(1,minimum)
     
