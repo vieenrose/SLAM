@@ -789,32 +789,33 @@ def averageRegisters(swipeFile,speakerTier=None):
         else:
             registers[speaker]=None
     return registers
-    
+
 
 def identifyEssentialPoints(freq,time=None, thld=2):
-    #assume data is of increasing order of time
-    try:
+
+    f = [freq[0],freq[-1]]
+    try: # get time axis from data if possible
         t = [time[0],time[-1]]
     except TypeError:
+        # create a normalized time axis
         time = np.linspace(0, 1, len(freq))
         t = [time[0],time[-1]]
-    f = [freq[0],freq[-1]]
-    
-    # find significant peak 
+
     k = (np.array(freq)).argmax()
-    maximum = freq[k]
-    #if (maximum >= f[0] + thld) and (maximum >= f[-1] + thld):
-    if (maximum >= f[0] + thld) :
-          t.insert(1,time[k])
-          f.insert(1,maximum)
-    # find significant valley
     l = (np.array(freq)).argmin()
-    minimum = freq[l]
-    #if (minimum <= f[0] - thld) and (minimum <= f[-1] - thld):
-    if (minimum <= f[0] - thld) :
-          t.insert(1,time[l])
-          f.insert(1,minimum)
-    
+    t_max,f_max = time[k],freq[k]
+    t_min,f_min = time[l],freq[l]
+
+    # detect sailliant peak and valley
+    have_sailliant_peak   = (f_max >= f[0] + thld)
+    have_sailliant_valley = (f_min <= f[0] - thld)
+    if t_max < t_min : # peak occurs before valley
+        if have_sailliant_peak  : t.insert(1,t_max);f.insert(1,f_max)
+        if have_sailliant_valley: t.insert(1,t_min);f.insert(1,f_min)
+    else:
+        if have_sailliant_valley: t.insert(1,t_min);f.insert(1,f_min)
+        if have_sailliant_peak  : t.insert(1,t_max);f.insert(1,f_max)
+
     return t,f
 
 def intv2pitch(intv,swipeFile):
