@@ -819,8 +819,8 @@ def identifyEssentialPoints(freq,time=None, thld=2):
     t_min,f_min = time[l],freq[l]
 
     # detect sailliant peak and valley
-    have_sailliant_peak   = (f_max >= f[0] + thld)
-    have_sailliant_valley = (f_min <= f[0] - thld)
+    have_sailliant_peak   = (f_max >= f[0] + thld) and k and k + 1 < len(np.array(freq))
+    have_sailliant_valley = (f_min <= f[0] - thld) and l and l + 1 < len(np.array(freq))
     if t_max < t_min : # peak occurs before valley
         if have_sailliant_peak  : t.insert(1,t_max);f.insert(1,f_max)
         if have_sailliant_valley: t.insert(1,t_min);f.insert(1,f_min)
