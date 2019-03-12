@@ -40,7 +40,7 @@ def SLAM1(semitones, time = None, rangeRegisterInSemitones = 20):
     DELTA = max(rangeRegisterInSemitones / numQuantizationRegions,minDELTA)
     delta = DELTA / 2
 
-    # identify the three essential points
+    # identify the essential points
     if len(smooth) >= 3: ti,fr=identifyEssentialPoints(smooth, time = time, thld=delta)
     else: ti,fr = time, smooth
     
@@ -278,7 +278,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     
     # stylization
     # rangeRegisterInHz
-    def style2pitch(style,xmin,xmax, yoffset=0, DELTA = 4):
+    def style2pitch(time, freq, style,xmin,xmax, yoffset=0, DELTA = 4):
         #print('style2pitch:style=',style) #debug
         alphabet2semitones = {'H': 8, 'h': 4, 'm': 0, 'l' : -4, 'L' : -8} 
         
@@ -297,6 +297,13 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
             while cnt > 0:
                   f_p = register2relst(style[cnt],DELTA=DELTA)[0] + yoffset #alphabet2semitones[style[2]]+yoffset
                   t_p = relativePos2time(style[cnt+1],[xmin,xmax])
+                  
+                  # peak / valley temporal re-alignment 
+                  [v_t, v_f] = identifyEssentialPoints(freq, time, thld=DELTA / 2)
+                  distances_times = [[abs(f_p - f) + abs(t_p - sec2msec(t)), sec2msec(t)] for t,f in zip(v_t, v_f)]
+                  distances_times = sorted(distances_times, key=lambda tup: tup[0])
+                  t_p= distances_times[0][1]
+                  
                   #print(style_intv)
                   style_intv.insert(1,t_p)
                   #print(style_intv)
@@ -328,12 +335,12 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     #print("show_sty:style1=",style1)#debug
     #DELTA = max(rangeRegisterInSemitones / 5,4.0)
     #print("show_sty:DELTA = ", DELTA)#debug
-    style1_intv,style1_pitch = style2pitch(style1,xticks_major[0],xticks_major[-1], DELTA=DELTA)
+    style1_intv,style1_pitch = style2pitch(time_org,smooth,style1,xticks_major[0],xticks_major[-1], DELTA=DELTA)
     #print('style1_pitch:',style1_pitch)#debug
     alphabet2semitones = {'H': 8, 'h': 4, 'm': 0, 'l' : -4, 'L' : -8}
     yoffset=hz2semitone(register_loc)-hz2semitone(register)
     #print(style1,style2)
-    style2_intv,style2_pitch = style2pitch(style2,xticks_major[0],xticks_major[-1],DELTA=DELTA, yoffset=yoffset)
+    style2_intv,style2_pitch = style2pitch(time_org,smooth,style2,xticks_major[0],xticks_major[-1],DELTA=DELTA, yoffset=yoffset)
     #debug
     #if len(style2_pitch)>3: print(style2,style2_pitch)
           
