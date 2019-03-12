@@ -298,19 +298,22 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
                   f_p = register2relst(style[cnt],DELTA=DELTA)[0] + yoffset #alphabet2semitones[style[2]]+yoffset
                   t_p = relativePos2time(style[cnt+1],[xmin,xmax])
                   
-                  # peak / valley temporal re-alignment 
+                  # peak / valley temporal / frequential re-alignment 
                   [v_t, v_f] = identifyEssentialPoints(freq, time, thld=DELTA / 2)
-                  distances_times = [[abs(f_p - f) + abs(t_p - sec2msec(t)), sec2msec(t)] for t,f in zip(v_t, v_f)]
+                  distances_times = [[abs(f_p - f) + abs(t_p - sec2msec(t)), sec2msec(t), f] for t,f in zip(v_t, v_f)]
                   distances_times = sorted(distances_times, key=lambda tup: tup[0])
-                  t_p= distances_times[0][1]
+                  t_p, f_p = distances_times[0][1:]
                   
                   #print(style_intv)
                   style_intv.insert(1,t_p)
                   #print(style_intv)
+                  style_pitch.insert(1,f_p)
+                  """
                   if f_p > f_i or f_p > f_f : #peak
                         style_pitch.insert(1,max([f_p,f_i+DELTA/2.0,f_f+DELTA/2.0]))
                   elif f_p < f_i or f_p < f_f : # valley
                         style_pitch.insert(1,min([f_p,f_i-DELTA/2.0,f_f-DELTA/2.0]))
+                  """
                   #else:
                         #debug
                   #      print('Err:')
