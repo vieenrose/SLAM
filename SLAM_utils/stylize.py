@@ -9,7 +9,7 @@ from SLAM_utils import swipe
 import os, math, sys, textwrap
 
 
-minDELTA=4
+minDELTA=3
 locality = 100
 smoothingEnable=False
 
@@ -429,14 +429,14 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     
     # target label
     txt = targetIntv.mark()
-    ann_target = ax.annotate(txt, xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04-0.08-0.01-0.04),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic', bbox=bbox_props,ma='left')
+    ann_target = ax.annotate(txt, xy=(.5*xticks_major[0]+.5*xticks_major[1],-0.13+.04-0.08-0.01-0.055),xycoords=('data','axes fraction'),fontsize=9,fontweight='medium',horizontalalignment='center',fontstyle='italic', bbox=bbox_props,ma='left')
     wrap_text_to_contours_width(txt, ann_target, fig, lns2)
     
     if is_new_support:
           TargetLabel = 'Target'
           if targetName: TargetLabel+=' [{}]'.format(targetName)
           TargetLabel += ': '
-          ax.annotate(TargetLabel      ,xy=(labelsLeftPos,-0.13+.04-0.08-0.01-0.04)              ,xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal'  ,horizontalalignment='right')
+          ax.annotate(TargetLabel      ,xy=(labelsLeftPos,-0.13+.04-0.08-0.01-0.055)              ,xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='normal'  ,horizontalalignment='right')
           #ax.annotate('Global Labels: ',xy=(labelsLeftPos,-0.19+.04+.02-0.08-0.01-0.02-0.06),              xycoords=('axes fraction','axes fraction'),fontsize=11,fontweight='semibold',horizontalalignment='right',color=color_style_styl)
     
     # its stlization in symbolic form
@@ -792,6 +792,11 @@ def averageRegisters(swipeFile,speakerTier=None):
 
 
 def identifyEssentialPoints(freq,time=None, thld=2):
+    # example of output :  
+    # t = [t_initial, t_peak , t_valley, t_final]
+    # f = [f_initial, f_peak , f_valley, f_final]
+    # for t_peak < t_valley
+    #     both peak and valley are saillant
 
     f = [freq[0],freq[-1]]
     try: # get time axis from data if possible
