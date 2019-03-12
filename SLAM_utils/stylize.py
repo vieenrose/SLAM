@@ -9,7 +9,7 @@ from SLAM_utils import swipe
 import os, math, sys, textwrap
 
 
-minDELTA=3
+minDELTA=4
 locality = 100
 smoothingEnable=False
 
@@ -410,7 +410,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     if is_new_support:
           ax.set_ylabel('Frequencey (Hz)')
     
-    fig.subplots_adjust(top=0.95,bottom=0.4,left=0.15, right=0.925)
+    fig.subplots_adjust(top=0.9,bottom=0.35,left=0.15, right=0.925)
     xlim=ax.get_xlim()
     diff_xlim = max(xlim)-min(xlim)
     diff_ylim = max(ylim)-min(ylim)
