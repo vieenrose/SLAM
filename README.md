@@ -22,24 +22,24 @@ An enhanced automatic stylizer for pitch (contour) of speech corpora based on **
 **SLAM+** : **SLAM+** is a software derived from **SLAM** [4].  **SLAM** is a data-driven language independent software for pitch (contour) annotation of speech corpora. It integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. **SLAM** method is based on the bottom-up generation of the contours. The underlying algorithm can be highlighted with the following features: 
  
 1) Model-agnostic Approach: 
-	- stylized melodic contours are directly derived from a manually cleaned (denoised) pitch signal.
+	- Stylized melodic contours are directly derived from a manually cleaned (denoised) pitch signal.
 2) Time-Frequence Representation: 
-	- melodic contours, simple or complex, are described through a simple time-frequency representation. 
+	- Melodic contours, simple or complex, are described through a simple time-frequency representation. 
 	- The melodic contours are automatically represented with a vocabulary of tonal labels (L,l,m,h,H) 
 3) User-defined Linguistic Units:
-	- melodic contours are used to describe various linguistic units as specified by users. 
-	- the linguistic variation concerns 
-		- the nature (pragmatics, syntactic, phonologic) of the unit
-		- the size of the unit (from the syllable to larger prosodic and syntactic units)
+	- Melodic contours are used to describe various linguistic units as specified by users. 
+	- The linguistic variation concerns 
+		- The nature (pragmatics, syntactic, phonologic) of the unit
+		- The size of the unit (from the syllable to larger prosodic and syntactic units)
 
 Two enhanced features are added in **SLAM+** 
 
 4) Support as input data a pair of 
 	- **Praat PitchTier** (binary or short text) file 
-	- and the associated **Praat TextGrid** file
+	- Associated **Praat TextGrid** file
 5) Generate a double stylization based on: 
-	- *global register* (calculated on classic account of intonational register)
-	- *parametrizable local register* (computed on a short-term account of intonational register)
+	- *Global register* (calculated on classic account of intonational register)
+	- *Parametrizable local register* (computed on a short-term account of intonational register)
 
 
 ### Illustration ###
