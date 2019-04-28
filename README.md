@@ -1,7 +1,7 @@
 SLAM+
 ====
 
-An enhanced automatic stylizer for pitch (contour) of speech corpora based on **SLAM**.
+An enhanced automatic stylizer for pitch (contour) of speech corpora based on [**SLAM**](https://github.com/jbeliao/SLAM).
 
 ## Contributors ##
 - Luigi (Yu-Cheng) Liu - [luigi.plurital@gmail.com](mailto:luigi.plurital@gmail.com)
