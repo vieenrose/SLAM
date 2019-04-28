@@ -1,7 +1,7 @@
 SLAM+
 ====
 
-An enhanced data-driven language independent stylizer for pitch (contour) of speech corpora.
+An enhanced automatic stylizer for pitch (contour) of speech corpora based on **SLAM**.
 
 ## Contributors ##
 - Luigi (Yu-Cheng) Liu - [luigi.plurital@gmail.com](mailto:luigi.plurital@gmail.com)
@@ -32,12 +32,12 @@ An enhanced data-driven language independent stylizer for pitch (contour) of spe
 		- the nature (pragmatics, syntactic, phonologic) of the unit
 		- the size of the unit (from the syllable to larger prosodic and syntactic units)
 
-And two enhanced features in **SLAM+** 
+Two enhanced features are added in **SLAM+** 
 
-4) Use as data input a pair of 
+4) Support as input data a pair of 
 	- **Praat PitchTier** (binary or short text) file 
 	- and the associated **Praat TextGrid** file
-5) Output a double stylization respectively based on: 
+5) Generate a double stylization based on: 
 	- *global register* (calculated on classic account of intonational register)
 	- *parametrizable local register* (computed on a short-term account of intonational register)
 
