@@ -67,7 +67,7 @@ Fig 1. Example of analysis carried out by **SLAM+** on a sample of the [Rhapsodi
 
 2) Then put the decompressed content of **SLAMplus** in the sub-directory of WinPython where *python.exe* is 
 
-## How to Launch it ##
+## How to Launch SLAM+ ##
 1) Drop your **PitchTier** files and **TextGrid** files in the sub-directory *data* of the corresponding **SLAM+** directory. **PitchTier** files must come in pair of *the same name* with **TextGrid** files. As an example: 
 
      "myfile1.PitchTier" "myfile1.TextGrid" "myfile2.wav" "myfile2.TextGrid"
@@ -83,7 +83,7 @@ for Windows
         python.exe SLAMplus.py
 4) Follow the instructions.
 
-## How to Configure it ##
+## How to Configure SLAM+ ##
 Configuration of SLAM+ to suit your work:
 
 1) Open the SLAMplus.py in the SLAM+ working folder with text editor (recommaded 'notepad++')
@@ -112,7 +112,7 @@ Fig 3. Configuration for Syllabes (Syl) as target
 
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Output_I.png)
-Fig 4. Analysis Result
+Fig 4. A sample of analysis Result
 
 #### 2. Prosodic Phrase as target ####
 
@@ -121,7 +121,7 @@ Fig 5. Configuration for Prosodic Phrase (PP) as target
 
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Output_II.png)
-Fig 6. Analysis Result
+Fig 6. A sample of Analysis Result
 
 ## How to cite us ##
 
