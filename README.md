@@ -123,11 +123,11 @@ Fig 5. Configuration for Prosodic Phrase (PP) as target
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Output_II.png)
 Fig 6. A sample of Analysis Result
 
-## How to cite us ##
+## Citation ##
 
 L. Liu, A. Lacheret-Dujour, N. Obin (2019), [AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?](https://www.researchgate.net/publication/332108118_Automatic_Modelling_and_Labelling_of_Speech_Prosody_What's_New_with_SLAM). In *ICPhS* (to appear).
 
-## Bibliography ##
+## References ##
 
 [1] Camacho, A. (2007). [SWIPE: A sawtooth waveform inspired pitch estimator for speech and music](https://www.cise.ufl.edu/~acamacho/publications/dissertation.pdf). Gainesville: University of Florida.
 
