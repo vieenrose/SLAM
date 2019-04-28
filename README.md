@@ -22,24 +22,24 @@ An enhanced data-driven language independent stylizer for pitch (contour) of spe
 **SLAM+** : **SLAM+** is a software derived from **SLAM** [4].  **SLAM** is a data-driven language independent software for pitch (contour) annotation of speech corpora. It integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. **SLAM** method is based on the bottom-up generation of the contours. The underlying algorithm can be highlighted with the following features: 
  
 1) Use Model-agnostic Approach: 
-- stylized melodic contours are directly derived from a manually cleaned (denoised) pitch signal.
+	- stylized melodic contours are directly derived from a manually cleaned (denoised) pitch signal.
 2) Use Sparse Time-Frequence Representation: 
-- melodic contours, simple or complex, are described through a simple time-frequency representation. 
-- The melodic contours are automatically represented with a vocabulary of tonal labels (L,l,m,h,H) 
+	- melodic contours, simple or complex, are described through a simple time-frequency representation. 
+	- The melodic contours are automatically represented with a vocabulary of tonal labels (L,l,m,h,H) 
 3) Use User-defined Linguistic Units:
-- melodic contours are used to describe various linguistic units as specified by users. 
-- the linguistic variation concerns 
-	- the nature (pragmatics, syntactic, phonologic) of the unit
-	- the size of the unit (from the syllable to larger prosodic and syntactic units)
+	- melodic contours are used to describe various linguistic units as specified by users. 
+	- the linguistic variation concerns 
+		- the nature (pragmatics, syntactic, phonologic) of the unit
+		- the size of the unit (from the syllable to larger prosodic and syntactic units)
 
 And two enhanced features in **SLAM+** 
 
 4) Use as data input a pair of 
-- **Praat PitchTier** (binary or short text) file 
-- and the associated **Praat TextGrid** file
+	- **Praat PitchTier** (binary or short text) file 
+	- and the associated **Praat TextGrid** file
 5) Two (instead of one in **SLAM**) stylizations are produced: there are respectively based on a long and a short-term account of intonational register: 
-- *global*
-- *parametrizable local registers*.
+	- *global*
+	- *parametrizable local registers*.
 
 
 ### Illustration ###
