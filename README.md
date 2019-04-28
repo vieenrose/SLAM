@@ -1,37 +1,46 @@
 SLAM+
 ====
 
-A data-driven language independent software for pitch (contour) annotation of speech corpora.
+An enhanced data-driven language independent stylizer for pitch (contour) of speech corpora.
 
-## Authors ##
+## Contributors ##
 - Luigi (Yu-Cheng) Liu - [luigi.plurital@gmail.com](mailto:luigi.plurital@gmail.com)
+	- [UMR 7114 MoDyCo Lab.](https://www.modyco.fr/fr/) [(University Paris Nanterre)](https://university.parisnanterre.fr/)
+	- [Ibadan University](https://www.ui.edu.ng/)
+	- [IFRA-Nigeria](http://www.ifra-nigeria.org/)
 - Anne Lacheret-Dujour - [anne@lacheret.com](mailto:anne@lacheret.com)
+	- [UMR 7114 MoDyCo Lab.](https://www.modyco.fr/fr/) [(University Paris Nanterre)](https://university.parisnanterre.fr/)
 - Nicolas Obin - [nicolas.obin@ircam.fr](mailto:nicolas.obin@ircam.fr)
+	- [Ircam](https://www.ircam.fr/)
+- Julie Belião
 
 ## What's **SLAM+** ?
 
 ### Overview ###
 
 
-**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a data-driven language independent software for pitch (contour) annotation of speech corpora. It integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. The algorithm is based on the bottom-up generation of the contours. This method  is characterized with five basic peculiarities: 
+**SLAM+** : **SLAM+** is a software derived from **SLAM** [4].  **SLAM** is a data-driven language independent software for pitch (contour) annotation of speech corpora. It integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. **SLAM** method is based on the bottom-up generation of the contours. The underlying algorithm can be highlighted with the following features: 
  
-1) Stylized melodic contours are directly derived from a manually cleaned (denoised) pitch waveform.
-2) Melodic contours, simple or complex, are described through a simple Time-Frequency representation. 
-3) Melodic contours are used to describe various linguistic units as specified by users. 
-4) The variation concerns 
+1) Use Model-agnostic Approach: 
+- stylized melodic contours are directly derived from a manually cleaned (denoised) pitch signal.
+2) Use Sparse Time-Frequence Representation: 
+- melodic contours, simple or complex, are described through a simple time-frequency representation. 
+- The melodic contours are automatically represented with a vocabulary of tonal labels (L,l,m,h,H) 
+3) Use User-defined Linguistic Units:
+- melodic contours are used to describe various linguistic units as specified by users. 
+- the linguistic variation concerns 
 	- the nature (pragmatics, syntactic, phonologic) of the unit
 	- the size of the unit (from the syllable to larger prosodic and syntactic units)
-5) The melodic contours are automatically represented with a vocabulary of tonal labels (L,l,m,h,H)  
 
-with 2 features newly added in **SLAM+** 
+And two enhanced features in **SLAM+** 
 
-6) Use **Praat PitchTier** file along with **TextGrid** file as data input.
-7) Two (instead of one in **SLAM**) stylizations are produced: there are respectively based on a long and a short-term account of intonational register: *global* and *parametrizable local registers*.
+4) Use as data input a pair of 
+- **Praat PitchTier** (binary or short text) file 
+- and the associated **Praat TextGrid** file
+5) Two (instead of one in **SLAM**) stylizations are produced: there are respectively based on a long and a short-term account of intonational register: 
+- *global*
+- *parametrizable local registers*.
 
-Note: 
-- **SLAM+** is compatible with **Python 2 and 3** but optimized only for Linux distributions.
-- **SLAM+** supports **PitchTier** files in binary or short text format as audio input.
-- **SLAM+** integrates a [Python implementaiton](https://gist.github.com/agramfort/850437) of *LOWESS* algorithm [4] for pitch smoothing.  
 
 ### Illustration ###
 
