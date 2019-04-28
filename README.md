@@ -37,9 +37,9 @@ And two enhanced features in **SLAM+**
 4) Use as data input a pair of 
 	- **Praat PitchTier** (binary or short text) file 
 	- and the associated **Praat TextGrid** file
-5) Two (instead of one in **SLAM**) stylizations are produced: there are respectively based on a long and a short-term account of intonational register: 
-	- *global*
-	- *parametrizable local registers*.
+5) Output double stylization: 
+	- *global* (calculated on classic account of intonational register)
+	- *parametrizable local registers* (computed on a short-term account of intonational register)
 
 
 ### Illustration ###
