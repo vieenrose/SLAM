@@ -1,3 +1,4 @@
+![logo](https://github.com/vieenrose/SLAMplus/blob/dev/img/logo.png)
 SLAM+
 ====
 
