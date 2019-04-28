@@ -1,26 +1,27 @@
 SLAM+
 ====
 
+A data-driven language independent software for pitch (contour) annotation of speech corpora.
+
 ## Authors ##
-- Luigi (Yu-Cheng) Liu [luigi.plurital@gmail.com](mailto:luigi.plurital@gmail.com)
-- Anne Lacheret-Dujour [anne@lacheret.com](mailto:anne@lacheret.com)
-- Nicolas Obin [nicolas.obin@ircam.fr](mailto:nicolas.obin@ircam.fr)
+- Luigi (Yu-Cheng) Liu - [luigi.plurital@gmail.com](mailto:luigi.plurital@gmail.com)
+- Anne Lacheret-Dujour - [anne@lacheret.com](mailto:anne@lacheret.com)
+- Nicolas Obin - [nicolas.obin@ircam.fr](mailto:nicolas.obin@ircam.fr)
 
 ## What's **SLAM+** ?
 
 ### Overview ###
 
 
-**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a data-driven language independent software for pitch (contour) annotation of speech corpora. It integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. This algorithm is characterized with three basic peculiarities: 
-
-the method is based on the bottom-up genneration of the contours : 
-1) Stylized melodic contours are directly derived from a manually (denoised) cleaned speech signal.
-2) Melodic contours, simple or complex, are described through a simple time-frequency representation. 
+**SLAM+** : **SLAM+** or **SLAMplus** is derived from **SLAM** [4], a data-driven language independent software for pitch (contour) annotation of speech corpora. It integrates an algorithm for the automatic stylization and labelling of melodic contours, developed to process intonation. The algorithm is based on the bottom-up generation of the contours. This method  is characterized with five basic peculiarities: 
+ 
+1) Stylized melodic contours are directly derived from a manually cleaned (denoised) pitch waveform.
+2) Melodic contours, simple or complex, are described through a simple Time-Frequency representation. 
 3) Melodic contours are used to describe various linguistic units as specified by users. 
-4) the variation concerns 
-	i) the nature (pragmatics, syntactic, phonologic) of the unit and
-	ii) the size of the unit (from the syllable to larger prosodic and syntactic units)
-5) the melodic contours are automatically represented with a vocabulary of tonal labels (L,l,m,h,H)  
+4) The variation concerns 
+	- the nature (pragmatics, syntactic, phonologic) of the unit
+	- the size of the unit (from the syllable to larger prosodic and syntactic units)
+5) The melodic contours are automatically represented with a vocabulary of tonal labels (L,l,m,h,H)  
 
 with 2 features newly added in **SLAM+** 
 
@@ -115,7 +116,7 @@ Fig 6. Analysis Result
 
 ## How to cite us ##
 
-L. Liu, A. Lacheret-Dujour, N. Obin (2019), AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?. In *ICPhS* (to appear).
+L. Liu, A. Lacheret-Dujour, N. Obin (2019), [AUTOMATIC MODELLING AND LABELLING OF SPEECH PROSODY: WHAT’S NEW WITH SLAM+ ?](https://www.researchgate.net/publication/332108118_Automatic_Modelling_and_Labelling_of_Speech_Prosody_What's_New_with_SLAM). In *ICPhS* (to appear).
 
 ## Bibliography ##
 
