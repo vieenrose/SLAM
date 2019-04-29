@@ -48,10 +48,20 @@ function will run faster with a smaller number of iterations."""
             yest[i] = beta[0] + beta[1]*x[i]
         residuals = y-yest
         s = numpy.median(abs(residuals))
+<<<<<<< HEAD
         if s:
             delta = numpy.clip(residuals/(6*s),-1,1)
             delta = 1-delta*delta
             delta = delta*delta
         else:
             delta =0.0
+=======
+        if abs(s) > 0 : 
+            delta = numpy.clip(residuals/(6*s),-1,1)
+            delta = 1-delta*delta
+            delta = delta*delta
+        else: 
+            delta = 0
+        
+>>>>>>> dev
     return yest
