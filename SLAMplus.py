@@ -46,8 +46,8 @@ display & export:
 * displayExamples : True or False: whether or not to display examples
                    of stylized f0 segments
 * displaySummary : True or False: whether or not to display a small
-                   summary of the distribution of the stylizes 
-* exportFigures :  True or False: whether or not to export the result 
+                   summary of the distribution of the stylizes
+* exportFigures :  True or False: whether or not to export the result
                    tonal analysis in PDF file
 #####################################################################"""
 
@@ -192,9 +192,10 @@ while (tgFiles):
     if not inputPitch:
         for file in srcFile:
             try:
-                inputPitch = stylize.readPitchtier(file)
-            except:
+                inputPitch = stylize.readPitchtierPlus(file)
+            except Exception as e:
                 inputPitch = None
+                print(e)
                 continue
             print('Reading pitch from PitchTier file {}'.format(file))
             break

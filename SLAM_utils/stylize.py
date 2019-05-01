@@ -20,7 +20,7 @@ def SLAM1(semitones, time=None, rangeRegisterInSemitones=20):
     #first, smooth the semitones curves using LOWESS
     # DOWNSAMPLE_ON = False
     """
-    if 100<len(semitones) and DOWNSAMPLE_ON: 
+    if 100<len(semitones) and DOWNSAMPLE_ON:
         # ? why do a downsampling ?
         # 1.assumed that the signal is of narraowband due to the
         # the filtering processing by SWIPE ?
@@ -292,7 +292,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
           ax2.set_yticklabels(yticklabels_major,minor=False)
           ax2.set_yticklabels(yticklabels_minor,minor=True)
     """
-    """       
+    """
     # grid relative to local regster in bleu lines
     register_local = hz2semitone(np.mean([semitone2hz(f) for f in smooth]))
     for offset in [0,-2,2,-6,6,-10,10]:
@@ -739,7 +739,7 @@ def stylizeObject(targetIntv,
 
     #get valide reference
     """
-    if is_numeric_paranoid(registers): 
+    if is_numeric_paranoid(registers):
           #no speaker/support tier was provided, registers is only the average f0
           reference = registers
     """
@@ -834,9 +834,9 @@ def is_numeric_paranoid(obj):
 
 def getSupportIntvs(targetIntv, supportTier):
     """
-      this function returns the interval of 'supportTier' which 
-      matchs the best with the given 'targetIntv'. 
-      
+      this function returns the interval of 'supportTier' which
+      matchs the best with the given 'targetIntv'.
+
       inputs
             targetIntv
             supportTier
@@ -871,9 +871,9 @@ def getSupportIntvs(targetIntv, supportTier):
 
 def getTags(targetIntv, tagTier):
     """
-      this function returns the interval of 'supportTier' which 
-      matchs the best with the given 'targetIntv'. 
-      
+      this function returns the interval of 'supportTier' which
+      matchs the best with the given 'targetIntv'.
+
       inputs
             targetIntv
             supportTier
@@ -892,7 +892,7 @@ def getTags(targetIntv, tagTier):
 
 def printIntv(intv):
     """
-      convinient function to shwo the content of an 'interval' 
+      convinient function to shwo the content of an 'interval'
       objet defined in 'TextGrid' class
       """
     print('{}: [{},{}]'.format(intv.mark().encode('utf-8'), intv.xmin(),
@@ -938,14 +938,10 @@ def get_basename(file):
 
 
 #read a PitchTier as swipe file
-class readPitchtier(swipe.Swipe):
+class readPitchtierPlus(swipe.Swipe):
     def __init__(self, file):
-        try:
-            [self.time, self.pitch] = praatUtil.readBinPitchTier(file)
-        except:
-            [self.time, self.pitch] = praatUtil.readPitchTier(file)
-
-
+        [self.time, self.pitch] = praatUtil.readPitchTier2(file)
+        
 def hz2cent(f0_Hz):
     return 1200.0 * np.log2(np.maximum(1E-5, np.double(f0_Hz)))
 

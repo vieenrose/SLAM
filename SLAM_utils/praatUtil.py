@@ -24,7 +24,15 @@ this program; if not, see <http://www.gnu.org/licenses/>.
 
 """
 
-import numpy
+import numpy,sys,struct
+
+# try tp enable javaobj for analor file support
+javaobj_installed = True
+try:
+    import javaobj
+except Exception as e:
+    javaobj_installed = False
+
 
 
 def writeBinPitchTier(fileName, dataX, dataY):
@@ -87,32 +95,84 @@ def isGoodMonoWav(fileName):
     return (FileTypeBlocID == 'RIFF' and FileFormatID == 'WAVE'
             and NbrCanaux == 1)
 
+def readPitchTier2(fileName):
 
-def readBinPitchTier(fileName):
-    metadataType = numpy.dtype([\
-         ('header','S22'),\
-         ('xMin'  ,'>d'),\
-         ('xMax'  ,'>d'),\
-         ('nb'    ,'>i4')])
-    dataType = numpy.dtype([('x', '>d'), ('y', '>d')])
-    with open(fileName, "rb") as bin:
-        try:
-            # header
-            md = numpy.fromfile(bin, dtype=metadataType, count=1)[0]
-            # check file header
-            header = md['header'].astype(str)
-            nb = md['nb'].astype(int)
-            if header != 'ooBinaryFile\tPitchTier':
-                raise IOError('file header not recongized !')
-            # read data as 2D-array
-            data = numpy.fromfile(bin, dtype=dataType, count=nb)
-            # check file end
-            if len(bin.read()) > 0:
-                raise EOFError
-        except:
-            raise
+	metadataType = numpy.dtype([\
+	     ('xMin'  ,'>d'),\
+	     ('xMax'  ,'>d'),\
+	     ('nb'    ,'>i4')])
+	dataType = numpy.dtype([('x', '>d'), ('y', '>d')])
 
-        return (data['x'], data['y'])
+	with open(fileName, "rb") as bin:
+
+		isAnalorFile = False
+		if javaobj_installed: # try as Analor file
+			try:
+				marshaller = javaobj.JavaObjectUnmarshaller(bin)
+			except:
+				marshaller = None
+		if 	marshaller:
+			while True:
+				pobj = marshaller.readObject()
+				if pobj == u'FIN' or \
+				   pobj == u'' :
+					break
+				if pobj == u'F0':
+					xMin, xMax = marshaller.readObject()
+					deltaT = marshaller.readObject()
+					vect_x, vect_y =  marshaller.readObject()
+					vect_x = numpy.array(vect_x)
+					vect_y = numpy.array(vect_y)
+					vect_y = 2.0 ** vect_y # log2 to linear scale
+					isAnalorFile = True
+		if not isAnalorFile:
+			# return the cursor and try as Praat file
+			bin.seek(0,0)
+			header = bin.read(12)
+			if header == b'ooBinaryFile':
+				# binray collection file or pitchtier file
+				sys.stdout.write('Praat Binary ')
+				sys.stdout.flush()
+				sub_header = bin.read(ord(bin.read(1)))
+				if sub_header == b'Collection':
+					sys.stdout.write('Collection ')
+					sys.stdout.flush()
+					jump2(bin,keyword=b'\x09PitchTier')
+				elif sub_header == b'PitchTier':
+					sys.stdout.write('PitchTier ')
+					sys.stdout.flush()
+				else:
+					raise IOError('Type non-supported !')
+
+				# metadata
+				md = numpy.fromfile(bin, dtype=metadataType, count=1)[0]
+				nb = md['nb'].astype(int)
+
+				# read data as 2D-array
+				data = numpy.fromfile(bin, dtype=dataType, count=nb)
+				# check file end
+				if sub_header == b'PitchTier' and len(bin.read()) > 0:
+				    raise EOFError
+				vect_x = data['x']
+				vect_y = data['y']
+			else:
+				# read pitchtier object from short text file
+				vect_x,vect_y = readPitchTier(fileName)
+
+	return (vect_x, vect_y)
+
+def jump2(ifile, keyword):
+    binstr = b''
+    while ifile:
+        binstr += ifile.read(1)
+        if len(binstr) > len(keyword):
+            binstr = binstr[1:]
+        if binstr == keyword:
+            break
+    lg = struct.unpack('>h', ifile.read(2))[0]
+    if lg == -1:
+        lg = lg.astype('>H')
+    objname = ifile.read(lg).decode('ascii')  # skip embeded oo name
 
 
 def readPitchTier(fileName):
