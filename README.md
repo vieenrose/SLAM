@@ -4,13 +4,13 @@ SLAM+
 An enhanced automatic stylizer for pitch (contour) of speech corpora based on [*SLAM*](https://github.com/jbeliao/SLAM).
 
 ## Contributors ##
-- Luigi (Yu-Cheng) Liu - [luigi.plurital@gmail.com](mailto:luigi.plurital@gmail.com)
+- Luigi (Yu-Cheng) Liu - [`luigi.plurital@gmail.com`](mailto:luigi.plurital@gmail.com)
 	- [UMR 7114 MoDyCo Lab.](https://www.modyco.fr/fr/) [(University Paris Nanterre)](https://university.parisnanterre.fr/)
 	- [Ibadan University](https://www.ui.edu.ng/)
 	- [IFRA-Nigeria](http://www.ifra-nigeria.org/)
-- Anne Lacheret-Dujour - [anne@lacheret.com](mailto:anne@lacheret.com)
+- Anne Lacheret-Dujour - [`anne@lacheret.com`](mailto:anne@lacheret.com)
 	- [UMR 7114 MoDyCo Lab.](https://www.modyco.fr/fr/) [(University Paris Nanterre)](https://university.parisnanterre.fr/)
-- Nicolas Obin - [nicolas.obin@ircam.fr](mailto:nicolas.obin@ircam.fr)
+- Nicolas Obin - [`nicolas.obin@ircam.fr`](mailto:nicolas.obin@ircam.fr)
 	- [Ircam](https://www.ircam.fr/)
 - Julie Belião
 
@@ -90,17 +90,17 @@ Configuration of SLAM+ to suit your work:
 
 2) Edit the values of `SpeakerTier`, `TargetTier` and `TagTier`. 
 
-Note: These values as stated here are different tiers specified in the concerned TextGrid files. SupportTier (as valued in this work) is defined as the tier name where the largest units of register estimation are delimited. TargetTier is defined as the tier name where units of stylization are bounded. TagTier provides additional descriptive information of the contents. It is used to compare and ascertain the details of SpeakerTier and TargetTier.
+Note: These values as stated here are different tiers specified in the concerned `TextGrid` files. `SupportTier` (as valued in this work) is defined as the tier name where the largest units of register estimation are delimited. `TargetTier` is defined as the tier name where units of stylization are bounded. `TagTier` provides additional descriptive information of the contents. It is used to compare and ascertain the details of `SpeakerTier` and `TargetTier`.
 
 ### Examples of Configuration ###
 
-For the examples (NaijaSynCor project: JOS_01_V___MDT) in the following, we use the same TextGrid file which provides 4 annotation tiers. These tiers are 
-- `Syllabes (Syl)`
-- `Prosodic Word (PrWd)` 
-- `Prosodic Phrase (PP)`
-- `Large Prosodic Unit (LPU)` 
+For the examples (NaijaSynCor project: JOS_01_V___MDT) in the following, we use the same `TextGrid` file which provides 4 annotation tiers. These tiers are 
+- Syllabes (`Syl`)
+- Prosodic Word (`PrWd`) 
+- Prosodic Phrase (`PP`)
+- Large Prosodic Unit (`LPU`) 
 
-Note that only the targetTier varies in these exemples while SupportTier and TagTier are fixed as LPU and PrWd, respectively. 
+Note that only the `targetTie` varies in these exemples while `SupportTier` and `TagTier` are fixed as `LPU` and `PrWd`, respectively. 
 
 ![alt text](https://github.com/vieenrose/SLAMplus/blob/dev/img/Example_TextGrid.png)
 Fig 2. Input TextGrid file used in examples
