@@ -17,6 +17,22 @@ try:
 except Exception as e:
     javaobj_installed = False
 
+def auto_decode(input):
+    if input:
+        if isinstance(input,(str,unicode)):
+            encoding = chardet.detect(input)['encoding']
+            return input.decode(encoding)
+        elif isinstance(input,list):
+            encoding = chardet.detect(''.join(input))['encoding']
+            ret = []
+            for x in input:
+                if x: x = x.decode(encoding)
+                ret.append(x)
+            return ret
+        else:
+            return input
+    else:
+        return input
 
 def detectEncoding(f):
     """
@@ -178,11 +194,11 @@ class TextGrid():
                     while tier_num:
                         # get the metadata of tier
                         tlims = marshaller.readObject()
-                        typ = marshaller.readObject()
-                        nom = marshaller.readObject()
-                        mots = marshaller.readObject()
+                        typ = auto_decode(marshaller.readObject())
+                        nom = auto_decode(marshaller.readObject())
+                        mots = auto_decode(marshaller.readObject())
                         bornes = marshaller.readObject()
-                        nomGuide = marshaller.readObject()
+                        nomGuide = auto_decode(marshaller.readObject())
 
                         # translation between 2 type naming
                         # between Analor and Praat version
