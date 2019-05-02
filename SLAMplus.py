@@ -60,9 +60,9 @@ alpha = 1  # for register ranger estimation
 #speakerTier= 'periode'
 #targetTier = 'pivot'
 
-speakerTier = 'Biola-IP'
-targetTier = 'tx'
-tagTier = 'TokensAlign'
+speakerTier = 'tx_new' # not very relevant, it should be Biola-IP for naija.
+targetTier = 'prenucleus_ic_value'
+tagTier = 'mot'
 
 #display and exportation
 examplesDisplayCount = 1  #number of example plots to do. Possibly 0
@@ -178,7 +178,7 @@ while (tgFiles):
     while tagTier not in tierNames and tagTier:
         print(
             '    TextGrid does not have a tier named %s for tag. Available tiers are:'
-            % speakerTier)
+            % tagTier)
         for t in tierNames:
             print('        %s' % t)
         tagTier = stylize.input_SLAM(
