@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #   SLAM : a method for the automatic Stylization and LAbelling of speech Melody
 #   Copyright (C) 2014  Julie BELIAO
 #
@@ -123,7 +124,12 @@ tgFiles = []
 srcFiles = []
 while tmpFiles:
     filename = tmpFiles.pop(0)
-    if re.search(r'\.TEXTGRID$', filename, re.IGNORECASE):
+    if re.search(r'\.(COLLECTION|OR)$', filename, re.IGNORECASE) :
+       # hybrid files : Praat Collection / Analor File
+       tgFiles.append(filename)
+       srcFiles.append(filename)
+    elif re.search(r'\.TEXTGRID$', filename, re.IGNORECASE):
+        # Praat TextGrid
         tgFiles.append(filename)
     else:
         srcFiles.append(filename)
@@ -134,14 +140,15 @@ while (tgFiles):
     #take a tg file from tgFiles and its related src file(s) from SrcFiles
     inputTextgridFile = tgFiles.pop(0)
     basename = stylize.get_basename(inputTextgridFile)
+
     extension = stylize.get_extension(inputTextgridFile)
     outputTextgridFile = './output/{}{}'.format(basename, extension)
     outputPitchTierFile = './output/{}{}'.format(basename, ".PitchTier")
     outputFigureFile = './output/{}{}'.format(basename, ".pdf")
-    srcFile = \
+    srcFilesPaired = \
     [filename for filename in srcFiles \
         if stylize.get_basename(filename).lower() == basename.lower()]
-    for filename in srcFile:
+    for filename in srcFilesPaired:
         srcFiles.remove(filename)
 
     #Create TextGrid object
@@ -190,7 +197,7 @@ while (tgFiles):
     inputPitch = None
     #try as PitchTier files (supported formats: short text and binary)
     if not inputPitch:
-        for file in srcFile:
+        for file in srcFilesPaired:
             try:
                 inputPitch = stylize.readPitchtierPlus(file)
             except Exception as e:
@@ -201,7 +208,7 @@ while (tgFiles):
             break
     # try as wave files
     if not inputPitch:
-        for file in srcFile:
+        for file in srcFilesPaired:
             if not praatUtil.isGoodMonoWav(file): continue
             try:
                 inputPitch = swipe.Swipe(file,
@@ -217,7 +224,7 @@ while (tgFiles):
             break
     # unknown format
     if not inputPitch:
-        print('Error: source files {} are not supported !'.format(srcFile))
+        print('Error: source files {} are not supported !'.format(srcFilesPaired))
         continue
 
     print('Computing average register for each speaker')
