@@ -75,7 +75,7 @@ Fig 1. Example of analysis carried out by *SLAM+* on a sample of the [Rhapsodie 
 
      `myfile1.PitchTier` `myfile1.TextGrid` `myfile2.wav` `myfile2.TextGrid`
 
-2) Open a terminal and go to the `SLAM+` directory
+2) Open a terminal and go to the `SLAMplus` directory
 3) Execute
 
 for Linux
