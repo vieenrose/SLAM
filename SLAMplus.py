@@ -60,8 +60,8 @@ alpha = 1  # for register ranger estimation
 #speakerTier= 'periode'
 #targetTier = 'pivot'
 
-speakerTier = 'tx_new' # not very relevant, it should be Biola-IP for naija.
-targetTier = 'prenucleus_ic_value'
+speakerTier = 'IUs' # not very relevant, it should be Biola-IP for naija.
+targetTier = 'ICs_2'
 tagTier = 'mot'
 
 #display and exportation
@@ -296,8 +296,13 @@ while (tgFiles):
                 smooth_total = np.concatenate((smooth_total, smooth_hz))
                 time_total = np.concatenate((time_total, targetTimes))
 
-        stylesGlo += [style_glo]
-        stylesDynLoc += [style_loc]
+        # don't export stylization on empty segment
+        if targetIntv.mark():
+            stylesGlo += [style_glo]
+            stylesDynLoc += [style_loc]
+        else:
+            style_glo = '';
+            style_loc = '';
 
         #then add an interval with that style to the (new) style tier
         newInterval = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(),
