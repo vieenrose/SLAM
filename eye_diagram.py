@@ -38,6 +38,8 @@ def tonal_dec(code):
 			y = code.pop()
 			t.append(cat2time(code.pop()))
 			f.append(cat2freq(y))
+			#if f[-1] > f[0] : f[-1] += 2
+			#else : f[-1] -= 2
 		i+=1
 
 	# sort data according to time axis
@@ -46,10 +48,14 @@ def tonal_dec(code):
 
 	return t,f
 
-# plot curvre by curve
-t,s=tonal_dec('hml2H1');ax.plot(t,s,'bo-')
-t,s=tonal_dec('mmh2');ax.plot(t,s,'bo-')
-t,s=tonal_dec('lml1');ax.plot(t,s,'bo-')
+# plot global styles on eye diagram
+with open('stylesGlo.out') as file:
+	for style in file:
+		style = style.replace('\n','')
+		if style:
+			t, s = tonal_dec(style)
+			ax.plot(t, s, 'bo-', linewidth=1, alpha=0.01, solid_capstyle="butt")
+
 
 # time position to normalized time
 # '1' -> .167
@@ -83,6 +89,6 @@ ax.yaxis.set_major_formatter(ticker.FixedFormatter(major_tick_labels))
 ax.yaxis.set_minor_locator(ticker.FixedLocator((minor_ticks)))
 ax.yaxis.set_minor_formatter(ticker.FixedFormatter(minor_tick_labels))
 
-#plt.grid(True,which='major', color='k', linestyle='-')
-plt.grid(True)
+plt.grid(False)
+plt.savefig('eye_diagram_glo.png', dpi=1200)
 plt.show()
