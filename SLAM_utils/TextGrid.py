@@ -412,7 +412,8 @@ class TextGrid():
                     text.write('\t\t\tintervals [%d]:\n' % o)
                     text.write('\t\t\t\txmin = %f\n' % interval.xmin())
                     text.write('\t\t\t\txmax = %f\n' % interval.xmax())
-                    text.write('\t\t\t\ttext = "%s"\n' % interval.mark())
+                    #text.write('\t\t\t\ttext = "%s"\n' % interval.mark())
+                    text.write('\t\t\t\ttext = "%s"\n' % interval.mark().replace('"',"'")) # replace double quote by single quote to avoid format error
             else:  # PointTier
                 text.write('\t\tclass = "TextTier"\n')
                 text.write('\t\tname = "%s"\n' % tier.name())
