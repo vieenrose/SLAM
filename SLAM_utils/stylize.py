@@ -1057,40 +1057,71 @@ def identifyEssentialPoints(freq, time=None, thld=2, baseMode = 0):
         time = np.linspace(0, 1, len(freq))
         t = [time[0], time[-1]]
 
-    k = (np.array(freq)).argmax()
-    l = (np.array(freq)).argmin()
-    t_max, f_max = time[k], freq[k]
-    t_min, f_min = time[l], freq[l]
+    # the remaning block of code deal with peak and valley detection
 
-    # detect sailliant peak and valley
+    # ignore saliences temporally close to boundaries
+    # hwo to: we define a window of sallience observation on
+    # time axis for that it keep only points at time
+    # coordinates t between gamma and 1 - gamme
+    # where gamma (which could be thought as some kind of "security distance")
+    # is a non-negative pamaremer of value
+    # between 0 and
+    # 1/3 (SLAM's time quantization step )
 
-    # 2 choices for the base frequency of sallience detection
-    # set baseMode = 0,
-    # this flag assignment will set base to 0. It takes the base to be the register used by the current target unit
-    # set baseMode = 1,
-    # this flag assignment will set base to f[0] it take the base to be intial frequency of the current target unit
+    gamma = 0.1
+    # get index of relevant time coordinates inside sallience obs. win.
+    id_sallience_observation = []
+    time_sallience_observation = []
+    # ugly implementation, which could be optimized latter
+    for i,time_val in enumerate(time):
+        # print(time) # debug
+        time_val_normalized = (time_val - time[0]) / (time[-1] - time[0])
+        if time_val_normalized >= gamma and time_val_normalized <= 1 - gamma:
+            id_sallience_observation.append(i)
+            time_sallience_observation.append(time_val)
 
-    base = 0; # by default, the base is set to the register
-    if baseMode == 1: base = f[0] # choose initial frequency as base
+    # get corresponding relevant freq. coordinates inside ...
+    freq_sallience_observation = [freq[k] for k in range(len(freq)) if k in id_sallience_observation]
 
-    have_sailliant_peak = (f_max >= base + thld) and k and k + 1 < len(
-        np.array(freq))
-    have_sailliant_valley = (f_min <= base - thld) and l and l + 1 < len(
-        np.array(freq))
-    if t_max < t_min:  # peak occurs before valley
-        if have_sailliant_peak:
-            t.insert(1, t_max)
-            f.insert(1, f_max)
-        if have_sailliant_valley:
-            t.insert(1, t_min)
-            f.insert(1, f_min)
-    else:
-        if have_sailliant_valley:
-            t.insert(1, t_min)
-            f.insert(1, f_min)
-        if have_sailliant_peak:
-            t.insert(1, t_max)
-            f.insert(1, f_max)
+    # # DEBUG:
+    #print(time_sallience_observation)
+    #print(freq_sallience_observation)
+
+    if len(freq_sallience_observation) > 0:
+        k = (np.array(freq_sallience_observation)).argmax()
+        l = (np.array(freq_sallience_observation)).argmin()
+        t_max, f_max = time_sallience_observation[k], freq_sallience_observation[k]
+        t_min, f_min = time_sallience_observation[l], freq_sallience_observation[l]
+
+        # detect sailliant peak and valley
+
+        # 2 choices for the base frequency of sallience detection
+        # set baseMode = 0,
+        # this flag assignment will set base to 0. It takes the base to be the register used by the current target unit
+        # set baseMode = 1,
+        # this flag assignment will set base to f[0] it take the base to be intial frequency of the current target unit
+
+        base = 0; # by default, the base is set to the register
+        if baseMode == 1: base = f[0] # choose initial frequency as base
+
+        have_sailliant_peak = (f_max >= base + thld) and k and k + 1 < len(
+            np.array(freq))
+        have_sailliant_valley = (f_min <= base - thld) and l and l + 1 < len(
+            np.array(freq))
+        if t_max < t_min:  # peak occurs before valley
+            if have_sailliant_peak:
+                t.insert(1, t_max)
+                f.insert(1, f_max)
+            if have_sailliant_valley:
+                t.insert(1, t_min)
+                f.insert(1, f_min)
+        else:
+            if have_sailliant_valley:
+                t.insert(1, t_min)
+                f.insert(1, f_min)
+            if have_sailliant_peak:
+                t.insert(1, t_max)
+                f.insert(1, f_max)
 
     return t, f
 
