@@ -941,7 +941,7 @@ def get_basename(file):
 class readPitchtierPlus(swipe.Swipe):
     def __init__(self, file):
         [self.time, self.pitch] = praatUtil.readPitchTier2(file)
-        
+
 def hz2cent(f0_Hz):
     return 1200.0 * np.log2(np.maximum(1E-5, np.double(f0_Hz)))
 
@@ -1042,7 +1042,7 @@ def averageRegisters(swipeFile, speakerTier=None):
     return registers
 
 
-def identifyEssentialPoints(freq, time=None, thld=2):
+def identifyEssentialPoints(freq, time=None, thld=2, baseMode = 0):
     # example of output :
     # t = [t_initial, t_peak , t_valley, t_final]
     # f = [f_initial, f_peak , f_valley, f_final]
@@ -1063,9 +1063,19 @@ def identifyEssentialPoints(freq, time=None, thld=2):
     t_min, f_min = time[l], freq[l]
 
     # detect sailliant peak and valley
-    have_sailliant_peak = (f_max >= f[0] + thld) and k and k + 1 < len(
+
+    # 2 choices for the base frequency of sallience detection
+    # set baseMode = 0,
+    # this flag assignment will set base to 0. It takes the base to be the register used by the current target unit
+    # set baseMode = 1,
+    # this flag assignment will set base to f[0] it take the base to be intial frequency of the current target unit
+
+    base = 0; # by default, the base is set to the register
+    if baseMode == 1: base = f[0] # choose initial frequency as base
+
+    have_sailliant_peak = (f_max >= base + thld) and k and k + 1 < len(
         np.array(freq))
-    have_sailliant_valley = (f_min <= f[0] - thld) and l and l + 1 < len(
+    have_sailliant_valley = (f_min <= base - thld) and l and l + 1 < len(
         np.array(freq))
     if t_max < t_min:  # peak occurs before valley
         if have_sailliant_peak:
