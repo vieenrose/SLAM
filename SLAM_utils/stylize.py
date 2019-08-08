@@ -346,10 +346,21 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
                 [v_t, v_f] = identifyEssentialPoints(freq,
                                                      time,
                                                      thld=DELTA / 2)
+
+                # # DEBUG:
+                #print("return values by identifyEssentialPoints call in show_stylization")
+                #print(v_t,v_t)
+
+                # the above is a problematic implemntation !!!
+                # For each essential point coded by SLAM annotation
+                # this dirty routine search for the nearest point to it (measured here by 1-norm in 2-dim)
+                # on the non-simplified pitch
                 distances_times = [[
                     abs(f_p - f) + abs(t_p - sec2msec(t)),
                     sec2msec(t), f
                 ] for t, f in zip(v_t, v_f)]
+
+                # sorting points by time order
                 distances_times = sorted(distances_times,
                                          key=lambda tup: tup[0])
                 t_p, f_p = distances_times[0][1:]
@@ -1079,6 +1090,13 @@ def identifyEssentialPoints(freq, time=None, thld=2, baseMode = 0):
         if time_val_normalized >= gamma and time_val_normalized <= 1 - gamma:
             id_sallience_observation.append(i)
             time_sallience_observation.append(time_val)
+        # include initial and final points in observation data
+        # because whithout knoning the frequence of initial and final point,
+        # the points next to orginal window boundary could be taken for
+        # peak or valley by error
+        elif i == 0 or i == len(time)-1 :
+            id_sallience_observation.append(i)
+            time_sallience_observation.append(time_val)
 
     # get corresponding relevant freq. coordinates inside ...
     freq_sallience_observation = [freq[k] for k in range(len(freq)) if k in id_sallience_observation]
@@ -1086,6 +1104,12 @@ def identifyEssentialPoints(freq, time=None, thld=2, baseMode = 0):
     # # DEBUG:
     #print(time_sallience_observation)
     #print(freq_sallience_observation)
+
+    #time_truncated = time_sallience_observation
+    #freq_truncated = freq_sallience_observation
+    ## DEBUG:
+    #print(time_truncated)
+
 
     if len(freq_sallience_observation) > 0:
         k = (np.array(freq_sallience_observation)).argmax()
@@ -1105,9 +1129,9 @@ def identifyEssentialPoints(freq, time=None, thld=2, baseMode = 0):
         if baseMode == 1: base = f[0] # choose initial frequency as base
 
         have_sailliant_peak = (f_max >= base + thld) and k and k + 1 < len(
-            np.array(freq))
+            np.array(freq_sallience_observation))
         have_sailliant_valley = (f_min <= base - thld) and l and l + 1 < len(
-            np.array(freq))
+            np.array(freq_sallience_observation))
         if t_max < t_min:  # peak occurs before valley
             if have_sailliant_peak:
                 t.insert(1, t_max)
@@ -1122,6 +1146,9 @@ def identifyEssentialPoints(freq, time=None, thld=2, baseMode = 0):
             if have_sailliant_peak:
                 t.insert(1, t_max)
                 f.insert(1, f_max)
+
+        #debug
+        #print(zip(t,f))
 
     return t, f
 
