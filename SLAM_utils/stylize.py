@@ -314,6 +314,8 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
 
     # stylization
     # rangeRegisterInHz
+    # note: freq, time here are provided mainly for essential point detection
+    # (ie. for the instance of identifyEssentialPoints called inside this function)
     def style2pitch(time, freq, style, xmin, xmax, yoffset=0, DELTA=4):
         #print('style2pitch:style=',style) #debug
         alphabet2semitones = {'H': 8, 'h': 4, 'm': 0, 'l': -4, 'L': -8}
@@ -336,6 +338,8 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
             #debug
             #print(style)
             cnt = (len(style) - minLenStyl)
+            # value of the integer "cnt" indicates
+            # the number of pic(s) and valley(s) remain to process
             while cnt > 0:
                 f_p = register2relst(
                     style[cnt], DELTA=DELTA
@@ -343,18 +347,29 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
                 t_p = relativePos2time(style[cnt + 1], [xmin, xmax])
 
                 # peak / valley temporal / frequential re-alignment
+                # bug occurs when the local annotation is analysed !
+                # because freq is given as for global version
                 [v_t, v_f] = identifyEssentialPoints(freq,
                                                      time,
                                                      thld=DELTA / 2)
+                # debug -> ok, len(freq) is enough
+                # print("len(f)",len(freq))
+
+                # debug
+                #print(v_t,v_f)
 
                 # # DEBUG:
                 #print("return values by identifyEssentialPoints call in show_stylization")
-                #print(v_t,v_t)
+                #print(v_t,v_f)
 
                 # the above is a problematic implemntation !!!
                 # For each essential point coded by SLAM annotation
-                # this dirty routine search for the nearest point to it (measured here by 1-norm in 2-dim)
+                # this dirty routine searchs for the nearest point to it (measured here by 1-norm in 2-dim)
                 # on the non-simplified pitch
+
+                # this routine maps each of SLAM+ quantized sallience points to
+                # its related realisetic essential points
+
                 distances_times = [[
                     abs(f_p - f) + abs(t_p - sec2msec(t)),
                     sec2msec(t), f
@@ -363,7 +378,15 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
                 # sorting points by time order
                 distances_times = sorted(distances_times,
                                          key=lambda tup: tup[0])
+
                 t_p, f_p = distances_times[0][1:]
+
+                #debug
+                #print((t_p,f_p))
+                #debug : if we plot the original essential point ?
+                #v_t_msec = [sec2msec(t) for t in v_t]
+                #t_p, f_p = v_t_msec, v_f
+
 
                 #print(style_intv)
                 style_intv.insert(1, t_p)
@@ -409,8 +432,10 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     alphabet2semitones = {'H': 8, 'h': 4, 'm': 0, 'l': -4, 'L': -8}
     yoffset = hz2semitone(register_loc) - hz2semitone(register)
     #print(style1,style2)
+    # bugfix: transform smoothed pitch (in semitnones) to local register based one
+    smooth2 = [f - yoffset for f in smooth]
     style2_intv, style2_pitch = style2pitch(time_org,
-                                            smooth,
+                                            smooth2,
                                             style2,
                                             xticks_major[0],
                                             xticks_major[-1],
@@ -418,6 +443,7 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
                                             yoffset=yoffset)
     #debug
     #if len(style2_pitch)>3: print(style2,style2_pitch)
+    style2_pitch = [f + yoffset for f in style2_pitch]
 
     # essential points
     ti, fr = identifyEssentialPoints(smooth, time=time_org, thld=DELTA / 2)
