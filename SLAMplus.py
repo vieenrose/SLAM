@@ -60,9 +60,9 @@ alpha = 1  # for register ranger estimation
 #speakerTier= 'periode'
 #targetTier = 'pivot'
 
-speakerTier = 'IUs' # not very relevant, it should be Biola-IP for naija.
-targetTier = 'ICs_2'
-tagTier = 'mot'
+speakerTier = 'periode' # not very relevant, it should be Biola-IP for naija.
+targetTier = 'pivot'
+tagTier = ''
 
 #display and exportation
 examplesDisplayCount = 1  #number of example plots to do. Possibly 0
