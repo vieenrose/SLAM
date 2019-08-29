@@ -11,7 +11,7 @@ import os, math, sys, textwrap
 minDELTA = 4
 locality = 100
 smoothingEnable = False
-
+freqRefSaillience = 1 # commentaire: this parameter controls the way we detect sallience on melodic contours. The possiblites values and its associated meanings are in the following : 0 means detection sallence w.r.t. register frequence ; 1 means sallience is detected w.r.t. intial frequency of the target
 
 def SLAM1(semitones, time=None, rangeRegisterInSemitones=20):
 
@@ -1079,7 +1079,7 @@ def averageRegisters(swipeFile, speakerTier=None):
     return registers
 
 
-def identifyEssentialPoints(freq, time=None, thld=2, baseMode = 0):
+def identifyEssentialPoints(freq, time=None, thld=2, baseMode = freqRefSaillience):
     # example of output :
     # t = [t_initial, t_peak , t_valley, t_final]
     # f = [f_initial, f_peak , f_valley, f_final]
