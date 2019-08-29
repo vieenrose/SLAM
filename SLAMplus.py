@@ -399,8 +399,10 @@ for i, styles in enumerate([stylesGlo, stylesDynLoc]):
     total = float(sum(unsorted_values))
 
     #remove styles that appear less than 0.5 percents of the time
+    """
     for style in list(count.keys()):
         if count[style] / total < 0.005: del count[style]
+    """
 
     unsorted_values = np.array(list(count.values()))
     stylesNames = list(count.keys())
@@ -416,17 +418,14 @@ SLAM analysis overall summary:
 - %d intervals to stylize.
 - %d intervals with a non empty style (others are unvoiced)
 - %d resulting styles appearing in total
-- %d resulting nonnegligible styles (appearing more than 0.5%% of the time)
 ------------------------------------------------------------------
-- The %d most important nonnegligible styles along with their frequency are:"""%(
+- The styles along with their frequency are:"""%(
     totalN,\
     len(styles),\
-    len(set(styles)),\
-    len(count),\
-    L))
+    len(set(styles))))
     styleNames = sorted(count, key=count.get)
     styleNames.reverse()
-    for styleName in styleNames[:L]:
+    for styleName in styleNames:
         print(
             ('\t%s\t:\t:%0.1f%% (%d occurrences)' %
              (styleName, count[styleName] / total * 100.0, count[styleName])))
