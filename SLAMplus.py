@@ -240,7 +240,7 @@ while (tgFiles):
     #computing at which iterations to give progress
     LEN = float(len(tg[targetTier]))
     totalN += LEN
-    POSdisplay = set([int(float(i) / 100.0 * LEN) for i in range(0, 100, 10)])
+    POSdisplay = set([int(float(i) / 100.0 * LEN) for i in range(0,100,10)])
     smooth_total = []
     time_total = []
     pl.rcParams["figure.figsize"] = [13, 7]
@@ -366,6 +366,7 @@ while (tgFiles):
         fig.clf()
         haveImgInbuf = False
 
+    print('Stylizing: {} contours'.format(prog.progressstring(len(tg[targetTier]))))
     #done, now writing tier into textgrid and saving textgrid
     print(('Saving computed styles in file %s' % outputTextgridFile))
     tg.append(newTier)
