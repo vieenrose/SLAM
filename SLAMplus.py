@@ -60,9 +60,9 @@ alpha = 1  # for register ranger estimation
 #speakerTier= 'periode'
 #targetTier = 'pivot'
 
-speakerTier = 'periode' # not very relevant, it should be Biola-IP for naija.
-targetTier = 'pivot'
-tagTier = ''
+speakerTier = 'IUs' # commentary.
+targetTier = 'ICs'
+tagTier = 'mot'
 
 #display and exportation
 examplesDisplayCount = 1  #number of example plots to do. Possibly 0
@@ -417,10 +417,10 @@ for i, styles in enumerate([stylesGlo, stylesDynLoc]):
 SLAM analysis overall summary:
 ------------------------------------------------------------------
 - %d intervals to stylize.
-- %d intervals with a non empty style (others are unvoiced)
-- %d resulting styles appearing in total
+- %d intervals with a non empty contour (others are unvoiced)
+- %d distinctive forms of contour appearing in total
 ------------------------------------------------------------------
-- The styles along with their frequency are:"""%(
+- The form of contour along with their frequency are:"""%(
     totalN,\
     len(styles),\
     len(set(styles))))
@@ -432,10 +432,10 @@ SLAM analysis overall summary:
              (styleName, count[styleName] / total * 100.0, count[styleName])))
     print('''
 
-x------------------------------------------x---------------------x
-| explained proportion of the observations | number of styles    |
-|         (percents)                       |                     |
-x------------------------------------------x---------------------x''')
+x------------------------------------------x-----------------------------x
+| explained proportion of the observations | number of forms of contours |
+|         (percents)                       |                             |
+x------------------------------------------x-----------------------------x''')
     cumulative_values = np.cumsum(sorted_values)
     cumulative_values = cumulative_values / float(cumulative_values[-1])
     for P in [70, 75, 80, 85, 90, 95, 99]:
