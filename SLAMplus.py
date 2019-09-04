@@ -87,13 +87,17 @@ Current parameters are:
   tier providing units of register estimation (support) : %s
   tier providing units to stylize (target)              : %s
   tier providing additional descriptive contents (tag)  : %s
+  min. value of the width of tonal zone (ie. minDELTA)  : %d (semitones)
+  reference frequency for saliency detection            : %d (ie. %s)
   Number of examples to display                         : %d
   Export result in PDF                                  : %d
   ENTER = ok
   anything+ENTER = change
 
   """ %
-    (speakerTier, targetTier, tagTier, examplesDisplayCount, exportFigures))
+    (speakerTier, targetTier, tagTier,
+     stylize.minDELTA, stylize.freqRefSaliency, ("favg" if stylize.freqRefSaliency == 0 else "fi"),
+     examplesDisplayCount, exportFigures))
 
 print(change)
 

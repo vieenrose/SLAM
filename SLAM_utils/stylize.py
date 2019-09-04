@@ -729,8 +729,10 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
     if is_new_support:
         key_of_register = register
         #supp_mark += ', key: {:.0f} Hz, range: {:.0f} Hz'.format(key_of_register, range_of_register)
-        text_key_range = 'Global Key: {:.0f} Hz, Global Range: {:.0f} Hz, DELTA = {} (semitones), alpha = {:4.2f}'.format(
-            key_of_register, range_of_register, DELTA, alpha)
+        text_key_range = 'Global Key: {:.0f} Hz, Global Range: {:.0f} Hz, DELTA = {} (semitones), freqRefSaliency = {} (ie. {}), alpha = {:4.2f}'.format(
+            key_of_register, range_of_register, DELTA,
+            freqRefSaliency, ("favg" if freqRefSaliency == 0 else "fi"),
+            alpha)
         ax.annotate(text_key_range,
                     xy=(0.5, 1.025),
                     xycoords='axes fraction',
