@@ -166,10 +166,11 @@ class TextGrid():
     def extractTextGridFromAnalorFile(self, file):
 
         SuccessOrNot = False
-
+        marshaller = None
         with open(file, 'rb') as ifile:
             try:
                 marshaller = javaobj.JavaObjectUnmarshaller(ifile)
+                if marshaller == None: raise IOError
             except IOError:
                 ifile.seek(0, 0)
                 return SuccessOrNot

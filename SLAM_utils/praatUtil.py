@@ -106,10 +106,12 @@ def readPitchTier2(fileName):
     with open(fileName, "rb") as bin:
 
         isAnalorFile = False
+        marshaller = None
         if javaobj_installed:  # try as Analor file
             try:
                 marshaller = javaobj.JavaObjectUnmarshaller(bin)
-            except:
+                if marshaller == None: raise IOError
+            except IOError:
                 marshaller = None
         if marshaller:
             while True:
