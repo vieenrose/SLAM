@@ -56,11 +56,11 @@ Fig 1. Example of analysis carried out by *SLAM+* on a sample of the [Rhapsodie 
 
 ### Under MacOS ###
 
-0) Install Python3 under MacOS. User may find [this installation guide](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/) helpful.
+0) Install Python3 under MacOS. For more information, users are refered to [this installation guide](https://docs.python-guide.org/starting/install3/osx/) which we find very helpful.
 
 1) Download or clone [*SLAMplus*](https://github.com/vieenrose/SLAMplus/tree/dev).
 
-2) Install the following libraries required by *SLAM+*:
+2) Install the following libraries required by *SLAM+* via pip3:
 
             sudo pip3 install numpy scipy matplotlib pandas sympy nose chardet
 
