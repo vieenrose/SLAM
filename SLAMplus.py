@@ -147,7 +147,7 @@ while (tgFiles):
 
     extension = stylize.get_extension(inputTextgridFile)
     outputTextgridFile = './output/{}{}'.format(basename, extension)
-    outputPitchTierFile = './output/{}{}'.format(basename, ".PitchTier")
+    #outputPitchTierFile = './output/{}{}'.format(basename, ".PitchTier")
     outputFigureFile = './output/{}{}'.format(basename, ".pdf")
     srcFilesPaired = \
     [filename for filename in srcFiles \
@@ -376,9 +376,9 @@ while (tgFiles):
     tg.append(newTier)
     tg.append(newTierLoc)
     tg.write(outputTextgridFile)
-    print('Exporting smoothed pitchs in Binary PitchTierfile %s' %
-          outputPitchTierFile)
-    praatUtil.writeBinPitchTier(outputPitchTierFile, time_total, smooth_total)
+    #print('Exporting smoothed pitchs in Binary PitchTierfile %s' %
+    #      outputPitchTierFile)
+    #praatUtil.writeBinPitchTier(outputPitchTierFile, time_total, smooth_total)
     print('Exporting figures in PDF file %s' % outputFigureFile)
     if exportFigures: pdf.close()
     pl.close()
