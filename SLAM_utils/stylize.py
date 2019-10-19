@@ -1175,10 +1175,12 @@ def identifyEssentialPoints(freq, time=None, thld=2, baseMode = freqRefSaliency)
             have_sailliant_peak = have_sailliant_peak and (f_max >= base2 + thld)
 
         have_sailliant_valley = (f_min <= base - thld) and l and l + 1 < len(
-            np.array(freq_sallience_observation))
+            np.array(freq_sallience_observation)) \
+            and not have_sailliant_peak # valley is recongnized only when there is no peak
 
         if baseMode == 2: # on mode2, for valley, we check 2nd base
             have_sailliant_valley = have_sailliant_valley and (f_min <= base2 - thld)
+
 
 
         if t_max < t_min:  # peak occurs before valley
