@@ -128,15 +128,17 @@ tgFiles = []
 srcFiles = []
 while tmpFiles:
     filename = tmpFiles.pop(0)
-    if re.search(r'\.(COLLECTION|OR)$', filename, re.IGNORECASE) :
-       # hybrid files : Praat Collection / Analor File
-       tgFiles.append(filename)
-       srcFiles.append(filename)
-    elif re.search(r'\.TEXTGRID$', filename, re.IGNORECASE):
+    tgFound = False
+    srcFound = False
+    if re.search(r'\.TEXTGRID$', filename, re.IGNORECASE):
         # Praat TextGrid
-        tgFiles.append(filename)
+        if not tgFound: tgFiles.append(filename); tgFound = True
+    elif re.search(r'\.(COLLECTION|OR)$', filename, re.IGNORECASE) :
+       # hybrid files : Praat Collection / Analor File
+       if not tgFound: tgFiles.append(filename); tgFound = True
+       if not srcFound: srcFiles.append(filename); srcFound = True
     else:
-        srcFiles.append(filename)
+        if not srcFound: srcFiles.append(filename); srcFound = False
 
 t1 = time.time()
 tgFiles = sorted(tgFiles)
