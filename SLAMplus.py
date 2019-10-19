@@ -96,7 +96,7 @@ Current parameters are:
 
   """ %
     (speakerTier, targetTier, tagTier,
-     stylize.minDELTA, stylize.freqRefSaliency, ("favg" if stylize.freqRefSaliency == 0 else "fi"),
+     stylize.minDELTA, stylize.freqRefSaliency, stylize.detMode2str(stylize.freqRefSaliency),
      examplesDisplayCount, exportFigures))
 
 print(change)

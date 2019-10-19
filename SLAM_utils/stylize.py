@@ -11,7 +11,11 @@ import os, math, sys, textwrap
 minDELTA = 3.2
 locality = 100
 smoothingEnable = False
-freqRefSaliency = 0 # commentaire: this parameter controls the way we detect salliency on melodic contours. The possible values and teheir associated meanings are the following : 0 means detection saliency is detected w.r.t. key of the register ; 1 means saliency is detected w.r.t. intial frequency of the target
+freqRefSaliency = 2 # commentaire: this parameter controls the way we detect salliency on melodic contours. The possible values and teheir associated meanings are the following : 0 means detection saliency is detected w.r.t. key of the register ; 1 means saliency is detected w.r.t. intial frequency of the target
+
+def detMode2str (mode) :
+    rets = ['favg','fi','fi and ff']
+    return rets[mode];
 
 def SLAM1(semitones, time=None, rangeRegisterInSemitones=20):
 
@@ -725,13 +729,15 @@ def show_stylization(time_org,original,smooth,style1,style2,targetIntv,register,
         #ax2.set_yticklabels(yticklabels_minor,minor=True,color=color_style_styl,fontweight='semibold')
         ax2.set_ylabel('Frequencey Relative to Global Register (semitones)')
 
+
+
     # support label
     if is_new_support:
         key_of_register = register
         #supp_mark += ', key: {:.0f} Hz, range: {:.0f} Hz'.format(key_of_register, range_of_register)
         text_key_range = 'Global Key: {:.0f} Hz, Global Range: {:.0f} Hz, DELTA = {} (semitones), freqRefSaliency = {} (ie. {}), alpha = {:4.2f}'.format(
             key_of_register, range_of_register, DELTA,
-            freqRefSaliency, ("favg" if freqRefSaliency == 0 else "fi"),
+            freqRefSaliency, detMode2str(freqRefSaliency),
             alpha)
         ax.annotate(text_key_range,
                     xy=(0.5, 1.025),
@@ -1152,14 +1158,29 @@ def identifyEssentialPoints(freq, time=None, thld=2, baseMode = freqRefSaliency)
         # this flag assignment will set base to 0. It takes the base to be the register used by the current target unit
         # set baseMode = 1,
         # this flag assignment will set base to f[0] it take the base to be intial frequency of the current target unit
+        # set baseMode = 2,
+        # this flag assignment will set base to f[0] and f[-1]
+        # it take the base to be maximum of intial and frequencies of the current target unit for the case of peak detection,
+        #                        minimum                                                                      valley
 
-        base = 0; # by default, the base is set to the register
-        if baseMode == 1: base = f[0] # choose initial frequency as base
+
+        base = 0; # by default, the  base is set to the register
+        base2 = f[-1];
+        if baseMode == 1 or baseMode == 2 : base = f[0] # choose initial frequency as 1st base
 
         have_sailliant_peak = (f_max >= base + thld) and k and k + 1 < len(
             np.array(freq_sallience_observation))
+
+        if baseMode == 2: # on mode2, for peak, we check 2nd base (ie. final freq.)
+            have_sailliant_peak = have_sailliant_peak and (f_max >= base2 + thld)
+
         have_sailliant_valley = (f_min <= base - thld) and l and l + 1 < len(
             np.array(freq_sallience_observation))
+
+        if baseMode == 2: # on mode2, for valley, we check 2nd base
+            have_sailliant_valley = have_sailliant_valley and (f_min <= base2 - thld)
+
+
         if t_max < t_min:  # peak occurs before valley
             if have_sailliant_peak:
                 t.insert(1, t_max)
