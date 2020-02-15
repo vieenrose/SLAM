@@ -7,6 +7,7 @@ import SLAM_utils.TextGrid as tg
 from SLAM_utils import praatUtil
 from SLAM_utils import swipe
 import os, math, sys, textwrap
+from collections import Counter
 
 minDELTA = 3.2
 locality = 100
@@ -889,20 +890,48 @@ def getSupportIntvs(targetIntv, supportTier):
             supportIntv
       """
 
-    trgt, spprt = targetIntv, supportTier  #alias
-    supportIntvs = tg.getMatchingIntervals([trgt],
-                                           spprt,
+    supportIntvs = tg.getMatchingIntervals([targetIntv],
+                                           supportTier,
                                            strict=False,
-                                           just_intersection=True)
+                                           just_intersection=False)
+
+    #checked: all intervals returned by "getMatchingIntervals"
+    #       in "suppoertIntvs" do overlap with "targetIntv"
+    for intv in supportIntvs:
+        if intv.xmin() > targetIntv.xmax() or \
+           intv.xmax() < targetIntv.xmin():
+           print("oops: ")
+           print(intv.xmin(),intv.xmax())
+           print("do not overlap with")
+           print(targetIntv.xmin(),targetIntv.xmax())
+           exit()
+
+    #checked: how many intervals it returns? not many, usually between 2 and 3
+    #print(len(supportIntvs), "intervals")
+
     if not supportIntvs: return supportIntvs
-    labels = [intv.mark() for intv in supportIntvs]
-    labelsCount = dict((label, labels.count(label)) for label in set(labels))
-    bestLabel = max(labelsCount, key=labelsCount.get)
-    """
-      for intv in supportIntvs:
-          if intv.mark() == bestLabel:
-              return intv
-      """
+
+    #compute overlaping duration
+    #then accumulate a dictionary "durationBylabel" by interval's label
+    durationBylabel = Counter()
+    for intv in supportIntvs:
+        dur = min(intv.xmax(), targetIntv.xmax()) -\
+              max(intv.xmin(), targetIntv.xmin())
+        #print(dur)
+        label = intv.mark()
+        # skip non-unlabeled interval
+        if not len(label): continue
+        durationBylabel[label]+= int(round(dur * 1000)) # save duration in ms
+
+    #debug
+    #print(durationBylabel)
+
+    # choose the label of the interval
+    # with maximal matched duration with the target
+    bestLabel = durationBylabel.most_common(1)[0][0]
+    #print(bestLabel)
+
+
     # it can occur that 2+ intervals carry the same label, return all
     # these sub-intervals to be complete
     intvs = [intv for intv in supportIntvs if intv.mark() == bestLabel]
