@@ -50,6 +50,8 @@ display & export:
                    summary of the distribution of the stylizes
 * exportFigures :  True or False: whether or not to export the result
                    tonal analysis in PDF file
+* exportTag :      True or False: whether or not to export the tag
+                   in TextGrid File
 #####################################################################"""
 
 timeStep = .001  #in seconds, step for swipe pitch analysis
@@ -91,14 +93,15 @@ Current parameters are:
   min. value of the width of tonal zone (ie. minDELTA)  : %d (semitones)
   reference frequency for saliency detection            : %d (ie. %s)
   Number of examples to display                         : %d
-  Export result in PDF                                  : %d
+  Export result in PDF                                  : %d (1 for True; 0 for False)
+  Export tag in TextGrid                                : %d (1 for True; 0 for False)
   ENTER = ok
   anything+ENTER = change
 
   """ %
     (speakerTier, targetTier, tagTier,
      stylize.minDELTA, stylize.freqRefSaliency, stylize.detMode2str(stylize.freqRefSaliency),
-     examplesDisplayCount, exportFigures))
+     examplesDisplayCount, exportFigures,exportTag))
 
 print(change)
 
@@ -114,9 +117,14 @@ if len(change):
     new = stylize.input_SLAM('number of displays (empty = keep %d) : ' %
                              examplesDisplayCount)
     if len(new): examplesDisplayCount = int(new)
-    new = input('export figures in PDF file (empty = keep %d) : ' %
+
+    new = stylize.input_SLAM('export figures in PDF file (empty = keep %d) : ' %
                 exportFigures)
     if len(new): exportFigures = int(new)
+
+    new = stylize.input_SLAM('export tag in TextGrid file (empty = keep %d) : ' %
+                exportTag)
+    if len(new): exportTag = int(new)
 
 #all styles, for statistics
 stylesGlo = []
@@ -311,7 +319,7 @@ while (tgFiles):
         # don't export stylization on empty segment
         if not targetIntv.mark():
             continue
-            
+
         stylesGlo += [style_glo]
         stylesDynLoc += [style_loc]
         #else:
