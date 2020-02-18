@@ -5,9 +5,6 @@ An enhanced automatic stylizer for pitch (contour) of speech corpora based on [*
 
 ## Contributors ##
 - `Luigi (Yu-Cheng) Liu` - [luigi.plurital@gmail.com](mailto:luigi.plurital@gmail.com)
-	- [UMR 7114 MoDyCo Lab.](https://www.modyco.fr/fr/) [(University Paris Nanterre)](https://university.parisnanterre.fr/)
-	- [Ibadan University](https://www.ui.edu.ng/)
-	- [IFRA-Nigeria](http://www.ifra-nigeria.org/)
 - `Anne Lacheret-Dujour` - [anne@lacheret.com](mailto:anne@lacheret.com)
 	- [UMR 7114 MoDyCo Lab.](https://www.modyco.fr/fr/) [(University Paris Nanterre)](https://university.parisnanterre.fr/)
 - `Nicolas Obin` - [nicolas.obin@ircam.fr](mailto:nicolas.obin@ircam.fr)
