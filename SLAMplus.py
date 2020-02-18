@@ -316,15 +316,13 @@ while (tgFiles):
                 smooth_total = np.concatenate((smooth_total, smooth_hz))
                 time_total = np.concatenate((time_total, targetTimes))
 
-        # don't export stylization on empty segment
-        if not targetIntv.mark():
-            continue
-
-        stylesGlo += [style_glo]
-        stylesDynLoc += [style_loc]
-        #else:
-        #    style_glo = '';
-        #    style_loc = '';
+        # give null stylization on empty segment
+        if targetIntv.mark():
+            stylesGlo += [style_glo]
+            stylesDynLoc += [style_loc]
+        else:
+            style_glo = '';
+            style_loc = '';
 
         #then add an interval with that style to the (new) style tier
         newInterval = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(),
