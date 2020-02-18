@@ -67,6 +67,7 @@ tagTier = 'mot'
 #display and exportation
 examplesDisplayCount = 1  #number of example plots to do. Possibly 0
 exportFigures = True
+exportTag = True
 
 #END OF PARAMETERS (don't touch below please)
 #------------------------------------------------------
@@ -196,6 +197,13 @@ while (tgFiles):
     newTierLoc = TextGrid.IntervalTier(name='%sStyleLoc' % targetTier,
                                        xmin=tg[targetTier].xmin(),
                                        xmax=tg[targetTier].xmax())
+    #create a new tier called exportTag
+    #when the binary flag exportTag is turned on
+    if exportTag:
+        newTierTag = TextGrid.IntervalTier(name='exportTag',
+                                           xmin=tg[targetTier].xmin(),
+                                           xmax=tg[targetTier].xmax())
+
 
     #Create swipe object from wave file or external PitchTier file
     inputPitch = None
@@ -301,12 +309,14 @@ while (tgFiles):
                 time_total = np.concatenate((time_total, targetTimes))
 
         # don't export stylization on empty segment
-        if targetIntv.mark():
-            stylesGlo += [style_glo]
-            stylesDynLoc += [style_loc]
-        else:
-            style_glo = '';
-            style_loc = '';
+        if not targetIntv.mark():
+            continue
+            
+        stylesGlo += [style_glo]
+        stylesDynLoc += [style_loc]
+        #else:
+        #    style_glo = '';
+        #    style_loc = '';
 
         #then add an interval with that style to the (new) style tier
         newInterval = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(),
@@ -315,6 +325,15 @@ while (tgFiles):
         newIntervalLoc = TextGrid.Interval(targetIntv.xmin(),
                                            targetIntv.xmax(), style_loc)
         newTierLoc.append(newIntervalLoc)
+
+        if exportTag:
+            # concatenate tags falling in the target interval and
+            concatenatedTag = tag
+
+            # put the concatenated result in newIntervalTag
+            newIntervalTag = TextGrid.Interval(targetIntv.xmin(),
+                                           targetIntv.xmax(), concatenatedTag)
+            newTierTag.append(newIntervalTag)
 
         #compute figure either for examples or for export in PDF file
         if support != None:
@@ -375,6 +394,8 @@ while (tgFiles):
     print(('Saving computed styles in file %s' % outputTextgridFile))
     tg.append(newTier)
     tg.append(newTierLoc)
+    if exportTag:
+        tg.append(newTierTag)
     tg.write(outputTextgridFile)
     #print('Exporting smoothed pitchs in Binary PitchTierfile %s' %
     #      outputPitchTierFile)
