@@ -286,12 +286,29 @@ while (tgFiles):
             stylize.stylizeObject(\
             targetIntv = targetIntv, supportIntvs = supportIntvs,\
             inputPitch = inputPitch, alpha=alpha)
-        if out == None:
-            continue
-        else:
+        if out:
             (style_glo,style_loc,\
             targetTimes,deltaTargetPitch, deltaTargetPitchSmooth, \
             reference, reference_loc, rangeRegisterInSemitones, loccalDynamicRegister) = out
+        else:
+            # when stylization fails, fill output tiers with empty content
+            # then skip visulization
+            style_glo = ""
+            style_loc = ""
+            concatenatedTag = ""
+
+            newInterval = TextGrid.Interval(targetIntv.xmin(), targetIntv.xmax(),
+                                            style_glo)
+            newTier.append(newInterval)
+            newIntervalLoc = TextGrid.Interval(targetIntv.xmin(),
+                                               targetIntv.xmax(), style_loc)
+            newTierLoc.append(newIntervalLoc)
+            if exportTag:
+                newIntervalTag = TextGrid.Interval(targetIntv.xmin(),
+                                           targetIntv.xmax(), concatenatedTag)
+                newTierTag.append(newIntervalTag)
+
+            continue
 
         # debug
         if len(style_glo) != 2 and len(style_glo) != 4 and len(style_glo) != 6:
@@ -334,7 +351,11 @@ while (tgFiles):
 
         if exportTag:
             # concatenate tags falling in the target interval and
-            concatenatedTag = tag
+            if targetIntv.mark():
+                concatenatedTag = tag
+            else:
+                # give null tag for empty target
+                concatenatedTag = ""
 
             # put the concatenated result in newIntervalTag
             newIntervalTag = TextGrid.Interval(targetIntv.xmin(),
